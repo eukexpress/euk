@@ -4,6 +4,9 @@ uvicorn[standard]==0.24.0
 pydantic==2.5.0
 pydantic-settings==2.1.0
 
+# Use pydantic-core from wheel - pin to a version with pre-built wheels
+pydantic-core==2.14.1
+
 # Database
 sqlalchemy==2.0.23
 alembic==1.12.1

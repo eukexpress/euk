@@ -1,5 +1,5 @@
-﻿name = "eukexpress"  # Must match dashboard EXACTLY
-main = "src/index.js"  # JavaScript entry point, NOT Python
+﻿name = "eukexpress"
+main = "src/index.js"
 compatibility_date = "2026-02-21"
 
 [env.production]

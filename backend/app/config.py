@@ -1,3 +1,4 @@
+# backend/app/config.py
 """
 Environment Configuration Management
 Loads and validates all environment variables
@@ -10,10 +11,10 @@ import os
 class Settings(BaseSettings):
     # Application
     APP_NAME: str = "EukExpress Global Logistics"
-    APP_ENV: str = "development"
+    APP_ENV: str = "production"  # Changed to production
     APP_SECRET_KEY: str
     APP_DEBUG: bool = False
-    APP_URL: str = "http://localhost:8000"
+    APP_URL: str = "https://eukexpress.onrender.com"  # Your Render URL
     
     # Database
     DATABASE_URL: str
@@ -25,21 +26,21 @@ class Settings(BaseSettings):
     ADMIN_EMAIL: str = "admin@eukexpress.com"
     ADMIN_PASSWORD: str
     
-    # Resend Email
+    # Resend Email - IMPORTANT: Using onboarding@ as required by Resend
     RESEND_API_KEY: str
-    RESEND_FROM_EMAIL: str = "notifications@eukexpress.com"
+    RESEND_FROM_EMAIL: str = "onboarding@eukexpress.com"  # Must match Resend verified domain
     RESEND_FROM_NAME: str = "EukExpress Global Logistics"
     
-    # File Uploads
+    # File Uploads - Render Linux paths
     MAX_UPLOAD_SIZE: int = 10485760  # 10MB
     ALLOWED_EXTENSIONS: str = ".jpg,.jpeg,.png"
-    UPLOAD_PATH: str = "C:/Eukexpress/frontend/uploads"
-    QR_CODE_PATH: str = "C:/Eukexpress/frontend/qr_codes"
+    UPLOAD_PATH: str = "/opt/render/project/src/frontend/uploads"
+    QR_CODE_PATH: str = "/opt/render/project/src/frontend/qr_codes"
     
     # Security
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7
-    CORS_ORIGINS: str = "http://localhost:8000,http://127.0.0.1:8000"
+    CORS_ORIGINS: str = "https://eukexpress.onrender.com,https://www.eukexpress.com,http://localhost:8000"
     
     # Rate Limiting
     RATE_LIMIT_REQUESTS: int = 100
@@ -47,10 +48,10 @@ class Settings(BaseSettings):
     
     # Logging
     LOG_LEVEL: str = "INFO"
-    LOG_FILE: str = "C:/Eukexpress/backend/logs/app.log"
+    LOG_FILE: str = "/opt/render/project/src/backend/logs/app.log"
     
-    # Keep Alive (for Render)
-    RENDER_APP_URL: str = "http://localhost:8000"
+    # Keep Alive
+    RENDER_APP_URL: str = "https://eukexpress.onrender.com"
     
     class Config:
         env_file = ".env"

@@ -19,7 +19,7 @@ from app.api.v1 import (
 from app.config import settings
 from app.database import engine, Base
 
-# Simple logging - no timestamps, just essential messages
+# Simple logging
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
@@ -56,10 +56,10 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS
+# CORS - Using settings.cors_origins_list instead of "*"
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.cors_origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -69,11 +69,18 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(dashboard.router, prefix="/api/v1/dashboard", tags=["Dashboard"])
 app.include_router(shipments.router, prefix="/api/v1/shipments", tags=["Shipments"])
+app.include_router(shipment_detail.router, prefix="/api/v1/shipments", tags=["Shipment Details"])
+app.include_router(interventions.router, prefix="/api/v1/shipments", tags=["Interventions"])
+app.include_router(communication.router, prefix="/api/v1/shipments", tags=["Communication"])
+app.include_router(bulk_operations.router, prefix="/api/v1/bulk", tags=["Bulk Operations"])
 app.include_router(public_tracking.router, prefix="/api/v1/public", tags=["Public"])
 
 # Static files
 os.makedirs(settings.UPLOAD_PATH, exist_ok=True)
 os.makedirs(settings.QR_CODE_PATH, exist_ok=True)
+os.makedirs(os.path.join(settings.UPLOAD_PATH, "shipments"), exist_ok=True)
+os.makedirs(os.path.join(settings.UPLOAD_PATH, "invoices"), exist_ok=True)
+
 app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_PATH), name="uploads")
 app.mount("/qr", StaticFiles(directory=settings.QR_CODE_PATH), name="qr")
 
@@ -83,12 +90,17 @@ async def root():
         "app": "EukExpress API",
         "version": "1.0.0",
         "status": "running",
+        "environment": settings.APP_ENV,
         "docs": "/docs"
     }
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "time": datetime.utcnow().isoformat()}
+    return {
+        "status": "ok",
+        "time": datetime.utcnow().isoformat(),
+        "database": "connected"
+    }
 
 if __name__ == "__main__":
     import uvicorn

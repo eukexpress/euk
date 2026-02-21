@@ -1,9 +1,0 @@
-﻿name = "eukexpress"
-main = "src/index.js"
-compatibility_date = "2026-02-21"
-
-[env.production]
-routes = [
-  { pattern = "eukexpress.com", custom_domain = true },
-  { pattern = "www.eukexpress.com", custom_domain = true }
-]

@@ -1,14 +1,9 @@
-name = "eukexpress"
-main = "src/index.py"
+﻿name = "eukexpress"
+main = "src/index.js"
 compatibility_date = "2026-02-21"
-compatibility_flags = ["python_workers"]
 
 [env.production]
 routes = [
   { pattern = "eukexpress.com", custom_domain = true },
   { pattern = "www.eukexpress.com", custom_domain = true }
 ]
-
-[env.production.vars]
-FRONTEND_ORIGIN = "http://69.57.162.187"
-BACKEND_ORIGIN = "https://eukexpress.onrender.com"

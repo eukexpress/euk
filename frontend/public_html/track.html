@@ -5,16 +5,36 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Track Shipment - EukExpress</title>
     <link rel='stylesheet' href='css/tracking.css'>
+    <style>
+        .tracking-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .back-home {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .back-home:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <header>
         <a href='/' class='logo'>EukExpress</a>
     </header>
     <main>
-        <div id='tracking-result' class='tracking-container'>
-            <!-- Tracking results will be loaded here -->
+        <div class='tracking-container'>
+            <a href='/' class='back-home'>← Back to Home</a>
+            <div id='tracking-result' class='tracking-card'>
+                <div class="loading">Enter a tracking number to begin</div>
+            </div>
         </div>
     </main>
+    <script src='js/api.js'></script>
     <script src='js/tracking.js'></script>
 </body>
 </html>

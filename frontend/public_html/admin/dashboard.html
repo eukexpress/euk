@@ -1,4 +1,3 @@
-<!-- Layer 1: Dashboard -->
 <!DOCTYPE html>
 <html lang='en'>
 <head>
@@ -12,17 +11,69 @@
         <h2>EukExpress Admin</h2>
         <button id='logout-btn'>Logout</button>
     </nav>
+    
+    <div id="error-message" class="error-message" style="display:none;"></div>
+    
     <main>
-        <div class='stats-grid' id='dashboard-stats'>
-            <!-- Stats will be loaded here -->
+        <div class='stats-grid'>
+            <div class='stat-card'>
+                <h3>Active Shipments</h3>
+                <div class='stat-number' id='active-shipments'>0</div>
+            </div>
+            <div class='stat-card'>
+                <h3>Today's Shipments</h3>
+                <div class='stat-number' id='today-shipments'>0</div>
+            </div>
+            <div class='stat-card'>
+                <h3>Delayed</h3>
+                <div class='stat-number' id='delayed-count'>0</div>
+            </div>
+            <div class='stat-card'>
+                <h3>Customs Bond</h3>
+                <div class='stat-number' id='customs-bond-count'>0</div>
+            </div>
+            <div class='stat-card'>
+                <h3>Damage Reported</h3>
+                <div class='stat-number' id='damage-reported-count'>0</div>
+            </div>
+            <div class='stat-card'>
+                <h3>Security Hold</h3>
+                <div class='stat-number' id='security-hold-count'>0</div>
+            </div>
+            <div class='stat-card'>
+                <h3>Attention Required</h3>
+                <div class='stat-number' id='attention-required'>0</div>
+            </div>
+            <div class='stat-card'>
+                <h3>Monthly Revenue</h3>
+                <div class='stat-number' id='revenue-month'>$0</div>
+            </div>
         </div>
+        
         <div class='action-cards'>
             <a href='create.html' class='action-card'>Create Shipment</a>
             <a href='history.html' class='action-card'>Shipment History</a>
             <a href='bulk-email.html' class='action-card'>Bulk Email</a>
         </div>
-        <div class='recent-activity' id='recent-activity'>
-            <!-- Recent activity will be loaded here -->
+        
+        <div class='recent-activity'>
+            <h2>Recent Activity</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tracking</th>
+                        <th>Event</th>
+                        <th>Time</th>
+                        <th>Location</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id='recent-activity-body'>
+                    <tr>
+                        <td colspan="5" style="text-align:center;">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </main>
     <script src='../js/api.js'></script>

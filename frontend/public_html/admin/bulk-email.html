@@ -1,1 +1,189 @@
-<!-- Bulk Email Campaign -->
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Bulk Email - EukExpress Admin</title>
+    <link rel='stylesheet' href='../css/admin.css'>
+    <style>
+        .bulk-email-form {
+            background: white;
+            margin: 2rem;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 800px;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .form-group textarea {
+            height: 200px;
+            font-family: monospace;
+        }
+        .form-group.checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .form-group.checkbox input {
+            width: auto;
+        }
+        .recipient-count {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f7fafc;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .recipient-count .count {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .form-actions button {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-send {
+            background: var(--primary);
+            color: white;
+            flex: 2;
+        }
+        .btn-preview {
+            background: #e2e8f0;
+            color: var(--dark);
+            flex: 1;
+        }
+        .btn-send:hover {
+            background: var(--secondary);
+        }
+        .btn-preview:hover {
+            background: #cbd5e0;
+        }
+        .preview-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .preview-content {
+            position: relative;
+            background: white;
+            margin: 2rem auto;
+            padding: 2rem;
+            max-width: 600px;
+            border-radius: 12px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .close-preview {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .email-preview {
+            padding: 1rem;
+            background: #f7fafc;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <nav class='admin-nav'>
+        <h2>EukExpress Admin</h2>
+        <button id='logout-btn'>Logout</button>
+    </nav>
+    
+    <div id="error-message" class="error-message" style="display:none;"></div>
+    <div id="success-message" class="success-message" style="display:none; background:#d4edda; color:#155724; padding:1rem; margin:2rem; border-radius:8px;"></div>
+    
+    <div class="bulk-email-form">
+        <h2>Bulk Email Campaign</h2>
+        
+        <form id="bulk-email-form">
+            <div class="form-group">
+                <label for="filter">Recipient Filter</label>
+                <select id="filter" name="filter" required>
+                    <option value="">Select filter...</option>
+                    <option value="all">All Shipments</option>
+                    <option value="active">Active Shipments</option>
+                    <option value="customs_bond">Customs Bond</option>
+                    <option value="delayed">Delayed</option>
+                    <option value="international">International</option>
+                </select>
+            </div>
+            
+            <div class="recipient-count">
+                <div>Estimated Recipients:</div>
+                <div class="count" id="recipient-count">0</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="subject">Email Subject</label>
+                <input type="text" id="subject" name="subject" required maxlength="500">
+            </div>
+            
+            <div class="form-group">
+                <label for="message">Email Message</label>
+                <textarea id="message" name="message" required></textarea>
+            </div>
+            
+            <div class="form-group checkbox">
+                <input type="checkbox" id="include_tracking_links" name="include_tracking_links" checked>
+                <label for="include_tracking_links">Include tracking links in emails</label>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn-preview" id="preview-btn">Preview</button>
+                <button type="submit" class="btn-send" id="send-btn">Send Campaign</button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Preview Modal -->
+    <div id="preview-modal" class="preview-modal">
+        <div class="preview-content">
+            <span class="close-preview" id="close-preview">&times;</span>
+            <h3>Email Preview</h3>
+            <div id="preview-subject" style="margin:1rem 0; font-weight:bold;"></div>
+            <div id="preview-body" class="email-preview"></div>
+        </div>
+    </div>
+    
+    <script src='../js/api.js'></script>
+    <script src='../js/auth.js'></script>
+    <script src='../js/bulk-email.js'></script>
+</body>
+</html>

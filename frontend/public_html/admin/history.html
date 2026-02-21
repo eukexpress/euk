@@ -1,1 +1,162 @@
-<!-- Layer 2: Shipment History -->
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Shipment History - EukExpress Admin</title>
+    <link rel='stylesheet' href='../css/admin.css'>
+    <style>
+        .filters {
+            background: white;
+            padding: 1.5rem;
+            margin: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .filters input, .filters select {
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .filters button {
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .shipments-table {
+            background: white;
+            margin: 2rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        .shipments-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .shipments-table th {
+            text-align: left;
+            padding: 1rem;
+            background: #f7fafc;
+            color: var(--dark);
+        }
+        .shipments-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .shipments-table tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .shipments-table tr:hover {
+            background: #f7fafc;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .status-blue { background: #cce5ff; color: #004085; }
+        .status-green { background: #d4edda; color: #155724; }
+        .status-red { background: #f8d7da; color: #721c24; }
+        .status-orange { background: #fff3cd; color: #856404; }
+        .status-gray { background: #e2e3e5; color: #383d41; }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 2rem;
+        }
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .pagination button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .intervention-badge {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        .intervention-customs { background: #f56565; }
+        .intervention-security { background: #ed8936; }
+        .intervention-damage { background: #e53e3e; }
+        .intervention-return { background: #9f7aea; }
+        .intervention-delay { background: #fbbf24; }
+    </style>
+</head>
+<body>
+    <nav class='admin-nav'>
+        <h2>EukExpress Admin</h2>
+        <button id='logout-btn'>Logout</button>
+    </nav>
+    
+    <div id="error-message" class="error-message" style="display:none;"></div>
+    
+    <div class="filters">
+        <input type="text" id="search" placeholder="Search tracking, sender, recipient...">
+        <select id="status-filter">
+            <option value="">All Statuses</option>
+        </select>
+        <input type="date" id="date-from" placeholder="From Date">
+        <input type="date" id="date-to" placeholder="To Date">
+        <button id="apply-filters">Apply Filters</button>
+        <button id="clear-filters">Clear</button>
+    </div>
+    
+    <div class="shipments-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Tracking</th>
+                    <th>Status</th>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th>Sender</th>
+                    <th>Recipient</th>
+                    <th>Last Update</th>
+                    <th>Interventions</th>
+                </tr>
+            </thead>
+            <tbody id="shipments-body">
+                <tr>
+                    <td colspan="8" style="text-align:center;">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="pagination" id="pagination">
+        <button id="prev-page" disabled>Previous</button>
+        <span id="page-info">Page 1</span>
+        <button id="next-page" disabled>Next</button>
+    </div>
+    
+    <script src='../js/api.js'></script>
+    <script src='../js/auth.js'></script>
+    <script src='../js/history.js'></script>
+</body>
+</html>

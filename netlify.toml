@@ -1,5 +1,5 @@
 ﻿[build]
-  publish = "public_html"  # Your frontend files are in public_html
+  publish = "public_html"
 
 [build.environment]
   NODE_VERSION = "18"

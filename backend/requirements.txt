@@ -16,7 +16,7 @@ passlib[bcrypt]==1.7.4
 python-multipart==0.0.6
 
 # File Handling
-Pillow==10.1.0
+Pillow==11.2.0
 imagehash==4.3.1
 python-magic==0.4.27
 

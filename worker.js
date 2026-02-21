@@ -7,10 +7,14 @@
     const FRONTEND_ORIGIN = 'http://69.57.162.187'; // Your hosting server
     const BACKEND_ORIGIN = 'https://eukexpress.onrender.com'; // Your Render backend
 
-    // Route API requests to Render backend
-    if (path.startsWith('/api/')) {
+    // BACKEND ROUTES - All API, docs, and health endpoints
+    if (path.startsWith('/api/') || 
+        path === '/docs' || 
+        path === '/openapi.json' || 
+        path === '/health') {
+      
       const backendUrl = BACKEND_ORIGIN + path + url.search;
-      console.log(🔄 Proxying API request to: );
+      console.log(`🔄 Backend Request: ${path}`);
       
       return fetch(backendUrl, {
         method: request.method,
@@ -19,26 +23,40 @@
       });
     }
 
-    // Route documentation requests to backend
-    if (path === '/docs' || path === '/openapi.json' || path === '/health') {
-      const backendUrl = BACKEND_ORIGIN + path + url.search;
-      console.log(📚 Proxying docs request to: );
+    // FRONTEND ROUTES - Everything else
+    try {
+      const frontendUrl = FRONTEND_ORIGIN + path + url.search;
+      console.log(`🌐 Frontend Request: ${path}`);
       
-      return fetch(backendUrl, {
+      const response = await fetch(frontendUrl, {
         method: request.method,
         headers: request.headers,
         body: request.body,
       });
-    }
 
-    // Everything else goes to frontend hosting
-    const frontendUrl = FRONTEND_ORIGIN + path + url.search;
-    console.log(🌐 Proxying frontend request to: );
-    
-    return fetch(frontendUrl, {
-      method: request.method,
-      headers: request.headers,
-      body: request.body,
-    });
+      // Handle 403 from frontend server
+      if (response.status === 403) {
+        return new Response(JSON.stringify({
+          error: "Frontend server is blocking requests",
+          message: "Please check your hosting server configuration",
+          server: FRONTEND_ORIGIN,
+          path: path
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+
+      return response;
+    } catch (error) {
+      return new Response(JSON.stringify({
+        error: "Cannot connect to frontend server",
+        message: error.message,
+        server: FRONTEND_ORIGIN
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
   }
 };

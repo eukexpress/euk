@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heritage Trust - Email Sender</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #003366 0%, #004080 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .header .subdomain {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eef2f6;
+            padding-bottom: 10px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #666;
+        }
+        
+        .tab.active {
+            background: #003366;
+            color: white;
+        }
+        
+        .tab:hover:not(.active) {
+            background: #f0f0f0;
+        }
+        
+        .form-section {
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #003366;
+            box-shadow: 0 0 0 3px rgba(0,51,102,0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .attachment-area {
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .attachment-area:hover {
+            border-color: #003366;
+            background: #f8f9fa;
+        }
+        
+        .attachment-area i {
+            font-size: 40px;
+            color: #003366;
+            margin-bottom: 10px;
+        }
+        
+        .attachment-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+        
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .attachment-item .remove {
+            color: #dc3545;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: #003366;
+            color: white;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .btn-primary:hover {
+            background: #004080;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,51,102,0.2);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .result-area {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .result-area.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .result-area.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Heritage Trust</h1>
+            <p>Professional Email Service</p>
+            <div class="subdomain">
+                <i class="fas fa-envelope"></i> notifications@heritagetrust.eukexpress.com
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('basic')">Basic Email</div>
+                <div class="tab" onclick="switchTab('invoice')">Send Invoice</div>
+                <div class="tab" onclick="switchTab('test')">Test Email</div>
+            </div>
+            
+            <!-- Basic Email Form -->
+            <div id="basic-form" class="form-section active">
+                <form id="emailForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> To (comma-separated)</label>
+                        <input type="text" id="to" placeholder="recipient@example.com, another@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Subject</label>
+                        <input type="text" id="subject" placeholder="Email subject" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-code"></i> HTML Content</label>
+                        <textarea id="htmlContent" rows="6" placeholder="<h1>Hello!</h1><p>Your HTML content here...</p>"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-file-alt"></i> Plain Text (fallback)</label>
+                        <textarea id="textContent" rows="4" placeholder="Plain text version for email clients that don't support HTML..."></textarea>
+                    </div>
+                    
+                    <div class="attachment-area" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Click to attach files</h3>
+                        <p>Supports images, PDFs, and any file type</p>
+                        <input type="file" id="fileInput" multiple style="display: none;" onchange="handleFiles(this.files)">
+                    </div>
+                    
+                    <ul id="attachmentList" class="attachment-list"></ul>
+                    
+                    <button type="submit" class="btn btn-primary" id="sendBtn">
+                        <i class="fas fa-paper-plane"></i> Send Email
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Invoice Form -->
+            <div id="invoice-form" class="form-section">
+                <form id="invoiceForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> To</label>
+                        <input type="email" id="invoiceTo" placeholder="client@example.com" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-hashtag"></i> Invoice Number</label>
+                            <input type="text" id="invoiceNumber" placeholder="INV-2024-001" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-dollar-sign"></i> Amount</label>
+                            <input type="number" step="0.01" id="amount" placeholder="199.99" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-align-left"></i> Description</label>
+                        <textarea id="invoiceDescription" rows="3" placeholder="Services rendered..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-file-pdf"></i> PDF Attachment (optional)</label>
+                        <input type="file" id="pdfAttachment" accept=".pdf">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="sendInvoiceBtn">
+                        <i class="fas fa-file-invoice"></i> Send Invoice
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Test Email Form -->
+            <div id="test-form" class="form-section">
+                <form id="testForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Send Test Email To</label>
+                        <input type="email" id="testTo" placeholder="your-email@example.com" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="testBtn">
+                        <i class="fas fa-flask"></i> Send Test Email
+                    </button>
+                </form>
+            </div>
+            
+            <div id="result" class="result-area">
+                <i class="fas fa-info-circle"></i>
+                <span id="resultMessage"></span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let attachments = [];
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            
+            if (tab === 'basic') {
+                document.querySelector('.tab').classList.add('active');
+                document.getElementById('basic-form').classList.add('active');
+            } else if (tab === 'invoice') {
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.getElementById('invoice-form').classList.add('active');
+            } else if (tab === 'test') {
+                document.querySelectorAll('.tab')[2].classList.add('active');
+                document.getElementById('test-form').classList.add('active');
+            }
+        }
+        
+        function handleFiles(files) {
+            for (let file of files) {
+                attachments.push(file);
+                displayAttachments();
+            }
+        }
+        
+        function displayAttachments() {
+            const list = document.getElementById('attachmentList');
+            list.innerHTML = '';
+            
+            attachments.forEach((file, index) => {
+                const item = document.createElement('li');
+                item.className = 'attachment-item';
+                item.innerHTML = `
+                    <span><i class="fas fa-${getFileIcon(file.name)}"></i> ${file.name} (${formatFileSize(file.size)})</span>
+                    <span class="remove" onclick="removeAttachment(${index})"><i class="fas fa-times"></i></span>
+                `;
+                list.appendChild(item);
+            });
+        }
+        
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) return 'image';
+            if (ext === 'pdf') return 'file-pdf';
+            if (['doc', 'docx'].includes(ext)) return 'file-word';
+            if (['xls', 'xlsx'].includes(ext)) return 'file-excel';
+            return 'file';
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+        
+        function removeAttachment(index) {
+            attachments.splice(index, 1);
+            displayAttachments();
+        }
+        
+        function showResult(message, isSuccess = true) {
+            const result = document.getElementById('result');
+            const messageSpan = document.getElementById('resultMessage');
+            
+            result.classList.remove('success', 'error');
+            result.classList.add(isSuccess ? 'success' : 'error');
+            messageSpan.textContent = message;
+        }
+        
+        // Basic Email Form
+        document.getElementById('emailForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('sendBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Sending...';
+            
+            const formData = new FormData();
+            formData.append('to', document.getElementById('to').value);
+            formData.append('subject', document.getElementById('subject').value);
+            
+            const htmlContent = document.getElementById('htmlContent').value;
+            if (htmlContent) formData.append('html_content', htmlContent);
+            
+            const textContent = document.getElementById('textContent').value;
+            if (textContent) formData.append('text_content', textContent);
+            
+            for (let file of attachments) {
+                formData.append('attachments', file);
+            }
+            
+            try {
+                const response = await fetch('/api/v1/heritage/send', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ Email sent successfully! Message ID: ${result.message_id}`, true);
+                    document.getElementById('emailForm').reset();
+                    attachments = [];
+                    displayAttachments();
+                } else {
+                    showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
+                }
+            } catch (error) {
+                showResult(`❌ Error: ${error.message}`, false);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Email';
+            }
+        });
+        
+        // Invoice Form
+        document.getElementById('invoiceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('sendInvoiceBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Sending...';
+            
+            const formData = new FormData();
+            formData.append('to', document.getElementById('invoiceTo').value);
+            formData.append('invoice_number', document.getElementById('invoiceNumber').value);
+            formData.append('amount', document.getElementById('amount').value);
+            formData.append('description', document.getElementById('invoiceDescription').value);
+            
+            const pdfFile = document.getElementById('pdfAttachment').files[0];
+            if (pdfFile) {
+                formData.append('pdf_attachment', pdfFile);
+            }
+            
+            try {
+                const response = await fetch('/api/v1/heritage/invoice', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ Invoice sent successfully! Message ID: ${result.message_id}`, true);
+                    document.getElementById('invoiceForm').reset();
+                } else {
+                    showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
+                }
+            } catch (error) {
+                showResult(`❌ Error: ${error.message}`, false);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-file-invoice"></i> Send Invoice';
+            }
+        });
+        
+        // Test Email Form
+        document.getElementById('testForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('testBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Sending...';
+            
+            const formData = new FormData();
+            formData.append('to', document.getElementById('testTo').value);
+            
+            try {
+                const response = await fetch('/api/v1/heritage/test', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ Test email sent! Check your inbox. Message ID: ${result.message_id}`, true);
+                } else {
+                    showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
+                }
+            } catch (error) {
+                showResult(`❌ Error: ${error.message}`, false);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-flask"></i> Send Test Email';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,27 +1,345 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang="en">
 <head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>EukExpress Global Logistics</title>
-    <link rel='stylesheet' href='css/main.css'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>EukExpress - Global Logistics Solutions</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Add your logo as favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/logo.png">
 </head>
 <body>
-    <header>
-        <h1>EukExpress Global Logistics</h1>
-    </header>
-    <main>
-        <section class='tracking-section'>
-            <h2>Track Your Shipment</h2>
-            <form action='/track' method='get'>
-                <input type='text' name='tracking' placeholder='Enter tracking number' pattern='EUK[A-Z2-9]{5}' required>
-                <button type='submit'>Track</button>
-            </form>
-        </section>
-        <section class='admin-login'>
-            <a href='admin/login.html' class='admin-link'>Admin Login</a>
-        </section>
-    </main>
-    <script src='js/tracking.js'></script>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/images/logo.png" alt="EukExpress Logo" class="logo-img">
+                <span class="logo-text">Euk<span class="logo-highlight">Express</span></span>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#tracking">Tracking</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <!-- Admin login removed as requested -->
+                    <a href="#quote" class="btn btn-primary">Get Quote</a>
+                </div>
+            </div>
+            <div class="nav-toggle" id="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Logo Background -->
+    <section id="home" class="hero">
+        <div class="hero-particles"></div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">Global Logistics Partner</div>
+                <h1 class="hero-title">
+                    <span class="title-line">Ship Smarter,</span>
+                    <span class="title-line title-gradient">Deliver Faster</span>
+                </h1>
+                <p class="hero-subtitle">With EukExpress, experience seamless global shipping, real-time tracking, and logistics solutions tailored to your business needs.</p>
+                <div class="hero-cta">
+                    <a href="#tracking" class="btn btn-primary btn-large">
+                        <i class="fas fa-search"></i> Track Shipment
+                    </a>
+                    <a href="#services" class="btn btn-outline-light btn-large">
+                        <i class="fas fa-ship"></i> Our Services
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">50K+</div>
+                        <div class="stat-label">Shipments Delivered</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label">Countries</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Support</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="hero-card">
+                    <img src="assets/images/logo.png" alt="EukExpress Logistics" class="hero-logo">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tracking Section -->
+    <section id="tracking" class="tracking-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Real-Time Tracking</span>
+                <h2>Track Your Shipment</h2>
+                <p>Enter your tracking number to get real-time updates on your shipment's location and status</p>
+            </div>
+            <div class="tracking-card">
+                <form id="tracking-form" action="/track" method="get" class="tracking-form">
+                    <div class="input-group">
+                        <i class="fas fa-box"></i>
+                        <input type="text" name="tracking" id="tracking-input" placeholder="Enter tracking number (e.g., EUK12345)" pattern="EUK[A-Z2-9]{5}" required>
+                        <button type="submit" class="btn btn-primary btn-track">
+                            <i class="fas fa-arrow-right"></i> Track
+                        </button>
+                    </div>
+                    <p class="input-hint">Format: EUK followed by 5 characters (e.g., EUKABCDE)</p>
+                </form>
+                <div id="tracking-preview" class="tracking-preview"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Our Services</span>
+                <h2>Comprehensive Logistics Solutions</h2>
+                <p>End-to-end shipping and logistics services tailored to your needs</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-plane"></i>
+                    </div>
+                    <h3>Air Freight</h3>
+                    <p>Fast and reliable air shipping for time-sensitive cargo to destinations worldwide.</p>
+                    <a href="#" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-ship"></i>
+                    </div>
+                    <h3>Ocean Freight</h3>
+                    <p>Cost-effective sea freight solutions for large volume shipments and heavy cargo.</p>
+                    <a href="#" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>Ground Shipping</h3>
+                    <p>Reliable ground transportation across borders with real-time tracking.</p>
+                    <a href="#" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-customs"></i>
+                    </div>
+                    <h3>Customs Clearance</h3>
+                    <p>Expert handling of customs documentation and clearance for international shipments.</p>
+                    <a href="#" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <h3>Warehousing</h3>
+                    <p>Secure storage facilities with inventory management and distribution services.</p>
+                    <a href="#" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Cargo Insurance</h3>
+                    <p>Comprehensive insurance coverage for peace of mind during transit.</p>
+                    <a href="#" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-globe"></i>
+                    <h4>Global Network</h4>
+                    <p>Presence in over 100 countries</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-clock"></i>
+                    <h4>Real-Time Updates</h4>
+                    <p>Live tracking and notifications</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-lock"></i>
+                    <h4>Secure Shipping</h4>
+                    <p>End-to-end security protocols</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-headset"></i>
+                    <h4>24/7 Support</h4>
+                    <p>Dedicated customer service</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-content">
+                    <span class="section-badge">About Us</span>
+                    <h2>Your Trusted Logistics Partner Since 2024</h2>
+                    <p>EukExpress Global Logistics is committed to providing exceptional shipping solutions with a focus on reliability, speed, and customer satisfaction.</p>
+                    <div class="about-stats">
+                        <div class="stat">
+                            <div class="stat-number">98%</div>
+                            <div class="stat-label">On-Time Delivery</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">15K+</div>
+                            <div class="stat-label">Happy Clients</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">50+</div>
+                            <div class="stat-label">Partners</div>
+                        </div>
+                    </div>
+                    <a href="#contact" class="btn btn-primary">Contact Us</a>
+                </div>
+                <div class="about-image">
+                    <img src="assets/images/logo.png" alt="EukExpress Logistics">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Get In Touch</span>
+                <h2>Contact Our Team</h2>
+                <p>Have questions? Our logistics experts are ready to help</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Headquarters</h4>
+                            <p>123 Logistics Avenue, Business District<br>New York, NY 10001, USA</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Phone</h4>
+                            <p>+1 (555) 123-4567</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>info@eukexpress.com<br>support@eukexpress.com</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form" id="contact-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Your Email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Subject" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Your Message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="footer-logo">
+                        <img src="assets/images/logo.png" alt="EukExpress" class="logo-img">
+                        <span class="logo-text white">EukExpress</span>
+                    </div>
+                    <p>Global logistics solutions with real-time tracking, secure shipping, and 24/7 support. Your trusted partner in international shipping.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#tracking">Tracking</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#">Air Freight</a></li>
+                        <li><a href="#">Ocean Freight</a></li>
+                        <li><a href="#">Ground Shipping</a></li>
+                        <li><a href="#">Customs Clearance</a></li>
+                        <li><a href="#">Warehousing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-newsletter">
+                    <h4>Newsletter</h4>
+                    <p>Subscribe for updates and offers</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Your email">
+                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 EukExpress Global Logistics. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/tracking.js"></script>
 </body>
 </html>

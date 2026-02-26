@@ -399,7 +399,7 @@
             font-family: monospace;
             font-size: 12px;
             margin-bottom: 20px;
-            max-height: 300px;
+            max-height: 400px;
             overflow-y: auto;
             display: none;
         }
@@ -738,7 +738,7 @@
             }
         }
         
-        // Send Email with enhanced debugging - FIXED FIELD NAMES
+        // Send Email with enhanced debugging and proper error logging
         document.getElementById('emailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -768,38 +768,41 @@
                 return;
             }
             
-            // Build FormData with CORRECT field names (matching backend)
+            // Validate email format
+            const emails = toValue.split(',').map(e => e.trim());
+            const invalidEmails = emails.filter(e => !e.includes('@') || !e.includes('.'));
+            if (invalidEmails.length > 0) {
+                showResult(`❌ Invalid email format: ${invalidEmails.join(', ')}`, false);
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                return;
+            }
+            
+            // Build FormData with CORRECT field names
             const formData = new FormData();
             formData.append('to', toValue);
             formData.append('subject', subjectValue);
             
             // Backend expects 'html_content' and 'text_content' (snake_case)
-            if (htmlContent) {
-                formData.append('html_content', htmlContent);
-            } else {
-                formData.append('html_content', ' '); // Send space if empty
-            }
-            
-            if (textContent) {
-                formData.append('text_content', textContent);
-            } else {
-                formData.append('text_content', ' '); // Send space if empty
-            }
+            // Ensure we send non-empty strings
+            formData.append('html_content', htmlContent || ' ');
+            formData.append('text_content', textContent || ' ');
             
             // Add attachments
             attachments.forEach(file => {
                 formData.append('attachments', file);
             });
             
-            // Detailed logging
+            // Log FormData contents for debugging
             debugLog('📤 Sending request to:', `${API_URL}/send`);
-            debugLog('FormData contents:', {
-                to: toValue,
-                subject: subjectValue,
-                html_content: htmlContent ? `${htmlContent.substring(0, 50)}...` : '(empty)',
-                text_content: textContent ? `${textContent.substring(0, 50)}...` : '(empty)',
-                attachments_count: attachments.length
-            });
+            debugLog('FormData entries:');
+            for (let pair of formData.entries()) {
+                if (pair[0] === 'attachments') {
+                    debugLog(`  ${pair[0]}: ${pair[1].name} (${pair[1].type}, ${pair[1].size} bytes)`);
+                } else {
+                    debugLog(`  ${pair[0]}: ${pair[1].substring(0, 50)}${pair[1].length > 50 ? '...' : ''}`);
+                }
+            }
             
             try {
                 const response = await fetch(`${API_URL}/send`, {
@@ -810,44 +813,70 @@
                 debugLog('Response status:', response.status);
                 debugLog('Response status text:', response.statusText);
                 
-                // Try to get response body
-                let result;
+                // Get response body - CRITICAL for debugging 422 errors
+                let responseData;
                 const contentType = response.headers.get('content-type');
                 
-                if (contentType && contentType.includes('application/json')) {
-                    result = await response.json();
-                    debugLog('Response body:', result);
-                } else {
-                    const text = await response.text();
-                    debugLog('Response text:', text.substring(0, 500));
-                    try {
-                        result = JSON.parse(text);
-                    } catch {
-                        result = { detail: text };
+                try {
+                    if (contentType && contentType.includes('application/json')) {
+                        responseData = await response.json();
+                        debugLog('Response body (JSON):', responseData);
+                    } else {
+                        const text = await response.text();
+                        debugLog('Response body (Text):', text.substring(0, 500));
+                        try {
+                            responseData = JSON.parse(text);
+                        } catch {
+                            responseData = { detail: text };
+                        }
                     }
+                } catch (e) {
+                    debugLog('Failed to parse response:', e.message);
+                    responseData = { detail: 'Could not parse response' };
                 }
                 
                 if (response.ok) {
-                    showResult(`✅ Email sent successfully! Message ID: ${result.message_id}`, true);
+                    showResult(`✅ Email sent successfully! Message ID: ${responseData.message_id}`, true);
                     
-                    // Clear form on success (optional)
+                    // Clear attachments on success
                     attachments = [];
                     displayAttachments();
                     
                 } else {
-                    // Show detailed error
-                    let errorMsg = result.detail || result.error || 'Unknown error';
-                    if (result.errors) {
-                        errorMsg += ' - ' + JSON.stringify(result.errors);
+                    // Show detailed error message from server
+                    let errorMsg = '';
+                    
+                    if (responseData.detail) {
+                        if (typeof responseData.detail === 'string') {
+                            errorMsg = responseData.detail;
+                        } else if (Array.isArray(responseData.detail)) {
+                            // FastAPI validation errors come as array
+                            errorMsg = responseData.detail.map(err => 
+                                `${err.loc.join('.')}: ${err.msg}`
+                            ).join(', ');
+                        } else {
+                            errorMsg = JSON.stringify(responseData.detail);
+                        }
+                    } else if (responseData.error) {
+                        errorMsg = responseData.error;
+                    } else {
+                        errorMsg = `HTTP ${response.status}: ${response.statusText}`;
                     }
+                    
                     showResult(`❌ ${errorMsg}`, false);
                     
                     // Special handling for 422
                     if (response.status === 422) {
-                        debugLog('❌ Validation failed. Backend expects:', {
-                            required: ['to', 'subject'],
-                            optional: ['html_content', 'text_content', 'attachments']
-                        });
+                        debugLog('❌ VALIDATION ERROR DETAILS:', responseData);
+                        
+                        // Try to guess what's wrong
+                        if (!htmlContent && !textContent) {
+                            debugLog('⚠️ Suggestion: Both html_content and text_content are empty. Send at least one with content.');
+                        }
+                        
+                        if (emails.length === 0) {
+                            debugLog('⚠️ Suggestion: No valid email addresses found in "to" field.');
+                        }
                     }
                 }
             } catch (error) {
@@ -893,15 +922,20 @@
                 let result;
                 const contentType = response.headers.get('content-type');
                 
-                if (contentType && contentType.includes('application/json')) {
-                    result = await response.json();
-                } else {
-                    const text = await response.text();
-                    try {
-                        result = JSON.parse(text);
-                    } catch {
-                        result = { detail: text };
+                try {
+                    if (contentType && contentType.includes('application/json')) {
+                        result = await response.json();
+                    } else {
+                        const text = await response.text();
+                        try {
+                            result = JSON.parse(text);
+                        } catch {
+                            result = { detail: text };
+                        }
                     }
+                } catch (e) {
+                    debugLog('Failed to parse test response:', e.message);
+                    result = { detail: 'Could not parse response' };
                 }
                 
                 debugLog('Test response:', result);
@@ -909,7 +943,11 @@
                 if (response.ok) {
                     showResult(`✅ Test email sent! Message ID: ${result.message_id}`, true);
                 } else {
-                    showResult(`❌ ${result.detail || 'Test failed'}`, false);
+                    let errorMsg = result.detail || result.error || 'Test failed';
+                    if (typeof errorMsg === 'object') {
+                        errorMsg = JSON.stringify(errorMsg);
+                    }
+                    showResult(`❌ ${errorMsg}`, false);
                 }
             } catch (error) {
                 debugLog('❌ Test error:', error.message);

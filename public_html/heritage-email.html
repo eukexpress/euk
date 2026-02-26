@@ -788,28 +788,35 @@
             formData.append('html_content', htmlContent || ' ');
             formData.append('text_content', textContent || ' ');
             
-            // FIXED: Handle attachments properly as a list/array
-            // The backend expects attachments to be a list, which FormData handles automatically
-            // when we append multiple files with the same field name
+            // CRITICAL FIX: Handle attachments properly
+            // The backend expects attachments to be a list/array
+            // If we have attachments, append them with the field name 'attachments'
             if (attachments.length > 0) {
                 attachments.forEach(file => {
                     formData.append('attachments', file);
                 });
-                debugLog(`Added ${attachments.length} attachments as list items`);
+                debugLog(`Added ${attachments.length} attachments with field name 'attachments'`);
             } else {
-                // If no attachments, don't send the field at all
-                debugLog('No attachments to send');
+                // If no attachments, we MUST NOT send the 'attachments' field at all
+                // Sending an empty field or no field is better than sending an invalid value
+                debugLog('No attachments to send - skipping attachments field entirely');
+                // Do NOT append anything for attachments
             }
             
             // Log FormData contents for debugging
             debugLog('📤 Sending request to:', `${API_URL}/send`);
             debugLog('FormData entries:');
+            let hasAttachments = false;
             for (let pair of formData.entries()) {
                 if (pair[0] === 'attachments') {
+                    hasAttachments = true;
                     debugLog(`  ${pair[0]}: ${pair[1].name} (${pair[1].type}, ${pair[1].size} bytes)`);
                 } else {
                     debugLog(`  ${pair[0]}: ${pair[1].substring(0, 50)}${pair[1].length > 50 ? '...' : ''}`);
                 }
+            }
+            if (!hasAttachments) {
+                debugLog('  attachments: (field not sent - no files attached)');
             }
             
             try {
@@ -859,9 +866,10 @@
                             errorMsg = responseData.detail;
                         } else if (Array.isArray(responseData.detail)) {
                             // FastAPI validation errors come as array
-                            errorMsg = responseData.detail.map(err => 
-                                `${err.loc.join('.')}: ${err.msg}`
-                            ).join(', ');
+                            errorMsg = responseData.detail.map(err => {
+                                const field = err.loc.join('.');
+                                return `${field}: ${err.msg}`;
+                            }).join(', ');
                         } else {
                             errorMsg = JSON.stringify(responseData.detail);
                         }
@@ -879,8 +887,9 @@
                         
                         // Check for attachment-related errors
                         if (responseData.detail && 
-                            JSON.stringify(responseData.detail).includes('attachments')) {
+                            JSON.stringify(responseData.detail).toLowerCase().includes('attachments')) {
                             debugLog('⚠️ Attachment issue detected. Make sure files are valid and not too large.');
+                            debugLog('   Current attachments count:', attachments.length);
                         }
                     }
                 }
@@ -965,7 +974,7 @@
         
         // Auto-test API on page load
         window.addEventListener('load', () => {
-            // Optional: Test API connection silently
+            // Test API connection silently
             fetch(`${API_URL}/ping`)
                 .then(res => res.json())
                 .then(data => {

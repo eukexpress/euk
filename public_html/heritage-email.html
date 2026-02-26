@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heritage Trust - Email Sender</title>
+    <title>Heritage Trust - Professional Email Service</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
         
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a2a4f 0%, #2c3e6e 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -22,39 +22,151 @@
             max-width: 800px;
             margin: 0 auto;
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             overflow: hidden;
         }
         
         .header {
-            background: linear-gradient(135deg, #003366 0%, #004080 100%);
+            background: linear-gradient(135deg, #003366 0%, #004a99 100%);
             color: white;
-            padding: 30px;
+            padding: 40px 30px;
             text-align: center;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ffd700, #ffffff, #ffd700);
         }
         
         .header h1 {
-            font-size: 32px;
+            font-size: 42px;
             margin-bottom: 10px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
         
         .header p {
-            opacity: 0.9;
-            font-size: 16px;
+            opacity: 0.95;
+            font-size: 18px;
+            margin-bottom: 25px;
         }
         
-        .header .subdomain {
-            background: rgba(255,255,255,0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-top: 15px;
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 215, 0, 0.15);
+            padding: 8px 20px;
+            border-radius: 100px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .verified-badge i {
+            color: #ffd700;
+        }
+        
+        .verified-badge span {
+            color: #ffd700;
+            font-weight: 600;
             font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .subdomain-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .subdomain {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            word-break: break-all;
+        }
+        
+        .subdomain i {
+            color: #ffd700;
+            margin-right: 10px;
+        }
+        
+        .verified-tag {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+            text-transform: uppercase;
+        }
+        
+        .subdomain-note {
+            margin-top: 10px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .subdomain-note i {
+            color: #ffd700;
         }
         
         .content {
-            padding: 30px;
+            padding: 40px 30px;
+        }
+        
+        .status-card {
+            background: #f0f9ff;
+            border-left: 4px solid #003366;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .status-card i {
+            font-size: 24px;
+            color: #003366;
+        }
+        
+        .status-card .status-text {
+            flex: 1;
+        }
+        
+        .status-card .status-text h3 {
+            font-size: 16px;
+            color: #003366;
+            margin-bottom: 5px;
+        }
+        
+        .status-card .status-text p {
+            color: #4a5568;
+            font-size: 14px;
+        }
+        
+        .status-card .verified {
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
         }
         
         .tabs {
@@ -66,12 +178,13 @@
         }
         
         .tab {
-            padding: 10px 20px;
+            padding: 12px 24px;
             cursor: pointer;
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.3s;
             color: #666;
+            background: #f8fafc;
         }
         
         .tab.active {
@@ -80,7 +193,7 @@
         }
         
         .tab:hover:not(.active) {
-            background: #f0f0f0;
+            background: #e2e8f0;
         }
         
         .form-section {
@@ -106,9 +219,9 @@
         .form-group textarea,
         .form-group select {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 16px;
             transition: all 0.3s;
             font-family: inherit;
@@ -129,23 +242,24 @@
         
         .attachment-area {
             border: 2px dashed #e0e0e0;
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 30px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
             margin-bottom: 20px;
+            background: #fafafa;
         }
         
         .attachment-area:hover {
             border-color: #003366;
-            background: #f8f9fa;
+            background: #f0f7ff;
         }
         
         .attachment-area i {
             font-size: 40px;
             color: #003366;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         
         .attachment-list {
@@ -157,7 +271,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px;
+            padding: 12px 15px;
             background: #f8f9fa;
             border-radius: 8px;
             margin-bottom: 8px;
@@ -167,12 +281,18 @@
             color: #dc3545;
             cursor: pointer;
             padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .attachment-item .remove:hover {
+            background: #fee2e2;
         }
         
         .btn {
-            padding: 14px 28px;
+            padding: 16px 32px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
@@ -180,31 +300,33 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
+            justify-content: center;
         }
         
         .btn-primary {
             background: #003366;
             color: white;
             width: 100%;
-            justify-content: center;
         }
         
         .btn-primary:hover {
-            background: #004080;
+            background: #004a99;
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,51,102,0.2);
+            box-shadow: 0 10px 25px -5px rgba(0,51,102,0.3);
         }
         
         .btn-primary:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            transform: none;
         }
         
         .result-area {
             margin-top: 30px;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 12px;
             display: none;
+            font-weight: 500;
         }
         
         .result-area.success {
@@ -232,12 +354,16 @@
             margin-right: 10px;
         }
         
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
         .api-info {
             background: #e3f2fd;
-            border-left: 4px solid #2196f3;
+            border-left: 4px solid #003366;
             padding: 15px;
             margin-bottom: 20px;
-            border-radius: 4px;
+            border-radius: 8px;
             font-size: 14px;
         }
         
@@ -248,17 +374,17 @@
             border: 1px solid #ddd;
         }
         
-        .backend-info {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-            font-size: 14px;
+        .footer-note {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eef2f6;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
         }
         
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .footer-note i {
+            color: #ffd700;
         }
         
         @media (max-width: 768px) {
@@ -267,7 +393,22 @@
             }
             
             .header h1 {
-                font-size: 24px;
+                font-size: 28px;
+            }
+            
+            .subdomain {
+                font-size: 18px;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                flex: 1;
+                text-align: center;
+                padding: 10px;
+                font-size: 14px;
             }
         }
     </style>
@@ -277,19 +418,42 @@
 <body>
     <div class="container">
         <div class="header">
+            <div class="verified-badge">
+                <i class="fas fa-check-circle"></i>
+                <span>Verified Subdomain</span>
+            </div>
+            
             <h1>Heritage Trust</h1>
             <p>Professional Email Service</p>
-            <div class="subdomain">
-                <i class="fas fa-envelope"></i> <strong>support@heritagetrust.eukexpress.com</strong>
+            
+            <div class="subdomain-container">
+                <div class="subdomain">
+                    <i class="fas fa-envelope"></i>
+                    support@heritagetrust.eukexpress.com
+                    <span class="verified-tag">VERIFIED</span>
+                </div>
+                <div class="subdomain-note">
+                    <i class="fas fa-shield-alt"></i>
+                    This subdomain is verified and ready to send emails
+                </div>
             </div>
         </div>
         
         <div class="content">
-            <div class="backend-info">
-                <i class="fas fa-server"></i> 
-                <strong>Backend API:</strong> <code>https://eukexpress-backend.onrender.com/api/v1/heritage/</code>
+            <div class="status-card">
+                <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                <div class="status-text">
+                    <h3>✓ Subdomain Verified</h3>
+                    <p>support.heritagetrust.eukexpress.com is configured and verified with Resend</p>
+                </div>
+                <span class="verified">ACTIVE</span>
+            </div>
+            
+            <div class="api-info">
+                <i class="fas fa-info-circle"></i> 
+                <strong>API Status:</strong> Connected to <code>https://eukexpress-backend.onrender.com/api/v1/heritage/</code>
                 <br>
-                <small>Connected to dedicated backend server</small>
+                <small>Using verified subdomain: <strong>support@heritagetrust.eukexpress.com</strong></small>
             </div>
             
             <div class="tabs">
@@ -389,6 +553,11 @@
             <div id="result" class="result-area">
                 <i class="fas fa-info-circle"></i>
                 <span id="resultMessage"></span>
+            </div>
+            
+            <div class="footer-note">
+                <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                Sending from: <strong>support@heritagetrust.eukexpress.com</strong> (Verified)
             </div>
         </div>
     </div>

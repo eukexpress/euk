@@ -173,6 +173,7 @@
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 13px;
+            margin-top: 5px;
         }
         
         .status-card .verified {
@@ -389,6 +390,38 @@
             border: 1px solid #ddd;
         }
         
+        .debug-panel {
+            background: #1e1e2f;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .debug-panel.visible {
+            display: block;
+        }
+        
+        .debug-toggle {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+        
+        .debug-toggle button {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
         .footer-note {
             margin-top: 30px;
             padding-top: 20px;
@@ -440,7 +473,6 @@
             }
         }
     </style>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -466,7 +498,7 @@
                 </div>
                 <div class="subdomain-note">
                     <i class="fas fa-shield-alt"></i>
-                    This subdomain is verified with Resend (onboarding@ prefix required)
+                    Resend requires the 'onboarding@' prefix for verified domains
                 </div>
             </div>
         </div>
@@ -476,7 +508,7 @@
                 <i class="fas fa-check-circle" style="color: #10b981;"></i>
                 <div class="status-text">
                     <h3>✓ Subdomain Verified</h3>
-                    <p>support.heritagetrust.eukexpress.com is configured and verified with Resend</p>
+                    <p>support.heritagetrust.eukexpress.com is configured with Resend</p>
                     <div class="from-email">
                         Sending as: <strong>onboarding@support.heritagetrust.eukexpress.com</strong>
                     </div>
@@ -486,21 +518,21 @@
             
             <div class="from-info">
                 <i class="fas fa-info-circle" style="color: #003366;"></i>
-                <strong>Email From Address:</strong> Heritage Trust &lt;onboarding@support.heritagetrust.eukexpress.com&gt;
-                <br>
-                <small style="color: #6c757d;">(Resend requires the 'onboarding@' prefix for verified domains)</small>
+                <strong>From Address:</strong> Heritage Trust &lt;onboarding@support.heritagetrust.eukexpress.com&gt;
             </div>
             
             <div class="api-info">
                 <i class="fas fa-info-circle"></i> 
-                <strong>API Status:</strong> Connected to <code>https://eukexpress-backend.onrender.com/api/v1/heritage/</code>
-                <br>
-                <small>Sending from: <strong>onboarding@support.heritagetrust.eukexpress.com</strong> (verified)</small>
+                <strong>API:</strong> <code>https://eukexpress-backend.onrender.com/api/v1/heritage/</code>
             </div>
+            
+            <div class="debug-toggle">
+                <button onclick="toggleDebug()">🔧 Show Debug</button>
+            </div>
+            <div id="debugPanel" class="debug-panel"></div>
             
             <div class="tabs">
                 <div class="tab active" onclick="switchTab('basic')">Basic Email</div>
-                <div class="tab" onclick="switchTab('invoice')">Send Invoice</div>
                 <div class="tab" onclick="switchTab('test')">Test Email</div>
             </div>
             
@@ -509,28 +541,27 @@
                 <form id="emailForm">
                     <div class="form-group">
                         <label><i class="fas fa-envelope"></i> To (comma-separated)</label>
-                        <input type="text" id="to" placeholder="recipient@example.com, another@example.com" required>
+                        <input type="text" id="to" value="test@example.com" placeholder="recipient@example.com" required>
                     </div>
                     
                     <div class="form-group">
                         <label><i class="fas fa-tag"></i> Subject</label>
-                        <input type="text" id="subject" placeholder="Email subject" required>
+                        <input type="text" id="subject" value="Test Email from Heritage Trust" placeholder="Email subject" required>
                     </div>
                     
                     <div class="form-group">
                         <label><i class="fas fa-code"></i> HTML Content</label>
-                        <textarea id="htmlContent" rows="6" placeholder="<h1>Hello!</h1><p>Your HTML content here...</p>"></textarea>
+                        <textarea id="htmlContent" rows="4"><h1>Hello from Heritage Trust!</h1><p>This is a test email sent through our verified subdomain.</p><p><strong>From:</strong> onboarding@support.heritagetrust.eukexpress.com</p></textarea>
                     </div>
                     
                     <div class="form-group">
                         <label><i class="fas fa-file-alt"></i> Plain Text (fallback)</label>
-                        <textarea id="textContent" rows="4" placeholder="Plain text version for email clients that don't support HTML..."></textarea>
+                        <textarea id="textContent" rows="2">Hello from Heritage Trust! This is a test email sent through our verified subdomain. From: onboarding@support.heritagetrust.eukexpress.com</textarea>
                     </div>
                     
                     <div class="attachment-area" onclick="document.getElementById('fileInput').click()">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <h3>Click to attach files</h3>
-                        <p>Supports images, PDFs, and any file type</p>
                         <input type="file" id="fileInput" multiple style="display: none;" onchange="handleFiles(this.files)">
                     </div>
                     
@@ -542,52 +573,15 @@
                 </form>
             </div>
             
-            <!-- Invoice Form -->
-            <div id="invoice-form" class="form-section">
-                <form id="invoiceForm">
-                    <div class="form-group">
-                        <label><i class="fas fa-envelope"></i> To</label>
-                        <input type="email" id="invoiceTo" placeholder="client@example.com" required>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label><i class="fas fa-hashtag"></i> Invoice Number</label>
-                            <input type="text" id="invoiceNumber" placeholder="INV-2024-001" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label><i class="fas fa-dollar-sign"></i> Amount</label>
-                            <input type="number" step="0.01" id="amount" placeholder="199.99" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label><i class="fas fa-align-left"></i> Description</label>
-                        <textarea id="invoiceDescription" rows="3" placeholder="Services rendered..." required></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label><i class="fas fa-file-pdf"></i> PDF Attachment (optional)</label>
-                        <input type="file" id="pdfAttachment" accept=".pdf">
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary" id="sendInvoiceBtn">
-                        <i class="fas fa-file-invoice"></i> Send Invoice
-                    </button>
-                </form>
-            </div>
-            
             <!-- Test Email Form -->
             <div id="test-form" class="form-section">
                 <form id="testForm">
                     <div class="form-group">
-                        <label><i class="fas fa-envelope"></i> Send Test Email To</label>
-                        <input type="email" id="testTo" placeholder="your-email@example.com" required>
+                        <label><i class="fas fa-envelope"></i> Send Test To</label>
+                        <input type="email" id="testTo" value="test@example.com" required>
                     </div>
-                    
                     <button type="submit" class="btn btn-primary" id="testBtn">
-                        <i class="fas fa-flask"></i> Send Test Email
+                        <i class="fas fa-flask"></i> Send Test
                     </button>
                 </form>
             </div>
@@ -596,19 +590,52 @@
                 <i class="fas fa-info-circle"></i>
                 <span id="resultMessage"></span>
             </div>
-            
-            <div class="footer-note">
-                <i class="fas fa-check-circle" style="color: #10b981;"></i>
-                Sending from: <strong>onboarding@support.heritagetrust.eukexpress.com</strong> (Verified with Resend)
-            </div>
         </div>
     </div>
     
     <script>
         let attachments = [];
+        let debugEnabled = false;
+        const API_URL = 'https://eukexpress-backend.onrender.com/api/v1/heritage';
         
-        // Backend API base URL
-        const BACKEND_API_URL = 'https://eukexpress-backend.onrender.com/api/v1/heritage';
+        function toggleDebug() {
+            debugEnabled = !debugEnabled;
+            const panel = document.getElementById('debugPanel');
+            const btn = document.querySelector('.debug-toggle button');
+            panel.classList.toggle('visible');
+            btn.textContent = debugEnabled ? '🔧 Hide Debug' : '🔧 Show Debug';
+        }
+        
+        function debugLog(message, data) {
+            if (!debugEnabled) return;
+            const panel = document.getElementById('debugPanel');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.style.borderBottom = '1px solid #333';
+            entry.style.padding = '5px 0';
+            entry.style.fontSize = '11px';
+            entry.innerHTML = `<span style="color: #888;">[${timestamp}]</span> ${message}`;
+            
+            if (data) {
+                if (typeof data === 'object') {
+                    const pre = document.createElement('pre');
+                    pre.style.margin = '2px 0 5px 10px';
+                            pre.style.fontSize = '10px';
+                    pre.style.color = '#aaa';
+                    pre.textContent = JSON.stringify(data, null, 2);
+                    entry.appendChild(pre);
+                } else {
+                    const span = document.createElement('span');
+                    span.style.color = '#ff0';
+                    span.textContent = ` ${data}`;
+                    entry.appendChild(span);
+                }
+            }
+            
+            panel.appendChild(entry);
+            panel.scrollTop = panel.scrollHeight;
+            console.log(`[${timestamp}] ${message}`, data || '');
+        }
         
         function switchTab(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -617,11 +644,8 @@
             if (tab === 'basic') {
                 document.querySelector('.tab').classList.add('active');
                 document.getElementById('basic-form').classList.add('active');
-            } else if (tab === 'invoice') {
-                document.querySelectorAll('.tab')[1].classList.add('active');
-                document.getElementById('invoice-form').classList.add('active');
             } else if (tab === 'test') {
-                document.querySelectorAll('.tab')[2].classList.add('active');
+                document.querySelectorAll('.tab')[1].classList.add('active');
                 document.getElementById('test-form').classList.add('active');
             }
         }
@@ -629,6 +653,7 @@
         function handleFiles(files) {
             for (let file of files) {
                 attachments.push(file);
+                debugLog('File added:', file.name);
             }
             displayAttachments();
         }
@@ -636,77 +661,61 @@
         function displayAttachments() {
             const list = document.getElementById('attachmentList');
             list.innerHTML = '';
-            
             attachments.forEach((file, index) => {
                 const item = document.createElement('li');
                 item.className = 'attachment-item';
                 item.innerHTML = `
-                    <span><i class="fas fa-${getFileIcon(file.name)}"></i> ${file.name} (${formatFileSize(file.size)})</span>
-                    <span class="remove" onclick="removeAttachment(${index})"><i class="fas fa-times"></i></span>
+                    <span><i class="fas fa-file"></i> ${file.name}</span>
+                    <span class="remove" onclick="removeAttachment(${index})">✖</span>
                 `;
                 list.appendChild(item);
             });
         }
         
-        function getFileIcon(filename) {
-            const ext = filename.split('.').pop().toLowerCase();
-            if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) return 'image';
-            if (ext === 'pdf') return 'file-pdf';
-            if (['doc', 'docx'].includes(ext)) return 'file-word';
-            if (['xls', 'xlsx'].includes(ext)) return 'file-excel';
-            return 'file';
-        }
-        
-        function formatFileSize(bytes) {
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-            return (bytes / 1048576).toFixed(1) + ' MB';
-        }
-        
         function removeAttachment(index) {
             attachments.splice(index, 1);
             displayAttachments();
+            debugLog('File removed');
         }
         
         function showResult(message, isSuccess = true) {
             const result = document.getElementById('result');
             const messageSpan = document.getElementById('resultMessage');
             
-            result.classList.remove('success', 'error');
-            result.classList.add(isSuccess ? 'success' : 'error');
+            result.className = 'result-area ' + (isSuccess ? 'success' : 'error');
             messageSpan.textContent = message;
             
-            // Auto hide after 10 seconds for success, 15 for error
             setTimeout(() => {
                 result.style.display = 'none';
-            }, isSuccess ? 10000 : 15000);
+            }, 8000);
+            
+            debugLog(isSuccess ? '✅ Success' : '❌ Error', message);
         }
         
-        // Test API connection on page load
+        // Test API connection
         async function testApiConnection() {
             try {
-                const response = await fetch(`${BACKEND_API_URL}/ping`);
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('✅ Heritage Trust API connected:', data);
-                    
-                    // Update the displayed from email if it differs
-                    if (data.from_email && data.from_email !== 'onboarding@support.heritagetrust.eukexpress.com') {
-                        console.warn('From email mismatch:', data.from_email);
-                    }
-                } else {
-                    console.warn('⚠️ Heritage Trust API returned:', response.status);
-                    showResult('⚠️ Backend connection issue. Check if server is running.', false);
+                debugLog('Testing API connection...');
+                const response = await fetch(`${API_URL}/ping`);
+                const data = await response.json();
+                debugLog('API Response:', data);
+                
+                if (data.from_email) {
+                    document.querySelector('.from-email strong').textContent = data.from_email;
                 }
+                
+                return true;
             } catch (error) {
-                console.warn('⚠️ Heritage Trust API connection failed:', error.message);
+                debugLog('API connection failed:', error.message);
+                showResult('⚠️ Cannot connect to backend. Check if server is running.', false);
+                return false;
             }
         }
         
         // Call on load
         testApiConnection();
         
-        // Basic Email Form
+        // Send Email
         document.getElementById('emailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -715,49 +724,77 @@
             btn.disabled = true;
             btn.innerHTML = '<span class="loading"></span> Sending...';
             
+            // Build FormData with all fields - exactly matching backend expectations
             const formData = new FormData();
             formData.append('to', document.getElementById('to').value);
             formData.append('subject', document.getElementById('subject').value);
             
+            // IMPORTANT: Backend expects both html_content AND text_content
             const htmlContent = document.getElementById('htmlContent').value;
-            if (htmlContent) formData.append('html_content', htmlContent);
-            
             const textContent = document.getElementById('textContent').value;
-            if (textContent) formData.append('text_content', textContent);
             
-            for (let file of attachments) {
+            // Always send both fields, even if empty
+            formData.append('html_content', htmlContent || '<p></p>');
+            formData.append('text_content', textContent || ' ');
+            
+            // Add attachments
+            attachments.forEach(file => {
                 formData.append('attachments', file);
-            }
+            });
+            
+            // Log what we're sending
+            debugLog('Sending FormData:');
+            debugLog('- to:', document.getElementById('to').value);
+            debugLog('- subject:', document.getElementById('subject').value);
+            debugLog('- html_content length:', htmlContent.length);
+            debugLog('- text_content length:', textContent.length);
+            debugLog('- attachments:', attachments.length);
             
             try {
-                console.log('Sending to:', `${BACKEND_API_URL}/send`);
-                
-                const response = await fetch(`${BACKEND_API_URL}/send`, {
+                const response = await fetch(`${API_URL}/send`, {
                     method: 'POST',
                     body: formData
                 });
                 
-                const contentType = response.headers.get('content-type');
+                debugLog('Response status:', response.status);
+                debugLog('Response status text:', response.statusText);
+                
+                // Try to get response as JSON first
                 let result;
+                const contentType = response.headers.get('content-type');
                 
                 if (contentType && contentType.includes('application/json')) {
                     result = await response.json();
+                    debugLog('Response JSON:', result);
                 } else {
                     const text = await response.text();
-                    console.error('Non-JSON response:', text);
-                    throw new Error(`Server returned ${response.status}: ${text.substring(0, 100)}`);
+                    debugLog('Response text:', text.substring(0, 500));
+                    result = { detail: text };
                 }
                 
                 if (response.ok) {
                     showResult(`✅ Email sent successfully! Message ID: ${result.message_id}`, true);
+                    
+                    // Clear form on success
                     document.getElementById('emailForm').reset();
                     attachments = [];
                     displayAttachments();
+                    
+                    // Set default values again
+                    document.getElementById('to').value = 'test@example.com';
+                    document.getElementById('subject').value = 'Test Email from Heritage Trust';
                 } else {
-                    showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
+                    // Show detailed error from server
+                    const errorMsg = result.detail || result.error || 'Unknown error';
+                    showResult(`❌ ${errorMsg}`, false);
+                    
+                    // If the error contains validation details, log them
+                    if (result.errors) {
+                        debugLog('Validation errors:', result.errors);
+                    }
                 }
             } catch (error) {
-                console.error('Fetch error:', error);
+                debugLog('Fetch error:', error.message);
                 showResult(`❌ Error: ${error.message}`, false);
             } finally {
                 btn.disabled = false;
@@ -765,59 +802,7 @@
             }
         });
         
-        // Invoice Form
-        document.getElementById('invoiceForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const btn = document.getElementById('sendInvoiceBtn');
-            const originalText = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = '<span class="loading"></span> Sending...';
-            
-            const formData = new FormData();
-            formData.append('to', document.getElementById('invoiceTo').value);
-            formData.append('invoice_number', document.getElementById('invoiceNumber').value);
-            formData.append('amount', document.getElementById('amount').value);
-            formData.append('description', document.getElementById('invoiceDescription').value);
-            
-            const pdfFile = document.getElementById('pdfAttachment').files[0];
-            if (pdfFile) {
-                formData.append('pdf_attachment', pdfFile);
-            }
-            
-            try {
-                const response = await fetch(`${BACKEND_API_URL}/invoice`, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const contentType = response.headers.get('content-type');
-                let result;
-                
-                if (contentType && contentType.includes('application/json')) {
-                    result = await response.json();
-                } else {
-                    const text = await response.text();
-                    console.error('Non-JSON response:', text);
-                    throw new Error(`Server returned ${response.status}: ${text.substring(0, 100)}`);
-                }
-                
-                if (response.ok) {
-                    showResult(`✅ Invoice sent successfully! Message ID: ${result.message_id}`, true);
-                    document.getElementById('invoiceForm').reset();
-                } else {
-                    showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
-                }
-            } catch (error) {
-                console.error('Fetch error:', error);
-                showResult(`❌ Error: ${error.message}`, false);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-            }
-        });
-        
-        // Test Email Form
+        // Test Email
         document.getElementById('testForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -829,31 +814,36 @@
             const formData = new FormData();
             formData.append('to', document.getElementById('testTo').value);
             
+            debugLog('Sending test email to:', document.getElementById('testTo').value);
+            
             try {
-                const response = await fetch(`${BACKEND_API_URL}/test`, {
+                const response = await fetch(`${API_URL}/test`, {
                     method: 'POST',
                     body: formData
                 });
                 
-                const contentType = response.headers.get('content-type');
+                debugLog('Test response status:', response.status);
+                
                 let result;
+                const contentType = response.headers.get('content-type');
                 
                 if (contentType && contentType.includes('application/json')) {
                     result = await response.json();
+                    debugLog('Test response:', result);
                 } else {
                     const text = await response.text();
-                    console.error('Non-JSON response:', text);
-                    throw new Error(`Server returned ${response.status}: ${text.substring(0, 100)}`);
+                    debugLog('Test response text:', text);
+                    result = { detail: text };
                 }
                 
                 if (response.ok) {
-                    showResult(`✅ Test email sent! Check your inbox. Message ID: ${result.message_id}`, true);
+                    showResult(`✅ Test email sent! Message ID: ${result.message_id}`, true);
                 } else {
-                    showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
+                    showResult(`❌ ${result.detail || 'Test failed'}`, false);
                 }
             } catch (error) {
-                console.error('Fetch error:', error);
-                showResult(`❌ Error: ${error.message}`, false);
+                debugLog('Test error:', error.message);
+                showResult(`❌ ${error.message}`, false);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalText;

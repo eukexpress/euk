@@ -753,7 +753,7 @@
         // Call on load
         testApiConnection();
         
-        // Basic Email Form - FIXED VERSION
+        // Basic Email Form - Enhanced debugging
         document.getElementById('emailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -770,15 +770,25 @@
             
             formData.append('to', to);
             formData.append('subject', subject);
-            
-            // FIX: Always append content fields, even if empty
             formData.append('html_content', htmlContent || '');
             formData.append('text_content', textContent || '');
+            
+            // Log all form data entries to console
+            console.log('📦 FormData contents being sent:');
+            for (let pair of formData.entries()) {
+                if (pair[0] === 'attachments') {
+                    console.log(`  ${pair[0]}: [File object]`);
+                } else {
+                    console.log(`  ${pair[0]}: "${pair[1]}" (length: ${pair[1].length})`);
+                }
+            }
             
             addDebugLog('Sending email with:', {
                 to: to,
                 subject: subject,
+                html_content: htmlContent || '(empty)',
                 html_content_length: htmlContent ? htmlContent.length : 0,
+                text_content: textContent || '(empty)',
                 text_content_length: textContent ? textContent.length : 0,
                 attachments: attachments.length
             });
@@ -799,25 +809,28 @@
                 
                 addDebugLog('Response status:', response.status);
                 addDebugLog('Response status text:', response.statusText);
+                addDebugLog('Response headers:', Object.fromEntries([...response.headers]));
                 
-                // Check if response is JSON
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    const text = await response.text();
-                    addDebugLog('Non-JSON response:', text.substring(0, 500));
-                    throw new Error(`Server returned ${response.status}: ${text.substring(0, 100)}`);
-                }
+                // Get the response text first
+                const responseText = await response.text();
+                addDebugLog('Raw response:', responseText.substring(0, 500));
                 
-                const result = await response.json();
-                addDebugLog('Response data:', result);
-                
-                if (response.ok) {
-                    showResult(`✅ Email sent successfully! Message ID: ${result.message_id}`, true);
-                    document.getElementById('emailForm').reset();
-                    attachments = [];
-                    displayAttachments();
-                } else {
-                    showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
+                // Try to parse as JSON
+                try {
+                    const result = JSON.parse(responseText);
+                    addDebugLog('Parsed response:', result);
+                    
+                    if (response.ok) {
+                        showResult(`✅ Email sent successfully! Message ID: ${result.message_id}`, true);
+                        document.getElementById('emailForm').reset();
+                        attachments = [];
+                        displayAttachments();
+                    } else {
+                        showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
+                    }
+                } catch (e) {
+                    addDebugLog('Failed to parse JSON:', e.message);
+                    showResult(`❌ Server returned non-JSON response: ${responseText.substring(0, 100)}`, false);
                 }
             } catch (error) {
                 addDebugLog('Fetch error:', error);
@@ -828,7 +841,7 @@
             }
         });
         
-        // Invoice Form
+        // Invoice Form - Enhanced debugging
         document.getElementById('invoiceForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -848,6 +861,11 @@
             formData.append('amount', amount);
             formData.append('description', description);
             
+            console.log('📦 Invoice FormData contents:');
+            for (let pair of formData.entries()) {
+                console.log(`  ${pair[0]}: "${pair[1]}"`);
+            }
+            
             addDebugLog('Sending invoice with:', {
                 to: to,
                 invoice_number: invoiceNumber,
@@ -859,6 +877,7 @@
             if (pdfFile) {
                 formData.append('pdf_attachment', pdfFile);
                 addDebugLog('Attaching PDF:', pdfFile.name);
+                console.log('  pdf_attachment: [PDF File]', pdfFile.name);
             }
             
             try {
@@ -872,22 +891,22 @@
                 
                 addDebugLog('Response status:', response.status);
                 
-                // Check if response is JSON
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    const text = await response.text();
-                    addDebugLog('Non-JSON response:', text.substring(0, 500));
-                    throw new Error(`Server returned ${response.status}: ${text.substring(0, 100)}`);
-                }
+                const responseText = await response.text();
+                addDebugLog('Raw response:', responseText.substring(0, 500));
                 
-                const result = await response.json();
-                addDebugLog('Response data:', result);
-                
-                if (response.ok) {
-                    showResult(`✅ Invoice sent successfully! Message ID: ${result.message_id}`, true);
-                    document.getElementById('invoiceForm').reset();
-                } else {
-                    showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
+                try {
+                    const result = JSON.parse(responseText);
+                    addDebugLog('Parsed response:', result);
+                    
+                    if (response.ok) {
+                        showResult(`✅ Invoice sent successfully! Message ID: ${result.message_id}`, true);
+                        document.getElementById('invoiceForm').reset();
+                    } else {
+                        showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
+                    }
+                } catch (e) {
+                    addDebugLog('Failed to parse JSON:', e.message);
+                    showResult(`❌ Server returned non-JSON response: ${responseText.substring(0, 100)}`, false);
                 }
             } catch (error) {
                 addDebugLog('Fetch error:', error);
@@ -898,7 +917,7 @@
             }
         });
         
-        // Test Email Form
+        // Test Email Form - Enhanced debugging
         document.getElementById('testForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -910,6 +929,8 @@
             const formData = new FormData();
             const testTo = document.getElementById('testTo').value;
             formData.append('to', testTo);
+            
+            console.log('📦 Test FormData:', testTo);
             
             addDebugLog('Sending test email to:', testTo);
             
@@ -924,21 +945,21 @@
                 
                 addDebugLog('Response status:', response.status);
                 
-                // Check if response is JSON
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    const text = await response.text();
-                    addDebugLog('Non-JSON response:', text.substring(0, 500));
-                    throw new Error(`Server returned ${response.status}: ${text.substring(0, 100)}`);
-                }
+                const responseText = await response.text();
+                addDebugLog('Raw response:', responseText.substring(0, 500));
                 
-                const result = await response.json();
-                addDebugLog('Response data:', result);
-                
-                if (response.ok) {
-                    showResult(`✅ Test email sent! Check your inbox. Message ID: ${result.message_id}`, true);
-                } else {
-                    showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
+                try {
+                    const result = JSON.parse(responseText);
+                    addDebugLog('Parsed response:', result);
+                    
+                    if (response.ok) {
+                        showResult(`✅ Test email sent! Check your inbox. Message ID: ${result.message_id}`, true);
+                    } else {
+                        showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
+                    }
+                } catch (e) {
+                    addDebugLog('Failed to parse JSON:', e.message);
+                    showResult(`❌ Server returned non-JSON response: ${responseText.substring(0, 100)}`, false);
                 }
             } catch (error) {
                 addDebugLog('Fetch error:', error);

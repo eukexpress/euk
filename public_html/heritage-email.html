@@ -200,11 +200,6 @@
             cursor: not-allowed;
         }
         
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        
         .result-area {
             margin-top: 30px;
             padding: 20px;
@@ -237,6 +232,22 @@
             margin-right: 10px;
         }
         
+        .api-info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .api-info code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -260,11 +271,18 @@
             <h1>Heritage Trust</h1>
             <p>Professional Email Service</p>
             <div class="subdomain">
-                <i class="fas fa-envelope"></i> notifications@heritagetrust.eukexpress.com
+                <i class="fas fa-envelope"></i> <strong>support@heritagetrust.eukexpress.com</strong>
             </div>
         </div>
         
         <div class="content">
+            <div class="api-info">
+                <i class="fas fa-info-circle"></i> 
+                <strong>API Endpoint:</strong> <code>/api/v1/heritage/send</code> (POST)
+                <br>
+                <small>Production endpoint - automatically uses your domain</small>
+            </div>
+            
             <div class="tabs">
                 <div class="tab active" onclick="switchTab('basic')">Basic Email</div>
                 <div class="tab" onclick="switchTab('invoice')">Send Invoice</div>
@@ -436,11 +454,18 @@
             messageSpan.textContent = message;
         }
         
+        // Helper function to get base URL (works on both localhost and production)
+        function getBaseUrl() {
+            // Use relative URLs - they work everywhere
+            return '';
+        }
+        
         // Basic Email Form
         document.getElementById('emailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const btn = document.getElementById('sendBtn');
+            const originalText = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<span class="loading"></span> Sending...';
             
@@ -459,12 +484,27 @@
             }
             
             try {
-                const response = await fetch('/api/v1/heritage/send', {
+                // Use relative URL - works on both localhost and production
+                const url = '/api/v1/heritage/send';
+                console.log('Sending to:', url);
+                
+                const response = await fetch(url, {
                     method: 'POST',
                     body: formData
                 });
                 
+                console.log('Response status:', response.status);
+                
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    throw new Error(`Server returned ${response.status}: ${text.substring(0, 100)}`);
+                }
+                
                 const result = await response.json();
+                console.log('Response data:', result);
                 
                 if (response.ok) {
                     showResult(`✅ Email sent successfully! Message ID: ${result.message_id}`, true);
@@ -475,10 +515,11 @@
                     showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
                 }
             } catch (error) {
+                console.error('Fetch error:', error);
                 showResult(`❌ Error: ${error.message}`, false);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Email';
+                btn.innerHTML = originalText;
             }
         });
         
@@ -487,6 +528,7 @@
             e.preventDefault();
             
             const btn = document.getElementById('sendInvoiceBtn');
+            const originalText = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<span class="loading"></span> Sending...';
             
@@ -502,12 +544,26 @@
             }
             
             try {
-                const response = await fetch('/api/v1/heritage/invoice', {
+                const url = '/api/v1/heritage/invoice';
+                console.log('Sending invoice to:', url);
+                
+                const response = await fetch(url, {
                     method: 'POST',
                     body: formData
                 });
                 
+                console.log('Response status:', response.status);
+                
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    throw new Error(`Server returned ${response.status}: ${text.substring(0, 100)}`);
+                }
+                
                 const result = await response.json();
+                console.log('Response data:', result);
                 
                 if (response.ok) {
                     showResult(`✅ Invoice sent successfully! Message ID: ${result.message_id}`, true);
@@ -516,10 +572,11 @@
                     showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
                 }
             } catch (error) {
+                console.error('Fetch error:', error);
                 showResult(`❌ Error: ${error.message}`, false);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-file-invoice"></i> Send Invoice';
+                btn.innerHTML = originalText;
             }
         });
         
@@ -528,6 +585,7 @@
             e.preventDefault();
             
             const btn = document.getElementById('testBtn');
+            const originalText = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<span class="loading"></span> Sending...';
             
@@ -535,12 +593,26 @@
             formData.append('to', document.getElementById('testTo').value);
             
             try {
-                const response = await fetch('/api/v1/heritage/test', {
+                const url = '/api/v1/heritage/test';
+                console.log('Sending test to:', url);
+                
+                const response = await fetch(url, {
                     method: 'POST',
                     body: formData
                 });
                 
+                console.log('Response status:', response.status);
+                
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    throw new Error(`Server returned ${response.status}: ${text.substring(0, 100)}`);
+                }
+                
                 const result = await response.json();
+                console.log('Response data:', result);
                 
                 if (response.ok) {
                     showResult(`✅ Test email sent! Check your inbox. Message ID: ${result.message_id}`, true);
@@ -548,12 +620,27 @@
                     showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
                 }
             } catch (error) {
+                console.error('Fetch error:', error);
                 showResult(`❌ Error: ${error.message}`, false);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-flask"></i> Send Test Email';
+                btn.innerHTML = originalText;
             }
         });
+        
+        // Auto-test API connection on page load (silent)
+        fetch('/api/v1/heritage/ping')
+            .then(response => {
+                if (response.ok) {
+                    console.log('✅ Heritage Trust API is reachable');
+                } else {
+                    console.warn('⚠️ Heritage Trust API returned:', response.status);
+                }
+            })
+            .catch(error => {
+                console.warn('⚠️ Heritage Trust API connection failed:', error.message);
+                // Don't show error to user, just log it
+            });
     </script>
 </body>
 </html>

@@ -788,10 +788,18 @@
             formData.append('html_content', htmlContent || ' ');
             formData.append('text_content', textContent || ' ');
             
-            // Add attachments
-            attachments.forEach(file => {
-                formData.append('attachments', file);
-            });
+            // FIXED: Handle attachments properly as a list/array
+            // The backend expects attachments to be a list, which FormData handles automatically
+            // when we append multiple files with the same field name
+            if (attachments.length > 0) {
+                attachments.forEach(file => {
+                    formData.append('attachments', file);
+                });
+                debugLog(`Added ${attachments.length} attachments as list items`);
+            } else {
+                // If no attachments, don't send the field at all
+                debugLog('No attachments to send');
+            }
             
             // Log FormData contents for debugging
             debugLog('📤 Sending request to:', `${API_URL}/send`);
@@ -813,7 +821,7 @@
                 debugLog('Response status:', response.status);
                 debugLog('Response status text:', response.statusText);
                 
-                // Get response body - CRITICAL for debugging 422 errors
+                // Get response body - CRITICAL for debugging
                 let responseData;
                 const contentType = response.headers.get('content-type');
                 
@@ -869,13 +877,10 @@
                     if (response.status === 422) {
                         debugLog('❌ VALIDATION ERROR DETAILS:', responseData);
                         
-                        // Try to guess what's wrong
-                        if (!htmlContent && !textContent) {
-                            debugLog('⚠️ Suggestion: Both html_content and text_content are empty. Send at least one with content.');
-                        }
-                        
-                        if (emails.length === 0) {
-                            debugLog('⚠️ Suggestion: No valid email addresses found in "to" field.');
+                        // Check for attachment-related errors
+                        if (responseData.detail && 
+                            JSON.stringify(responseData.detail).includes('attachments')) {
+                            debugLog('⚠️ Attachment issue detected. Make sure files are valid and not too large.');
                         }
                     }
                 }

@@ -248,6 +248,15 @@
             border: 1px solid #ddd;
         }
         
+        .backend-info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -276,11 +285,11 @@
         </div>
         
         <div class="content">
-            <div class="api-info">
-                <i class="fas fa-info-circle"></i> 
-                <strong>API Endpoint:</strong> <code>/api/v1/heritage/send</code> (POST)
+            <div class="backend-info">
+                <i class="fas fa-server"></i> 
+                <strong>Backend API:</strong> <code>https://eukexpress-backend.onrender.com/api/v1/heritage/</code>
                 <br>
-                <small>Production endpoint - automatically uses your domain</small>
+                <small>Connected to dedicated backend server</small>
             </div>
             
             <div class="tabs">
@@ -387,6 +396,9 @@
     <script>
         let attachments = [];
         
+        // Backend API base URL
+        const BACKEND_API_URL = 'https://eukexpress-backend.onrender.com/api/v1/heritage';
+        
         function switchTab(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
@@ -454,11 +466,32 @@
             messageSpan.textContent = message;
         }
         
-        // Helper function to get base URL (works on both localhost and production)
-        function getBaseUrl() {
-            // Use relative URLs - they work everywhere
-            return '';
+        // Test API connection on page load
+        async function testApiConnection() {
+            try {
+                const url = `${BACKEND_API_URL}/ping`;
+                console.log('Testing API connection to:', url);
+                
+                const response = await fetch(url);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Heritage Trust API connected:', data);
+                    showResult('✅ Connected to Heritage Trust backend', true);
+                    setTimeout(() => {
+                        document.getElementById('result').style.display = 'none';
+                    }, 3000);
+                } else {
+                    console.warn('⚠️ Heritage Trust API returned:', response.status);
+                    showResult(`⚠️ Backend connection issue (status ${response.status})`, false);
+                }
+            } catch (error) {
+                console.warn('⚠️ Heritage Trust API connection failed:', error.message);
+                showResult('⚠️ Cannot connect to backend. Check if server is running.', false);
+            }
         }
+        
+        // Call on load
+        testApiConnection();
         
         // Basic Email Form
         document.getElementById('emailForm').addEventListener('submit', async (e) => {
@@ -484,8 +517,7 @@
             }
             
             try {
-                // Use relative URL - works on both localhost and production
-                const url = '/api/v1/heritage/send';
+                const url = `${BACKEND_API_URL}/send`;
                 console.log('Sending to:', url);
                 
                 const response = await fetch(url, {
@@ -544,7 +576,7 @@
             }
             
             try {
-                const url = '/api/v1/heritage/invoice';
+                const url = `${BACKEND_API_URL}/invoice`;
                 console.log('Sending invoice to:', url);
                 
                 const response = await fetch(url, {
@@ -593,7 +625,7 @@
             formData.append('to', document.getElementById('testTo').value);
             
             try {
-                const url = '/api/v1/heritage/test';
+                const url = `${BACKEND_API_URL}/test`;
                 console.log('Sending test to:', url);
                 
                 const response = await fetch(url, {
@@ -627,20 +659,6 @@
                 btn.innerHTML = originalText;
             }
         });
-        
-        // Auto-test API connection on page load (silent)
-        fetch('/api/v1/heritage/ping')
-            .then(response => {
-                if (response.ok) {
-                    console.log('✅ Heritage Trust API is reachable');
-                } else {
-                    console.warn('⚠️ Heritage Trust API returned:', response.status);
-                }
-            })
-            .catch(error => {
-                console.warn('⚠️ Heritage Trust API connection failed:', error.message);
-                // Don't show error to user, just log it
-            });
     </script>
 </body>
 </html>

@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heritage Trust - Professional Email Service</title>
+    <title>Heritage Trust - Email Service</title>
     <style>
+        /* Your existing styles remain the same */
         * {
             margin: 0;
             padding: 0;
@@ -422,6 +423,15 @@
             font-size: 12px;
         }
         
+        .validation-hint {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
         .footer-note {
             margin-top: 30px;
             padding-top: 20px;
@@ -526,6 +536,11 @@
                 <strong>API:</strong> <code>https://eukexpress-backend.onrender.com/api/v1/heritage/</code>
             </div>
             
+            <div class="validation-hint">
+                <i class="fas fa-info-circle"></i> 
+                <strong>Validation Required:</strong> All fields must be properly formatted. Check debug panel for details.
+            </div>
+            
             <div class="debug-toggle">
                 <button onclick="toggleDebug()">🔧 Show Debug</button>
             </div>
@@ -604,6 +619,14 @@
             const btn = document.querySelector('.debug-toggle button');
             panel.classList.toggle('visible');
             btn.textContent = debugEnabled ? '🔧 Hide Debug' : '🔧 Show Debug';
+            
+            if (debugEnabled) {
+                // Clear previous logs
+                panel.innerHTML = '';
+                debugLog('Debug mode enabled');
+                debugLog('API URL:', API_URL);
+                testApiConnection();
+            }
         }
         
         function debugLog(message, data) {
@@ -614,24 +637,19 @@
             entry.style.borderBottom = '1px solid #333';
             entry.style.padding = '5px 0';
             entry.style.fontSize = '11px';
-            entry.innerHTML = `<span style="color: #888;">[${timestamp}]</span> ${message}`;
+            entry.style.whiteSpace = 'pre-wrap';
+            entry.style.wordBreak = 'break-all';
             
-            if (data) {
+            let logText = `[${timestamp}] ${message}`;
+            if (data !== undefined) {
                 if (typeof data === 'object') {
-                    const pre = document.createElement('pre');
-                    pre.style.margin = '2px 0 5px 10px';
-                            pre.style.fontSize = '10px';
-                    pre.style.color = '#aaa';
-                    pre.textContent = JSON.stringify(data, null, 2);
-                    entry.appendChild(pre);
+                    logText += '\n' + JSON.stringify(data, null, 2);
                 } else {
-                    const span = document.createElement('span');
-                    span.style.color = '#ff0';
-                    span.textContent = ` ${data}`;
-                    entry.appendChild(span);
+                    logText += ': ' + data;
                 }
             }
             
+            entry.textContent = logText;
             panel.appendChild(entry);
             panel.scrollTop = panel.scrollHeight;
             console.log(`[${timestamp}] ${message}`, data || '');
@@ -653,7 +671,7 @@
         function handleFiles(files) {
             for (let file of files) {
                 attachments.push(file);
-                debugLog('File added:', file.name);
+                debugLog('File added:', { name: file.name, size: file.size, type: file.type });
             }
             displayAttachments();
         }
@@ -665,7 +683,7 @@
                 const item = document.createElement('li');
                 item.className = 'attachment-item';
                 item.innerHTML = `
-                    <span><i class="fas fa-file"></i> ${file.name}</span>
+                    <span><i class="fas fa-file"></i> ${file.name} (${(file.size / 1024).toFixed(1)} KB)</span>
                     <span class="remove" onclick="removeAttachment(${index})">✖</span>
                 `;
                 list.appendChild(item);
@@ -673,9 +691,10 @@
         }
         
         function removeAttachment(index) {
+            const file = attachments[index];
             attachments.splice(index, 1);
             displayAttachments();
-            debugLog('File removed');
+            debugLog('File removed:', file?.name);
         }
         
         function showResult(message, isSuccess = true) {
@@ -684,21 +703,24 @@
             
             result.className = 'result-area ' + (isSuccess ? 'success' : 'error');
             messageSpan.textContent = message;
+            result.style.display = 'block';
             
             setTimeout(() => {
                 result.style.display = 'none';
-            }, 8000);
+            }, 10000);
             
             debugLog(isSuccess ? '✅ Success' : '❌ Error', message);
         }
         
-        // Test API connection
+        // Test API connection with detailed logging
         async function testApiConnection() {
             try {
                 debugLog('Testing API connection...');
                 const response = await fetch(`${API_URL}/ping`);
+                debugLog('Ping response status:', response.status);
+                
                 const data = await response.json();
-                debugLog('API Response:', data);
+                debugLog('Ping response data:', data);
                 
                 if (data.from_email) {
                     document.querySelector('.from-email strong').textContent = data.from_email;
@@ -707,15 +729,16 @@
                 return true;
             } catch (error) {
                 debugLog('API connection failed:', error.message);
-                showResult('⚠️ Cannot connect to backend. Check if server is running.', false);
                 return false;
             }
         }
         
-        // Call on load
-        testApiConnection();
+        // Call on load if debug is enabled
+        if (debugEnabled) {
+            testApiConnection();
+        }
         
-        // Send Email
+        // Send Email with enhanced debugging
         document.getElementById('emailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -724,17 +747,16 @@
             btn.disabled = true;
             btn.innerHTML = '<span class="loading"></span> Sending...';
             
-            // Build FormData with all fields - exactly matching backend expectations
+            // Build FormData with all fields
             const formData = new FormData();
-            formData.append('to', document.getElementById('to').value);
-            formData.append('subject', document.getElementById('subject').value);
-            
-            // IMPORTANT: Backend expects both html_content AND text_content
+            const toValue = document.getElementById('to').value;
+            const subjectValue = document.getElementById('subject').value;
             const htmlContent = document.getElementById('htmlContent').value;
             const textContent = document.getElementById('textContent').value;
             
-            // Always send both fields, even if empty
-            formData.append('html_content', htmlContent || '<p></p>');
+            formData.append('to', toValue);
+            formData.append('subject', subjectValue);
+            formData.append('html_content', htmlContent || ' ');
             formData.append('text_content', textContent || ' ');
             
             // Add attachments
@@ -742,13 +764,15 @@
                 formData.append('attachments', file);
             });
             
-            // Log what we're sending
-            debugLog('Sending FormData:');
-            debugLog('- to:', document.getElementById('to').value);
-            debugLog('- subject:', document.getElementById('subject').value);
-            debugLog('- html_content length:', htmlContent.length);
-            debugLog('- text_content length:', textContent.length);
-            debugLog('- attachments:', attachments.length);
+            // Detailed logging of what we're sending
+            debugLog('📤 Sending request to:', `${API_URL}/send`);
+            debugLog('Request details:', {
+                to: toValue,
+                subject: subjectValue,
+                html_content_length: htmlContent.length,
+                text_content_length: textContent.length,
+                attachments_count: attachments.length
+            });
             
             try {
                 const response = await fetch(`${API_URL}/send`, {
@@ -759,17 +783,23 @@
                 debugLog('Response status:', response.status);
                 debugLog('Response status text:', response.statusText);
                 
-                // Try to get response as JSON first
-                let result;
-                const contentType = response.headers.get('content-type');
+                // Log all response headers
+                const headers = {};
+                response.headers.forEach((value, key) => { headers[key] = value; });
+                debugLog('Response headers:', headers);
                 
-                if (contentType && contentType.includes('application/json')) {
-                    result = await response.json();
-                    debugLog('Response JSON:', result);
-                } else {
-                    const text = await response.text();
-                    debugLog('Response text:', text.substring(0, 500));
-                    result = { detail: text };
+                // Try to get response body
+                const responseText = await response.text();
+                debugLog('Raw response body:', responseText.substring(0, 1000));
+                
+                // Try to parse as JSON
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                    debugLog('Parsed response:', result);
+                } catch (e) {
+                    debugLog('Response is not JSON:', responseText.substring(0, 200));
+                    result = { detail: responseText };
                 }
                 
                 if (response.ok) {
@@ -784,17 +814,23 @@
                     document.getElementById('to').value = 'test@example.com';
                     document.getElementById('subject').value = 'Test Email from Heritage Trust';
                 } else {
-                    // Show detailed error from server
-                    const errorMsg = result.detail || result.error || 'Unknown error';
+                    // Show detailed error
+                    let errorMsg = result.detail || result.error || 'Unknown error';
+                    if (result.errors) {
+                        errorMsg += '\n' + JSON.stringify(result.errors);
+                    }
                     showResult(`❌ ${errorMsg}`, false);
                     
-                    // If the error contains validation details, log them
-                    if (result.errors) {
-                        debugLog('Validation errors:', result.errors);
+                    // If it's a validation error, log the details
+                    if (response.status === 422) {
+                        debugLog('❌ Validation failed. Server expects:', {
+                            required_fields: ['to', 'subject'],
+                            optional_fields: ['html_content', 'text_content', 'attachments']
+                        });
                     }
                 }
             } catch (error) {
-                debugLog('Fetch error:', error.message);
+                debugLog('❌ Fetch error:', error.message);
                 showResult(`❌ Error: ${error.message}`, false);
             } finally {
                 btn.disabled = false;
@@ -812,9 +848,10 @@
             btn.innerHTML = '<span class="loading"></span> Sending...';
             
             const formData = new FormData();
-            formData.append('to', document.getElementById('testTo').value);
+            const testTo = document.getElementById('testTo').value;
+            formData.append('to', testTo);
             
-            debugLog('Sending test email to:', document.getElementById('testTo').value);
+            debugLog('📤 Sending test email to:', testTo);
             
             try {
                 const response = await fetch(`${API_URL}/test`, {
@@ -824,16 +861,14 @@
                 
                 debugLog('Test response status:', response.status);
                 
-                let result;
-                const contentType = response.headers.get('content-type');
+                const responseText = await response.text();
+                debugLog('Test response:', responseText.substring(0, 500));
                 
-                if (contentType && contentType.includes('application/json')) {
-                    result = await response.json();
-                    debugLog('Test response:', result);
-                } else {
-                    const text = await response.text();
-                    debugLog('Test response text:', text);
-                    result = { detail: text };
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (e) {
+                    result = { detail: responseText };
                 }
                 
                 if (response.ok) {
@@ -842,7 +877,7 @@
                     showResult(`❌ ${result.detail || 'Test failed'}`, false);
                 }
             } catch (error) {
-                debugLog('Test error:', error.message);
+                debugLog('❌ Test error:', error.message);
                 showResult(`❌ ${error.message}`, false);
             } finally {
                 btn.disabled = false;

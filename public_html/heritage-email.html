@@ -387,6 +387,38 @@
             color: #ffd700;
         }
         
+        .debug-panel {
+            background: #1e1e2f;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-bottom: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .debug-panel.visible {
+            display: block;
+        }
+        
+        .debug-toggle {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+        
+        .debug-toggle button {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -455,6 +487,11 @@
                 <br>
                 <small>Using verified subdomain: <strong>support@heritagetrust.eukexpress.com</strong></small>
             </div>
+            
+            <div class="debug-toggle">
+                <button onclick="toggleDebug()" id="debugBtn">🔧 Show Debug</button>
+            </div>
+            <div id="debugPanel" class="debug-panel"></div>
             
             <div class="tabs">
                 <div class="tab active" onclick="switchTab('basic')">Basic Email</div>
@@ -564,9 +601,52 @@
     
     <script>
         let attachments = [];
+        let debugMode = false;
         
         // Backend API base URL
         const BACKEND_API_URL = 'https://eukexpress-backend.onrender.com/api/v1/heritage';
+        
+        function toggleDebug() {
+            debugMode = !debugMode;
+            const panel = document.getElementById('debugPanel');
+            const btn = document.getElementById('debugBtn');
+            
+            if (debugMode) {
+                panel.classList.add('visible');
+                btn.innerHTML = '🔧 Hide Debug';
+            } else {
+                panel.classList.remove('visible');
+                btn.innerHTML = '🔧 Show Debug';
+            }
+        }
+        
+        function addDebugLog(message, data = null) {
+            if (!debugMode) return;
+            
+            const panel = document.getElementById('debugPanel');
+            const timestamp = new Date().toLocaleTimeString();
+            let logMessage = `[${timestamp}] ${message}`;
+            
+            if (data) {
+                if (typeof data === 'object') {
+                    logMessage += '\n' + JSON.stringify(data, null, 2);
+                } else {
+                    logMessage += ': ' + data;
+                }
+            }
+            
+            const logEntry = document.createElement('div');
+            logEntry.style.borderBottom = '1px solid #333';
+            logEntry.style.padding = '5px 0';
+            logEntry.style.whiteSpace = 'pre-wrap';
+            logEntry.style.wordBreak = 'break-all';
+            logEntry.textContent = logMessage;
+            
+            panel.appendChild(logEntry);
+            panel.scrollTop = panel.scrollHeight;
+            
+            console.log(message, data);
+        }
         
         function switchTab(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -582,13 +662,21 @@
                 document.querySelectorAll('.tab')[2].classList.add('active');
                 document.getElementById('test-form').classList.add('active');
             }
+            
+            addDebugLog('Switched to tab:', tab);
         }
         
         function handleFiles(files) {
+            addDebugLog(`Adding ${files.length} file(s)`);
             for (let file of files) {
                 attachments.push(file);
-                displayAttachments();
+                addDebugLog('File added:', {
+                    name: file.name,
+                    size: formatFileSize(file.size),
+                    type: file.type
+                });
             }
+            displayAttachments();
         }
         
         function displayAttachments() {
@@ -622,6 +710,7 @@
         }
         
         function removeAttachment(index) {
+            addDebugLog('Removing attachment:', attachments[index].name);
             attachments.splice(index, 1);
             displayAttachments();
         }
@@ -633,28 +722,30 @@
             result.classList.remove('success', 'error');
             result.classList.add(isSuccess ? 'success' : 'error');
             messageSpan.textContent = message;
+            
+            addDebugLog(`Result: ${isSuccess ? 'SUCCESS' : 'ERROR'} - ${message}`);
         }
         
         // Test API connection on page load
         async function testApiConnection() {
             try {
                 const url = `${BACKEND_API_URL}/ping`;
-                console.log('Testing API connection to:', url);
+                addDebugLog('Testing API connection to:', url);
                 
                 const response = await fetch(url);
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('✅ Heritage Trust API connected:', data);
+                    addDebugLog('✅ Heritage Trust API connected:', data);
                     showResult('✅ Connected to Heritage Trust backend', true);
                     setTimeout(() => {
                         document.getElementById('result').style.display = 'none';
                     }, 3000);
                 } else {
-                    console.warn('⚠️ Heritage Trust API returned:', response.status);
+                    addDebugLog('⚠️ Heritage Trust API returned:', response.status);
                     showResult(`⚠️ Backend connection issue (status ${response.status})`, false);
                 }
             } catch (error) {
-                console.warn('⚠️ Heritage Trust API connection failed:', error.message);
+                addDebugLog('⚠️ Heritage Trust API connection failed:', error.message);
                 showResult('⚠️ Cannot connect to backend. Check if server is running.', false);
             }
         }
@@ -662,7 +753,7 @@
         // Call on load
         testApiConnection();
         
-        // Basic Email Form
+        // Basic Email Form - FIXED VERSION
         document.getElementById('emailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -672,40 +763,53 @@
             btn.innerHTML = '<span class="loading"></span> Sending...';
             
             const formData = new FormData();
-            formData.append('to', document.getElementById('to').value);
-            formData.append('subject', document.getElementById('subject').value);
-            
+            const to = document.getElementById('to').value;
+            const subject = document.getElementById('subject').value;
             const htmlContent = document.getElementById('htmlContent').value;
-            if (htmlContent) formData.append('html_content', htmlContent);
-            
             const textContent = document.getElementById('textContent').value;
-            if (textContent) formData.append('text_content', textContent);
+            
+            formData.append('to', to);
+            formData.append('subject', subject);
+            
+            // FIX: Always append content fields, even if empty
+            formData.append('html_content', htmlContent || '');
+            formData.append('text_content', textContent || '');
+            
+            addDebugLog('Sending email with:', {
+                to: to,
+                subject: subject,
+                html_content_length: htmlContent ? htmlContent.length : 0,
+                text_content_length: textContent ? textContent.length : 0,
+                attachments: attachments.length
+            });
             
             for (let file of attachments) {
                 formData.append('attachments', file);
+                addDebugLog('Attaching file:', file.name);
             }
             
             try {
                 const url = `${BACKEND_API_URL}/send`;
-                console.log('Sending to:', url);
+                addDebugLog('Sending to endpoint:', url);
                 
                 const response = await fetch(url, {
                     method: 'POST',
                     body: formData
                 });
                 
-                console.log('Response status:', response.status);
+                addDebugLog('Response status:', response.status);
+                addDebugLog('Response status text:', response.statusText);
                 
                 // Check if response is JSON
                 const contentType = response.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
                     const text = await response.text();
-                    console.error('Non-JSON response:', text);
+                    addDebugLog('Non-JSON response:', text.substring(0, 500));
                     throw new Error(`Server returned ${response.status}: ${text.substring(0, 100)}`);
                 }
                 
                 const result = await response.json();
-                console.log('Response data:', result);
+                addDebugLog('Response data:', result);
                 
                 if (response.ok) {
                     showResult(`✅ Email sent successfully! Message ID: ${result.message_id}`, true);
@@ -716,7 +820,7 @@
                     showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
                 }
             } catch (error) {
-                console.error('Fetch error:', error);
+                addDebugLog('Fetch error:', error);
                 showResult(`❌ Error: ${error.message}`, false);
             } finally {
                 btn.disabled = false;
@@ -734,37 +838,50 @@
             btn.innerHTML = '<span class="loading"></span> Sending...';
             
             const formData = new FormData();
-            formData.append('to', document.getElementById('invoiceTo').value);
-            formData.append('invoice_number', document.getElementById('invoiceNumber').value);
-            formData.append('amount', document.getElementById('amount').value);
-            formData.append('description', document.getElementById('invoiceDescription').value);
+            const to = document.getElementById('invoiceTo').value;
+            const invoiceNumber = document.getElementById('invoiceNumber').value;
+            const amount = document.getElementById('amount').value;
+            const description = document.getElementById('invoiceDescription').value;
+            
+            formData.append('to', to);
+            formData.append('invoice_number', invoiceNumber);
+            formData.append('amount', amount);
+            formData.append('description', description);
+            
+            addDebugLog('Sending invoice with:', {
+                to: to,
+                invoice_number: invoiceNumber,
+                amount: amount,
+                description: description
+            });
             
             const pdfFile = document.getElementById('pdfAttachment').files[0];
             if (pdfFile) {
                 formData.append('pdf_attachment', pdfFile);
+                addDebugLog('Attaching PDF:', pdfFile.name);
             }
             
             try {
                 const url = `${BACKEND_API_URL}/invoice`;
-                console.log('Sending invoice to:', url);
+                addDebugLog('Sending invoice to:', url);
                 
                 const response = await fetch(url, {
                     method: 'POST',
                     body: formData
                 });
                 
-                console.log('Response status:', response.status);
+                addDebugLog('Response status:', response.status);
                 
                 // Check if response is JSON
                 const contentType = response.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
                     const text = await response.text();
-                    console.error('Non-JSON response:', text);
+                    addDebugLog('Non-JSON response:', text.substring(0, 500));
                     throw new Error(`Server returned ${response.status}: ${text.substring(0, 100)}`);
                 }
                 
                 const result = await response.json();
-                console.log('Response data:', result);
+                addDebugLog('Response data:', result);
                 
                 if (response.ok) {
                     showResult(`✅ Invoice sent successfully! Message ID: ${result.message_id}`, true);
@@ -773,7 +890,7 @@
                     showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
                 }
             } catch (error) {
-                console.error('Fetch error:', error);
+                addDebugLog('Fetch error:', error);
                 showResult(`❌ Error: ${error.message}`, false);
             } finally {
                 btn.disabled = false;
@@ -791,29 +908,32 @@
             btn.innerHTML = '<span class="loading"></span> Sending...';
             
             const formData = new FormData();
-            formData.append('to', document.getElementById('testTo').value);
+            const testTo = document.getElementById('testTo').value;
+            formData.append('to', testTo);
+            
+            addDebugLog('Sending test email to:', testTo);
             
             try {
                 const url = `${BACKEND_API_URL}/test`;
-                console.log('Sending test to:', url);
+                addDebugLog('Sending test to:', url);
                 
                 const response = await fetch(url, {
                     method: 'POST',
                     body: formData
                 });
                 
-                console.log('Response status:', response.status);
+                addDebugLog('Response status:', response.status);
                 
                 // Check if response is JSON
                 const contentType = response.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
                     const text = await response.text();
-                    console.error('Non-JSON response:', text);
+                    addDebugLog('Non-JSON response:', text.substring(0, 500));
                     throw new Error(`Server returned ${response.status}: ${text.substring(0, 100)}`);
                 }
                 
                 const result = await response.json();
-                console.log('Response data:', result);
+                addDebugLog('Response data:', result);
                 
                 if (response.ok) {
                     showResult(`✅ Test email sent! Check your inbox. Message ID: ${result.message_id}`, true);
@@ -821,7 +941,7 @@
                     showResult(`❌ Error: ${result.detail || 'Unknown error'}`, false);
                 }
             } catch (error) {
-                console.error('Fetch error:', error);
+                addDebugLog('Fetch error:', error);
                 showResult(`❌ Error: ${error.message}`, false);
             } finally {
                 btn.disabled = false;

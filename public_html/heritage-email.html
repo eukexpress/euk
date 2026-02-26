@@ -557,6 +557,7 @@
                     <div class="form-group">
                         <label><i class="fas fa-envelope"></i> To (comma-separated)</label>
                         <input type="text" id="to" value="test@example.com" placeholder="recipient@example.com" required>
+                        <small style="color: #666;">Multiple emails: separate with commas</small>
                     </div>
                     
                     <div class="form-group">
@@ -566,12 +567,14 @@
                     
                     <div class="form-group">
                         <label><i class="fas fa-code"></i> HTML Content</label>
-                        <textarea id="htmlContent" rows="4"><h1>Hello from Heritage Trust!</h1><p>This is a test email sent through our verified subdomain.</p><p><strong>From:</strong> onboarding@support.heritagetrust.eukexpress.com</p></textarea>
+                        <textarea id="html_content" rows="4"><h1>Hello from Heritage Trust!</h1><p>This is a test email sent through our verified subdomain.</p><p><strong>From:</strong> onboarding@support.heritagetrust.eukexpress.com</p></textarea>
+                        <small style="color: #666;">Field name: html_content (matches backend)</small>
                     </div>
                     
                     <div class="form-group">
                         <label><i class="fas fa-file-alt"></i> Plain Text (fallback)</label>
-                        <textarea id="textContent" rows="2">Hello from Heritage Trust! This is a test email sent through our verified subdomain. From: onboarding@support.heritagetrust.eukexpress.com</textarea>
+                        <textarea id="text_content" rows="2">Hello from Heritage Trust! This is a test email sent through our verified subdomain. From: onboarding@support.heritagetrust.eukexpress.com</textarea>
+                        <small style="color: #666;">Field name: text_content (matches backend)</small>
                     </div>
                     
                     <div class="attachment-area" onclick="document.getElementById('fileInput').click()">
@@ -621,7 +624,6 @@
             btn.textContent = debugEnabled ? '🔧 Hide Debug' : '🔧 Show Debug';
             
             if (debugEnabled) {
-                // Clear previous logs
                 panel.innerHTML = '';
                 debugLog('Debug mode enabled');
                 debugLog('API URL:', API_URL);
@@ -643,7 +645,11 @@
             let logText = `[${timestamp}] ${message}`;
             if (data !== undefined) {
                 if (typeof data === 'object') {
-                    logText += '\n' + JSON.stringify(data, null, 2);
+                    try {
+                        logText += '\n' + JSON.stringify(data, null, 2);
+                    } catch (e) {
+                        logText += ': [Circular or Complex Object]';
+                    }
                 } else {
                     logText += ': ' + data;
                 }
@@ -712,7 +718,6 @@
             debugLog(isSuccess ? '✅ Success' : '❌ Error', message);
         }
         
-        // Test API connection with detailed logging
         async function testApiConnection() {
             try {
                 debugLog('Testing API connection...');
@@ -733,12 +738,7 @@
             }
         }
         
-        // Call on load if debug is enabled
-        if (debugEnabled) {
-            testApiConnection();
-        }
-        
-        // Send Email with enhanced debugging
+        // Send Email with enhanced debugging - FIXED FIELD NAMES
         document.getElementById('emailForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -747,30 +747,57 @@
             btn.disabled = true;
             btn.innerHTML = '<span class="loading"></span> Sending...';
             
-            // Build FormData with all fields
-            const formData = new FormData();
-            const toValue = document.getElementById('to').value;
-            const subjectValue = document.getElementById('subject').value;
-            const htmlContent = document.getElementById('htmlContent').value;
-            const textContent = document.getElementById('textContent').value;
+            // Get form values
+            const toValue = document.getElementById('to').value.trim();
+            const subjectValue = document.getElementById('subject').value.trim();
+            const htmlContent = document.getElementById('html_content').value.trim();
+            const textContent = document.getElementById('text_content').value.trim();
             
+            // Validate required fields
+            if (!toValue) {
+                showResult('❌ Recipient email is required', false);
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                return;
+            }
+            
+            if (!subjectValue) {
+                showResult('❌ Subject is required', false);
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                return;
+            }
+            
+            // Build FormData with CORRECT field names (matching backend)
+            const formData = new FormData();
             formData.append('to', toValue);
             formData.append('subject', subjectValue);
-            formData.append('html_content', htmlContent || ' ');
-            formData.append('text_content', textContent || ' ');
+            
+            // Backend expects 'html_content' and 'text_content' (snake_case)
+            if (htmlContent) {
+                formData.append('html_content', htmlContent);
+            } else {
+                formData.append('html_content', ' '); // Send space if empty
+            }
+            
+            if (textContent) {
+                formData.append('text_content', textContent);
+            } else {
+                formData.append('text_content', ' '); // Send space if empty
+            }
             
             // Add attachments
             attachments.forEach(file => {
                 formData.append('attachments', file);
             });
             
-            // Detailed logging of what we're sending
+            // Detailed logging
             debugLog('📤 Sending request to:', `${API_URL}/send`);
-            debugLog('Request details:', {
+            debugLog('FormData contents:', {
                 to: toValue,
                 subject: subjectValue,
-                html_content_length: htmlContent.length,
-                text_content_length: textContent.length,
+                html_content: htmlContent ? `${htmlContent.substring(0, 50)}...` : '(empty)',
+                text_content: textContent ? `${textContent.substring(0, 50)}...` : '(empty)',
                 attachments_count: attachments.length
             });
             
@@ -783,55 +810,49 @@
                 debugLog('Response status:', response.status);
                 debugLog('Response status text:', response.statusText);
                 
-                // Log all response headers
-                const headers = {};
-                response.headers.forEach((value, key) => { headers[key] = value; });
-                debugLog('Response headers:', headers);
-                
                 // Try to get response body
-                const responseText = await response.text();
-                debugLog('Raw response body:', responseText.substring(0, 1000));
-                
-                // Try to parse as JSON
                 let result;
-                try {
-                    result = JSON.parse(responseText);
-                    debugLog('Parsed response:', result);
-                } catch (e) {
-                    debugLog('Response is not JSON:', responseText.substring(0, 200));
-                    result = { detail: responseText };
+                const contentType = response.headers.get('content-type');
+                
+                if (contentType && contentType.includes('application/json')) {
+                    result = await response.json();
+                    debugLog('Response body:', result);
+                } else {
+                    const text = await response.text();
+                    debugLog('Response text:', text.substring(0, 500));
+                    try {
+                        result = JSON.parse(text);
+                    } catch {
+                        result = { detail: text };
+                    }
                 }
                 
                 if (response.ok) {
                     showResult(`✅ Email sent successfully! Message ID: ${result.message_id}`, true);
                     
-                    // Clear form on success
-                    document.getElementById('emailForm').reset();
+                    // Clear form on success (optional)
                     attachments = [];
                     displayAttachments();
                     
-                    // Set default values again
-                    document.getElementById('to').value = 'test@example.com';
-                    document.getElementById('subject').value = 'Test Email from Heritage Trust';
                 } else {
                     // Show detailed error
                     let errorMsg = result.detail || result.error || 'Unknown error';
                     if (result.errors) {
-                        errorMsg += '\n' + JSON.stringify(result.errors);
+                        errorMsg += ' - ' + JSON.stringify(result.errors);
                     }
                     showResult(`❌ ${errorMsg}`, false);
                     
-                    // If it's a validation error, log the details
+                    // Special handling for 422
                     if (response.status === 422) {
-                        debugLog('❌ Validation failed. Server expects:', {
-                            required_fields: ['to', 'subject'],
-                            optional_fields: ['html_content', 'text_content', 'attachments']
+                        debugLog('❌ Validation failed. Backend expects:', {
+                            required: ['to', 'subject'],
+                            optional: ['html_content', 'text_content', 'attachments']
                         });
                     }
                 }
             } catch (error) {
                 debugLog('❌ Fetch error:', error.message);
-                showResult(`❌ Error: ${error.message}`, false);
+                showResult(`❌ Network error: ${error.message}`, false);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalText;
@@ -848,7 +869,15 @@
             btn.innerHTML = '<span class="loading"></span> Sending...';
             
             const formData = new FormData();
-            const testTo = document.getElementById('testTo').value;
+            const testTo = document.getElementById('testTo').value.trim();
+            
+            if (!testTo) {
+                showResult('❌ Email address is required', false);
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                return;
+            }
+            
             formData.append('to', testTo);
             
             debugLog('📤 Sending test email to:', testTo);
@@ -861,15 +890,21 @@
                 
                 debugLog('Test response status:', response.status);
                 
-                const responseText = await response.text();
-                debugLog('Test response:', responseText.substring(0, 500));
-                
                 let result;
-                try {
-                    result = JSON.parse(responseText);
-                } catch (e) {
-                    result = { detail: responseText };
+                const contentType = response.headers.get('content-type');
+                
+                if (contentType && contentType.includes('application/json')) {
+                    result = await response.json();
+                } else {
+                    const text = await response.text();
+                    try {
+                        result = JSON.parse(text);
+                    } catch {
+                        result = { detail: text };
+                    }
                 }
+                
+                debugLog('Test response:', result);
                 
                 if (response.ok) {
                     showResult(`✅ Test email sent! Message ID: ${result.message_id}`, true);
@@ -883,6 +918,19 @@
                 btn.disabled = false;
                 btn.innerHTML = originalText;
             }
+        });
+        
+        // Auto-test API on page load
+        window.addEventListener('load', () => {
+            // Optional: Test API connection silently
+            fetch(`${API_URL}/ping`)
+                .then(res => res.json())
+                .then(data => {
+                    console.log('API Connection OK:', data);
+                })
+                .catch(err => {
+                    console.error('API Connection Error:', err);
+                });
         });
     </script>
 </body>

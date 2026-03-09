@@ -1,0 +1,2365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EukExpress Global Logistics - Admin Portal</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 48px;
+            width: 100%;
+            max-width: 440px;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-header .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 40px;
+        }
+
+        .login-header h2 {
+            color: #1e293b;
+            font-weight: 700;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .euk-badge {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-block;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            height: 48px;
+            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            padding: 0 16px;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #2a5298;
+            box-shadow: 0 0 0 4px rgba(42, 82, 152, 0.1);
+            outline: none;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border: none;
+            height: 48px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-login:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(42, 82, 152, 0.3);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .dashboard-container.active {
+            display: block;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            color: #1e293b;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.05);
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 30px 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .sidebar-header h3 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-header p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .sidebar-menu {
+            padding: 20px 16px;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.2s;
+            margin: 4px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .menu-item:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .menu-item.active {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            box-shadow: 0 10px 20px rgba(42, 82, 152, 0.2);
+        }
+
+        .menu-item i {
+            margin-right: 14px;
+            font-size: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            transition: all 0.3s;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .page-title h2 {
+            margin: 0;
+            color: #1e293b;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .page-title p {
+            margin: 5px 0 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-name {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: none;
+            border: 1.5px solid #e2e8f0;
+            padding: 10px 20px;
+            border-radius: 12px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: #f1f5f9;
+            border-color: #2a5298;
+            color: #2a5298;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        .stat-title {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            color: #1e293b;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-desc {
+            color: #10b981;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: #f8fafc;
+            padding: 16px;
+            text-align: left;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 14px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .table td {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .tracking-badge {
+            background: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 13px;
+        }
+
+        .tracking-prefix {
+            color: #2a5298;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-booked { background: #f1f5f9; color: #475569; }
+        .status-processing { background: #dbeafe; color: #1e40af; }
+        .status-in_transit { background: #dcfce7; color: #166534; }
+        .status-out_for_delivery { background: #fef9c3; color: #854d0e; }
+        .status-delivered { background: #d1fae5; color: #065f46; }
+        .status-delayed { background: #fee2e2; color: #991b1b; }
+        .status-return_initiated { background: #f3e8ff; color: #6b21a8; }
+        .status-cancelled { background: #f1f5f9; color: #475569; }
+
+        /* Intervention Badges */
+        .intervention-container {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .intervention-badge {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: help;
+            position: relative;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .intervention-badge::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            z-index: 1000;
+            display: none;
+            margin-bottom: 8px;
+        }
+
+        .intervention-badge:hover::after {
+            display: block;
+        }
+
+        .intervention-customs { background: #fef3c7; color: #92400e; }
+        .intervention-security { background: #fee2e2; color: #991b1b; }
+        .intervention-damage { background: #ffedd5; color: #9a3412; }
+        .intervention-return { background: #f3e8ff; color: #6b21a8; }
+        .intervention-delay { background: #e2e8f0; color: #334155; }
+
+        /* Forms */
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: #2a5298;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(42, 82, 152, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(42, 82, 152, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            border: 1.5px solid #e2e8f0;
+            padding: 12px 24px;
+            border-radius: 12px;
+            color: #475569;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        /* Image Upload */
+        .image-upload-container {
+            display: flex;
+            gap: 24px;
+            margin-top: 10px;
+        }
+
+        .image-box {
+            flex: 1;
+            border: 2px dashed #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+
+        .image-box:hover {
+            border-color: #2a5298;
+            background: #f1f5f9;
+        }
+
+        .image-box.has-image {
+            border: 2px solid #10b981;
+            background: #f0fdf4;
+        }
+
+        .image-box i {
+            font-size: 40px;
+            color: #2a5298;
+            margin-bottom: 12px;
+        }
+
+        .image-box p {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 120px;
+            margin-top: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .image-hash {
+            font-family: monospace;
+            font-size: 10px;
+            color: #64748b;
+            margin-top: 8px;
+            word-break: break-all;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-warning {
+            background: #ffedd5;
+            color: #9a3412;
+            border: 1px solid #fed7aa;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .modal-header h5 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #64748b;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #1e293b;
+        }
+
+        .intervention-section {
+            margin-bottom: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .intervention-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .intervention-control input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #2a5298;
+        }
+
+        .intervention-control label {
+            font-weight: 600;
+            color: #1e293b;
+            cursor: pointer;
+        }
+
+        .intervention-details {
+            margin-left: 32px;
+            padding: 16px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Pagination */
+        .pagination-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-btn {
+            padding: 8px 16px;
+            border: 1.5px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            color: #475569;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            border-color: #2a5298;
+            color: #2a5298;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Section -->
+    <div id="loginSection" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+                <h2>Welcome Back</h2>
+                <p>Sign in to EukExpress Admin Portal</p>
+                <div class="euk-badge mt-3">v1.0.0 • Production</div>
+            </div>
+            
+            <div id="loginAlert" class="alert alert-danger" style="display: none;"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" placeholder="Enter your username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <span id="loginText">Sign In</span>
+                    <span id="loginSpinner" style="display: none;">
+                        <span class="loading-spinner"></span> Authenticating...
+                    </span>
+                </button>
+            </form>
+            
+            <div class="text-center mt-4">
+                <small class="text-muted">© 2026 EukExpress Global Logistics. All rights reserved.</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>EukExpress</h3>
+                <p>Global Logistics Platform</p>
+            </div>
+            <div class="sidebar-menu">
+                <div class="menu-item active" onclick="showSection('dashboard')">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="menu-item" onclick="showSection('shipments')">
+                    <i class="bi bi-box"></i>
+                    <span>Shipments</span>
+                </div>
+                <div class="menu-item" onclick="showSection('createShipment')">
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Create Shipment</span>
+                </div>
+                <div class="menu-item" onclick="showSection('interventions')">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <span>Interventions</span>
+                </div>
+                <div class="menu-item" onclick="showSection('history')">
+                    <i class="bi bi-clock-history"></i>
+                    <span>History</span>
+                </div>
+                <div class="menu-item" onclick="showSection('settings')">
+                    <i class="bi bi-gear"></i>
+                    <span>Settings</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="page-title">
+                    <h2 id="pageTitle">Dashboard</h2>
+                    <p id="pageSubtitle">Overview of your logistics operations</p>
+                </div>
+                <div class="user-info">
+                    <span class="user-name" id="adminName">Loading...</span>
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Alert Container -->
+            <div id="dashboardAlert" class="alert" style="display: none;"></div>
+
+            <!-- Dashboard Section Content -->
+            <div id="dashboardContent" class="content-section active">
+                <div class="stats-grid" id="statsContainer">
+                    <div class="stat-card">
+                        <div class="stat-title">Active Shipments</div>
+                        <div class="stat-value" id="activeShipments">0</div>
+                        <div class="stat-desc">In transit</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Today's Shipments</div>
+                        <div class="stat-value" id="todayShipments">0</div>
+                        <div class="stat-desc">New today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Delayed</div>
+                        <div class="stat-value" id="delayedCount">0</div>
+                        <div class="stat-desc">Require attention</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Total Shipments</div>
+                        <div class="stat-value" id="totalShipments">0</div>
+                        <div class="stat-desc">All time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Customs Bond</div>
+                        <div class="stat-value" id="customsCount">0</div>
+                        <div class="stat-desc">Under review</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Security Hold</div>
+                        <div class="stat-value" id="securityCount">0</div>
+                        <div class="stat-desc">On hold</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-7 mb-4">
+                        <div class="table-container">
+                            <h5 class="mb-3">Recent Shipments</h5>
+                            <table class="table" id="recentShipmentsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Tracking #</th>
+                                        <th>Status</th>
+                                        <th>Interventions</th>
+                                        <th>Destination</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentShipmentsBody">
+                                    <tr><td colspan="4" class="text-center text-muted py-4">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-5 mb-4">
+                        <div class="table-container">
+                            <h5 class="mb-3">Intervention Summary</h5>
+                            <div id="interventionSummary" class="list-group"></div>
+                        </div>
+                        <div class="chart-container mt-4">
+                            <h5 class="mb-3">Shipment Status Distribution</h5>
+                            <canvas id="statusChart" style="height: 200px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipments List Content -->
+            <div id="shipmentsContent" class="content-section">
+                <div class="table-container">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="m-0">All Shipments</h5>
+                        <div class="d-flex gap-2">
+                            <input type="text" class="form-input" style="width: 250px;" placeholder="Search by tracking, sender, recipient..." id="shipmentSearch">
+                            <select class="form-select" style="width: 150px;" id="statusFilter">
+                                <option value="">All Status</option>
+                            </select>
+                            <select class="form-select" style="width: 150px;" id="interventionFilter">
+                                <option value="">All Interventions</option>
+                                <option value="customs">Customs Bond</option>
+                                <option value="security">Security Hold</option>
+                                <option value="damage">Damage Reported</option>
+                                <option value="return">Return Active</option>
+                                <option value="delay">Delay Active</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table" id="shipmentsTable">
+                            <thead>
+                                <tr>
+                                    <th>Tracking #</th>
+                                    <th>Status</th>
+                                    <th>Sender</th>
+                                    <th>Recipient</th>
+                                    <th>Origin</th>
+                                    <th>Destination</th>
+                                    <th>Interventions</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="shipmentsBody">
+                                <tr><td colspan="8" class="text-center text-muted py-4">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <div>
+                            <select class="form-select" style="width: 80px;" id="pageLimit">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        <div class="pagination-info">
+                            <button class="page-btn" onclick="prevPage()" id="prevPageBtn" disabled>
+                                <i class="bi bi-chevron-left"></i> Previous
+                            </button>
+                            <span id="pageInfo" class="fw-medium">Page 1</span>
+                            <button class="page-btn" onclick="nextPage()" id="nextPageBtn">
+                                Next <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Shipment Content -->
+            <div id="createShipmentContent" class="content-section">
+                <div class="form-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="m-0">Create New Shipment</h5>
+                        <div class="alert alert-info mb-0 py-2 px-3" style="display: block;">
+                            <i class="bi bi-info-circle"></i> 
+                            Tracking format: <strong>EUK*****</strong> (auto-generated)
+                        </div>
+                    </div>
+                    
+                    <form id="createShipmentForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="mb-3" style="color: #1e293b;">Sender Information</h6>
+                                <div class="form-group">
+                                    <label class="form-label">Full Name *</label>
+                                    <input type="text" class="form-input" id="senderName" name="sender_name" required placeholder="John Doe">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email Address *</label>
+                                    <input type="email" class="form-input" id="senderEmail" name="sender_email" required placeholder="sender@example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number *</label>
+                                    <input type="tel" class="form-input" id="senderPhone" name="sender_phone" required placeholder="+1234567890">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Address *</label>
+                                    <textarea class="form-textarea" id="senderAddress" name="sender_address" rows="3" required placeholder="Full address with street, city, postal code"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-3" style="color: #1e293b;">Recipient Information</h6>
+                                <div class="form-group">
+                                    <label class="form-label">Full Name *</label>
+                                    <input type="text" class="form-input" id="recipientName" name="recipient_name" required placeholder="Jane Smith">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email Address *</label>
+                                    <input type="email" class="form-input" id="recipientEmail" name="recipient_email" required placeholder="recipient@example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number *</label>
+                                    <input type="tel" class="form-input" id="recipientPhone" name="recipient_phone" required placeholder="+0987654321">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Address *</label>
+                                    <textarea class="form-textarea" id="recipientAddress" name="recipient_address" rows="3" required placeholder="Full address with street, city, postal code"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <h6 class="mb-3" style="color: #1e293b;">Shipment Details</h6>
+                                <div class="form-group">
+                                    <label class="form-label">Origin Location *</label>
+                                    <input type="text" class="form-input" id="originLocation" name="origin_location" required placeholder="City, Country">
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Origin Code</label>
+                                            <input type="text" class="form-input" id="originCode" name="origin_code" placeholder="e.g., NYC" maxlength="10">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Destination Code</label>
+                                            <input type="text" class="form-input" id="destinationCode" name="destination_code" placeholder="e.g., LHR" maxlength="10">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Destination Location *</label>
+                                    <input type="text" class="form-input" id="destinationLocation" name="destination_location" required placeholder="City, Country">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Goods Description *</label>
+                                    <textarea class="form-textarea" id="goodsDescription" name="goods_description" rows="3" required placeholder="Detailed description of items"></textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Weight (kg)</label>
+                                            <input type="number" step="0.01" min="0" class="form-input" id="weightKg" name="weight_kg" placeholder="5.5">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Dimensions (LxWxH cm)</label>
+                                            <input type="text" class="form-input" id="dimensions" name="dimensions" placeholder="30x20x15">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-3" style="color: #1e293b;">Shipping Information</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Declared Value</label>
+                                            <input type="number" step="0.01" min="0" class="form-input" id="declaredValue" name="declared_value" placeholder="500.00">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Currency</label>
+                                            <select class="form-select" id="declaredCurrency" name="declared_currency">
+                                                <option value="USD">USD ($)</option>
+                                                <option value="EUR">EUR (€)</option>
+                                                <option value="GBP">GBP (£)</option>
+                                                <option value="NGN">NGN (₦)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Shipping Amount *</label>
+                                    <input type="number" step="0.01" min="0" class="form-input" id="shippingAmount" name="shipping_amount" required placeholder="75.00">
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Payment Method</label>
+                                            <select class="form-select" id="paymentMethod" name="payment_method">
+                                                <option value="">Select</option>
+                                                <option value="CASH">Cash</option>
+                                                <option value="TRANSFER">Bank Transfer</option>
+                                                <option value="CARD">Card</option>
+                                                <option value="POS">POS</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Payment Status</label>
+                                            <select class="form-select" id="paymentStatus" name="payment_status">
+                                                <option value="PENDING">Pending</option>
+                                                <option value="PAID">Paid</option>
+                                                <option value="LATER">Pay Later</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Sending Date *</label>
+                                            <input type="date" class="form-input" id="sendingDate" name="sending_date" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Est. Delivery *</label>
+                                            <input type="date" class="form-input" id="estimatedDeliveryDate" name="estimated_delivery_date" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="isInternational" name="is_international">
+                                    <label class="form-check-label" for="isInternational">International Shipment</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h6 class="mb-3" style="color: #1e293b;">Shipment Images (Required: Front & Rear)</h6>
+                                <div class="image-upload-container">
+                                    <div class="image-box" id="frontImageBox" onclick="document.getElementById('frontImage').click()">
+                                        <i class="bi bi-camera"></i>
+                                        <p>Front View</p>
+                                        <input type="file" id="frontImage" accept="image/*" style="display: none;" onchange="previewImage(this, 'frontPreview', 'frontHash')">
+                                        <img id="frontPreview" class="image-preview" style="display: none;">
+                                        <div id="frontHash" class="image-hash"></div>
+                                    </div>
+                                    <div class="image-box" id="rearImageBox" onclick="document.getElementById('rearImage').click()">
+                                        <i class="bi bi-camera"></i>
+                                        <p>Rear View</p>
+                                        <input type="file" id="rearImage" accept="image/*" style="display: none;" onchange="previewImage(this, 'rearPreview', 'rearHash')">
+                                        <img id="rearPreview" class="image-preview" style="display: none;">
+                                        <div id="rearHash" class="image-hash"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="button" class="btn-secondary me-3" onclick="resetCreateForm()">Reset</button>
+                            <button type="submit" class="btn-primary" id="createShipmentBtn">
+                                <span id="createBtnText">Create Shipment</span>
+                                <span id="createBtnSpinner" style="display: none;">
+                                    <span class="loading-spinner"></span> Creating...
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Interventions Content -->
+            <div id="interventionsContent" class="content-section">
+                <div class="table-container">
+                    <h5 class="mb-4">Shipments Requiring Intervention</h5>
+                    <div class="table-responsive">
+                        <table class="table" id="interventionsTable">
+                            <thead>
+                                <tr>
+                                    <th>Tracking #</th>
+                                    <th>Intervention Type</th>
+                                    <th>Status</th>
+                                    <th>Origin</th>
+                                    <th>Destination</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="interventionsBody">
+                                <tr><td colspan="6" class="text-center text-muted py-4">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Content -->
+            <div id="historyContent" class="content-section">
+                <div class="table-container">
+                    <h5 class="mb-4">Shipment Status History</h5>
+                    <div class="table-responsive">
+                        <table class="table" id="historyTable">
+                            <thead>
+                                <tr>
+                                    <th>Tracking #</th>
+                                    <th>Event</th>
+                                    <th>Previous Status</th>
+                                    <th>New Status</th>
+                                    <th>Timestamp</th>
+                                    <th>Location</th>
+                                    <th>Changed By</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyBody">
+                                <tr><td colspan="7" class="text-center text-muted py-4">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Content -->
+            <div id="settingsContent" class="content-section">
+                <div class="form-card">
+                    <h5 class="mb-4">Account Settings</h5>
+                    
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle"></i> 
+                        Change your password regularly to maintain account security.
+                    </div>
+                    
+                    <form id="changePasswordForm">
+                        <div class="form-group">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" class="form-input" id="currentPassword" required autocomplete="current-password">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-input" id="newPassword" required minlength="8" autocomplete="new-password">
+                            <small class="text-muted">Minimum 8 characters</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-input" id="confirmPassword" required autocomplete="new-password">
+                        </div>
+                        <button type="submit" class="btn-primary">Update Password</button>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <h5 class="mb-3">Session Information</h5>
+                    <div class="bg-light p-3 rounded">
+                        <p class="mb-2"><strong>Logged in as:</strong> <span id="sessionUsername"></span></p>
+                        <p class="mb-0"><strong>API Endpoint:</strong> <code>http://localhost:8000/api/v1</code></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shipment Detail Modal -->
+    <div id="shipmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Shipment Details</h5>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="shipmentDetailContent" class="mb-4"></div>
+            
+            <div class="mb-4">
+                <h6 class="mb-3">Update Status</h6>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <select class="form-select" id="statusSelect">
+                            <option value="">Loading...</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn-primary w-100" onclick="updateShipmentStatus()">Update Status</button>
+                    </div>
+                    <div class="col-12">
+                        <input type="text" class="form-input" id="statusLocation" placeholder="Current location (optional)">
+                    </div>
+                    <div class="col-12">
+                        <textarea class="form-textarea" id="statusNotes" placeholder="Additional notes (optional)" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <h6 class="mb-3">Intervention Controls</h6>
+                
+                <!-- Customs Bond -->
+                <div class="intervention-section">
+                    <div class="intervention-control">
+                        <input type="checkbox" id="customsBond">
+                        <label>Customs Bond</label>
+                    </div>
+                    <div id="customsDetails" class="intervention-details" style="display: none;">
+                        <select class="form-select mb-2" id="customsAction">
+                            <option value="activate">Activate Bond</option>
+                            <option value="release">Release Bond</option>
+                        </select>
+                        <input type="text" class="form-input mb-2" id="customsLocation" placeholder="Location">
+                        <input type="text" class="form-input mb-2" id="customsReference" placeholder="Reference #">
+                        <textarea class="form-textarea" id="customsNotes" placeholder="Notes" rows="2"></textarea>
+                    </div>
+                </div>
+                
+                <!-- Security Hold -->
+                <div class="intervention-section">
+                    <div class="intervention-control">
+                        <input type="checkbox" id="securityHold">
+                        <label>Security Hold</label>
+                    </div>
+                    <div id="securityDetails" class="intervention-details" style="display: none;">
+                        <select class="form-select mb-2" id="securityAction">
+                            <option value="activate">Activate Hold</option>
+                            <option value="clear">Clear Hold</option>
+                        </select>
+                        <input type="text" class="form-input mb-2" id="securityLocation" placeholder="Location">
+                        <textarea class="form-textarea" id="securityNotes" placeholder="Notes" rows="2"></textarea>
+                    </div>
+                </div>
+                
+                <!-- Damage Reported -->
+                <div class="intervention-section">
+                    <div class="intervention-control">
+                        <input type="checkbox" id="damageReported">
+                        <label>Damage Reported</label>
+                    </div>
+                    <div id="damageDetails" class="intervention-details" style="display: none;">
+                        <select class="form-select mb-2" id="damageAction">
+                            <option value="report">Report Damage</option>
+                            <option value="resolve">Resolve Damage</option>
+                        </select>
+                        <textarea class="form-textarea mb-2" id="damageDescription" placeholder="Damage description" rows="2"></textarea>
+                        <textarea class="form-textarea" id="damageResolution" placeholder="Resolution notes" rows="2"></textarea>
+                    </div>
+                </div>
+                
+                <!-- Return to Sender -->
+                <div class="intervention-section">
+                    <div class="intervention-control">
+                        <input type="checkbox" id="returnActive">
+                        <label>Return to Sender</label>
+                    </div>
+                    <div id="returnDetails" class="intervention-details" style="display: none;">
+                        <textarea class="form-textarea" id="returnReason" placeholder="Return reason" rows="2"></textarea>
+                    </div>
+                </div>
+                
+                <!-- Delay -->
+                <div class="intervention-section">
+                    <div class="intervention-control">
+                        <input type="checkbox" id="delayActive">
+                        <label>Delay</label>
+                    </div>
+                    <div id="delayDetails" class="intervention-details" style="display: none;">
+                        <select class="form-select mb-2" id="delayAction">
+                            <option value="report">Report Delay</option>
+                            <option value="resolve">Resolve Delay</option>
+                        </select>
+                        <input type="date" class="form-input mb-2" id="revisedEta" placeholder="Revised ETA">
+                        <textarea class="form-textarea mb-2" id="delayReason" placeholder="Delay reason" rows="2"></textarea>
+                        <textarea class="form-textarea" id="delayNotes" placeholder="Additional notes" rows="2"></textarea>
+                    </div>
+                </div>
+                
+                <button class="btn-primary w-100 mt-3" onclick="updateInterventions()">Apply Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // API CONFIGURATION
+        // ============================================
+        const API_BASE = 'https://eukexpress-backend.onrender.com/api/v1';
+        let currentPage = 1;
+        let currentLimit = 10;
+        let totalPages = 1;
+        let currentShipmentTracking = null;
+        let frontImageFile = null;
+        let rearImageFile = null;
+        let statusChart = null;
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        function showAlert(message, type = 'success') {
+            const alert = document.getElementById('dashboardAlert');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 4000);
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function formatTracking(tracking) {
+            if (!tracking) return '';
+            return `<span class="tracking-badge"><span class="tracking-prefix">EUK</span>${tracking.substring(3)}</span>`;
+        }
+
+        function getStatusClass(status) {
+            if (!status) return 'status-booked';
+            const statusMap = {
+                'BOOKED': 'status-booked',
+                'PROCESSING': 'status-processing',
+                'IN_TRANSIT': 'status-in_transit',
+                'OUT_FOR_DELIVERY': 'status-out_for_delivery',
+                'DELIVERED': 'status-delivered',
+                'DELAYED': 'status-delayed',
+                'RETURN_INITIATED': 'status-return_initiated',
+                'CANCELLED': 'status-cancelled'
+            };
+            return statusMap[status] || 'status-booked';
+        }
+
+        // ============================================
+        // IMAGE PREVIEW
+        // ============================================
+        function previewImage(input, previewId, hashId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById(previewId);
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    
+                    const box = input.closest('.image-box');
+                    box.classList.add('has-image');
+                    
+                    document.getElementById(hashId).textContent = '✓ Image selected';
+                };
+                reader.readAsDataURL(input.files[0]);
+                
+                if (previewId === 'frontPreview') {
+                    frontImageFile = input.files[0];
+                } else {
+                    rearImageFile = input.files[0];
+                }
+            }
+        }
+
+        function resetCreateForm() {
+            document.getElementById('createShipmentForm').reset();
+            frontImageFile = null;
+            rearImageFile = null;
+            document.getElementById('frontPreview').style.display = 'none';
+            document.getElementById('rearPreview').style.display = 'none';
+            document.getElementById('frontImageBox').classList.remove('has-image');
+            document.getElementById('rearImageBox').classList.remove('has-image');
+            document.getElementById('frontHash').textContent = '';
+            document.getElementById('rearHash').textContent = '';
+            
+            // Set default dates
+            const today = new Date().toISOString().split('T')[0];
+            const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            document.getElementById('sendingDate').value = today;
+            document.getElementById('estimatedDeliveryDate').value = nextWeek;
+        }
+
+        // ============================================
+        // AUTHENTICATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('adminToken');
+            if (token) {
+                showDashboard();
+                loadDashboardData();
+            }
+            
+            // Set default dates for create form
+            const today = new Date().toISOString().split('T')[0];
+            const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            if (document.getElementById('sendingDate')) {
+                document.getElementById('sendingDate').value = today;
+                document.getElementById('estimatedDeliveryDate').value = nextWeek;
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const loginText = document.getElementById('loginText');
+            const loginSpinner = document.getElementById('loginSpinner');
+            const loginAlert = document.getElementById('loginAlert');
+            
+            if (!username || !password) {
+                showAlert('Please enter username and password', 'danger');
+                return;
+            }
+            
+            loginText.style.display = 'none';
+            loginSpinner.style.display = 'inline';
+            loginBtn.disabled = true;
+            loginAlert.style.display = 'none';
+            
+            try {
+                const formData = new URLSearchParams();
+                formData.append('username', username);
+                formData.append('password', password);
+                
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('adminToken', data.access_token);
+                    localStorage.setItem('adminUser', username);
+                    showDashboard();
+                    loadDashboardData();
+                } else {
+                    loginAlert.textContent = data.detail || 'Invalid credentials';
+                    loginAlert.style.display = 'block';
+                }
+            } catch (error) {
+                loginAlert.textContent = 'Network error. Please check your connection.';
+                loginAlert.style.display = 'block';
+            } finally {
+                loginText.style.display = 'inline';
+                loginSpinner.style.display = 'none';
+                loginBtn.disabled = false;
+            }
+        });
+
+        function showDashboard() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('dashboardSection').classList.add('active');
+            document.getElementById('adminName').textContent = localStorage.getItem('adminUser') || 'Admin';
+            document.getElementById('sessionUsername').textContent = localStorage.getItem('adminUser') || 'Admin';
+        }
+
+        async function logout() {
+            const token = localStorage.getItem('adminToken');
+            
+            try {
+                await fetch(`${API_BASE}/auth/logout`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+            } catch (error) {
+                // Ignore logout errors
+            } finally {
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUser');
+                document.getElementById('loginSection').style.display = 'flex';
+                document.getElementById('dashboardSection').classList.remove('active');
+                document.getElementById('loginForm').reset();
+            }
+        }
+
+        // ============================================
+        // SECTION NAVIGATION
+        // ============================================
+        function showSection(section) {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.menu-item').classList.add('active');
+            
+            document.querySelectorAll('.content-section').forEach(s => {
+                s.classList.remove('active');
+            });
+            
+            const titles = {
+                'dashboard': { title: 'Dashboard', subtitle: 'Overview of your logistics operations' },
+                'shipments': { title: 'Shipments', subtitle: 'Manage all shipments' },
+                'createShipment': { title: 'Create Shipment', subtitle: 'Register a new shipment' },
+                'interventions': { title: 'Interventions', subtitle: 'Shipments requiring attention' },
+                'history': { title: 'History', subtitle: 'Shipment status history' },
+                'settings': { title: 'Settings', subtitle: 'Account settings' }
+            };
+            
+            document.getElementById('pageTitle').textContent = titles[section].title;
+            document.getElementById('pageSubtitle').textContent = titles[section].subtitle;
+            
+            document.getElementById(`${section}Content`).classList.add('active');
+            
+            // Load section data
+            switch(section) {
+                case 'dashboard':
+                    loadDashboardData();
+                    break;
+                case 'shipments':
+                    currentPage = 1;
+                    loadShipments();
+                    loadStatusFilters();
+                    break;
+                case 'interventions':
+                    loadInterventions();
+                    break;
+                case 'history':
+                    loadHistory();
+                    break;
+            }
+        }
+
+        // ============================================
+        // DASHBOARD FUNCTIONS
+        // ============================================
+        async function loadDashboardData() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) return;
+            
+            try {
+                // Load dashboard stats
+                const response = await fetch(`${API_BASE}/dashboard/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const stats = data.data.stats;
+                    
+                    document.getElementById('activeShipments').textContent = stats.active_shipments || 0;
+                    document.getElementById('todayShipments').textContent = stats.today_shipments || 0;
+                    document.getElementById('delayedCount').textContent = stats.delayed_count || 0;
+                    document.getElementById('totalShipments').textContent = stats.total_shipments || 0;
+                    document.getElementById('customsCount').textContent = stats.customs_bond_count || 0;
+                    document.getElementById('securityCount').textContent = stats.security_hold_count || 0;
+                    
+                    // Update intervention summary
+                    updateInterventionSummary(stats);
+                }
+                
+                // Load recent shipments
+                const recentResponse = await fetch(`${API_BASE}/dashboard/recent-shipments`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (recentResponse.ok) {
+                    const data = await recentResponse.json();
+                    const tbody = document.getElementById('recentShipmentsBody');
+                    
+                    if (!data.data || data.data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No recent shipments</td></tr>';
+                    } else {
+                        tbody.innerHTML = data.data.map(s => `
+                            <tr>
+                                <td>${formatTracking(s.tracking)}</td>
+                                <td><span class="status-badge ${getStatusClass(s.status)}">${s.status_display || s.status}</span></td>
+                                <td>
+                                    <div class="intervention-container">
+                                        ${s.has_interventions ? '<span class="intervention-badge intervention-customs" data-tooltip="Has Interventions">!</span>' : ''}
+                                    </div>
+                                </td>
+                                <td>${s.destination || 'N/A'}</td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+                
+                // Load status distribution for chart
+                loadStatusChart();
+                
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showAlert('Failed to load dashboard data', 'danger');
+            }
+        }
+
+        function updateInterventionSummary(stats) {
+            const summaryDiv = document.getElementById('interventionSummary');
+            summaryDiv.innerHTML = `
+                <div class="list-group">
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <span><i class="bi bi-shield-shaded me-2" style="color: #92400e;"></i> Customs Bond</span>
+                        <span class="badge bg-warning rounded-pill px-3 py-2">${stats.customs_bond_count || 0}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <span><i class="bi bi-shield-lock me-2" style="color: #991b1b;"></i> Security Hold</span>
+                        <span class="badge bg-danger rounded-pill px-3 py-2">${stats.security_hold_count || 0}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <span><i class="bi bi-exclamation-triangle me-2" style="color: #9a3412;"></i> Damage Reported</span>
+                        <span class="badge bg-warning rounded-pill px-3 py-2">${stats.damage_reported_count || 0}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <span><i class="bi bi-arrow-return-left me-2" style="color: #6b21a8;"></i> Return Active</span>
+                        <span class="badge bg-secondary rounded-pill px-3 py-2">0</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <span><i class="bi bi-clock-history me-2" style="color: #334155;"></i> Delay Active</span>
+                        <span class="badge bg-secondary rounded-pill px-3 py-2">${stats.delayed_count || 0}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadStatusChart() {
+            const token = localStorage.getItem('adminToken');
+            
+            try {
+                const response = await fetch(`${API_BASE}/shipments/?limit=1000`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const shipments = data.data.shipments;
+                    
+                    // Count by status
+                    const statusCounts = {};
+                    shipments.forEach(s => {
+                        const status = s.status_display || s.status;
+                        statusCounts[status] = (statusCounts[status] || 0) + 1;
+                    });
+                    
+                    const ctx = document.getElementById('statusChart').getContext('2d');
+                    
+                    if (statusChart) {
+                        statusChart.destroy();
+                    }
+                    
+                    statusChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: Object.keys(statusCounts),
+                            datasets: [{
+                                data: Object.values(statusCounts),
+                                backgroundColor: [
+                                    '#2a5298', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280'
+                                ],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading chart:', error);
+            }
+        }
+
+        // ============================================
+        // SHIPMENTS FUNCTIONS
+        // ============================================
+        async function loadShipments() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) return;
+            
+            const search = document.getElementById('shipmentSearch').value;
+            const status = document.getElementById('statusFilter').value;
+            
+            let url = `${API_BASE}/shipments/?page=${currentPage}&limit=${currentLimit}`;
+            if (search) url += `&search=${encodeURIComponent(search)}`;
+            if (status) url += `&status=${encodeURIComponent(status)}`;
+            
+            try {
+                const response = await fetch(url, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    totalPages = data.data.pages || 1;
+                    
+                    document.getElementById('pageInfo').textContent = `Page ${data.data.page} of ${totalPages}`;
+                    document.getElementById('prevPageBtn').disabled = data.data.page <= 1;
+                    document.getElementById('nextPageBtn').disabled = data.data.page >= totalPages;
+                    
+                    const tbody = document.getElementById('shipmentsBody');
+                    
+                    if (!data.data.shipments || data.data.shipments.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No shipments found</td></tr>';
+                    } else {
+                        const interventionFilter = document.getElementById('interventionFilter').value;
+                        let filteredShipments = data.data.shipments;
+                        
+                        if (interventionFilter) {
+                            filteredShipments = filteredShipments.filter(s => 
+                                s.intervention_types && s.intervention_types.includes(interventionFilter)
+                            );
+                        }
+                        
+                        tbody.innerHTML = filteredShipments.map(s => {
+                            const interventionIcons = (s.intervention_types || []).map(t => {
+                                const icons = {
+                                    'customs': '<span class="intervention-badge intervention-customs" data-tooltip="Customs Bond">C</span>',
+                                    'security': '<span class="intervention-badge intervention-security" data-tooltip="Security Hold">S</span>',
+                                    'damage': '<span class="intervention-badge intervention-damage" data-tooltip="Damage">D</span>',
+                                    'return': '<span class="intervention-badge intervention-return" data-tooltip="Return">R</span>',
+                                    'delay': '<span class="intervention-badge intervention-delay" data-tooltip="Delay">L</span>'
+                                };
+                                return icons[t] || '';
+                            }).join('');
+                            
+                            return `
+                                <tr>
+                                    <td>${formatTracking(s.tracking_number)}</td>
+                                    <td><span class="status-badge ${getStatusClass(s.status)}">${s.status_display || s.status}</span></td>
+                                    <td>${s.sender_name || 'N/A'}</td>
+                                    <td>${s.recipient_name || 'N/A'}</td>
+                                    <td>${s.origin_location || 'N/A'}</td>
+                                    <td>${s.destination_location || 'N/A'}</td>
+                                    <td><div class="intervention-container">${interventionIcons}</div></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="viewShipment('${s.tracking_number}')">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading shipments:', error);
+                showAlert('Failed to load shipments', 'danger');
+            }
+        }
+
+        async function loadStatusFilters() {
+            const token = localStorage.getItem('adminToken');
+            
+            try {
+                const response = await fetch(`${API_BASE}/shipments/filters`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const select = document.getElementById('statusFilter');
+                    const currentValue = select.value;
+                    
+                    select.innerHTML = '<option value="">All Status</option>' + 
+                        (data.data.statuses || []).map(s => `<option value="${s.value}">${s.label}</option>`).join('');
+                    
+                    select.value = currentValue;
+                }
+            } catch (error) {
+                console.error('Error loading filters:', error);
+            }
+        }
+
+        // Search and Filter Events
+        document.getElementById('shipmentSearch')?.addEventListener('input', debounce(() => {
+            currentPage = 1;
+            loadShipments();
+        }, 500));
+        
+        document.getElementById('statusFilter')?.addEventListener('change', () => {
+            currentPage = 1;
+            loadShipments();
+        });
+        
+        document.getElementById('interventionFilter')?.addEventListener('change', () => {
+            currentPage = 1;
+            loadShipments();
+        });
+        
+        document.getElementById('pageLimit')?.addEventListener('change', (e) => {
+            currentLimit = parseInt(e.target.value);
+            currentPage = 1;
+            loadShipments();
+        });
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                loadShipments();
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadShipments();
+            }
+        }
+
+        // ============================================
+        // CREATE SHIPMENT
+        // ============================================
+        document.getElementById('createShipmentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                showAlert('Please login again', 'danger');
+                return;
+            }
+            
+            if (!frontImageFile || !rearImageFile) {
+                showAlert('Please upload both front and rear images', 'danger');
+                return;
+            }
+            
+            const createBtn = document.getElementById('createShipmentBtn');
+            const btnText = document.getElementById('createBtnText');
+            const btnSpinner = document.getElementById('createBtnSpinner');
+            
+            btnText.style.display = 'none';
+            btnSpinner.style.display = 'inline';
+            createBtn.disabled = true;
+            
+            const formData = new FormData();
+            
+            // Append all form fields
+            formData.append('sender_name', document.getElementById('senderName').value.trim());
+            formData.append('sender_email', document.getElementById('senderEmail').value.trim());
+            formData.append('sender_phone', document.getElementById('senderPhone').value.trim());
+            formData.append('sender_address', document.getElementById('senderAddress').value.trim());
+            formData.append('recipient_name', document.getElementById('recipientName').value.trim());
+            formData.append('recipient_email', document.getElementById('recipientEmail').value.trim());
+            formData.append('recipient_phone', document.getElementById('recipientPhone').value.trim());
+            formData.append('recipient_address', document.getElementById('recipientAddress').value.trim());
+            formData.append('origin_location', document.getElementById('originLocation').value.trim());
+            
+            const originCode = document.getElementById('originCode').value.trim();
+            if (originCode) formData.append('origin_code', originCode);
+            
+            formData.append('destination_location', document.getElementById('destinationLocation').value.trim());
+            
+            const destinationCode = document.getElementById('destinationCode').value.trim();
+            if (destinationCode) formData.append('destination_code', destinationCode);
+            
+            formData.append('goods_description', document.getElementById('goodsDescription').value.trim());
+            
+            const weightKg = document.getElementById('weightKg').value;
+            if (weightKg) formData.append('weight_kg', weightKg);
+            
+            const dimensions = document.getElementById('dimensions').value.trim();
+            if (dimensions) formData.append('dimensions', dimensions);
+            
+            const declaredValue = document.getElementById('declaredValue').value;
+            if (declaredValue) formData.append('declared_value', declaredValue);
+            
+            formData.append('declared_currency', document.getElementById('declaredCurrency').value);
+            formData.append('shipping_amount', document.getElementById('shippingAmount').value);
+            
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            if (paymentMethod) formData.append('payment_method', paymentMethod);
+            
+            formData.append('payment_status', document.getElementById('paymentStatus').value);
+            formData.append('sending_date', document.getElementById('sendingDate').value);
+            formData.append('estimated_delivery_date', document.getElementById('estimatedDeliveryDate').value);
+            formData.append('is_international', document.getElementById('isInternational').checked ? 'true' : 'false');
+            
+            // Append images
+            formData.append('front_image', frontImageFile);
+            formData.append('rear_image', rearImageFile);
+            
+            try {
+                const response = await fetch(`${API_BASE}/shipments/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert(`Shipment created! Tracking: ${result.data.tracking_number}`, 'success');
+                    resetCreateForm();
+                    
+                    setTimeout(() => {
+                        showSection('shipments');
+                        loadShipments();
+                    }, 1500);
+                } else {
+                    let errorMessage = 'Failed to create shipment';
+                    if (result.detail) {
+                        if (Array.isArray(result.detail)) {
+                            errorMessage = result.detail.map(err => err.msg).join(', ');
+                        } else {
+                            errorMessage = result.detail;
+                        }
+                    }
+                    showAlert(errorMessage, 'danger');
+                }
+            } catch (error) {
+                console.error('Error creating shipment:', error);
+                showAlert('Network error. Please try again.', 'danger');
+            } finally {
+                btnText.style.display = 'inline';
+                btnSpinner.style.display = 'none';
+                createBtn.disabled = false;
+            }
+        });
+
+        // ============================================
+        // INTERVENTIONS FUNCTIONS
+        // ============================================
+        async function loadInterventions() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/shipments/?limit=100`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const interventions = (data.data.shipments || []).filter(s => s.has_interventions);
+                    
+                    const tbody = document.getElementById('interventionsBody');
+                    
+                    if (interventions.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No active interventions</td></tr>';
+                    } else {
+                        tbody.innerHTML = interventions.map(s => {
+                            const types = (s.intervention_types || []).map(t => {
+                                const labels = {
+                                    'customs': 'Customs Bond',
+                                    'security': 'Security Hold',
+                                    'damage': 'Damage',
+                                    'return': 'Return',
+                                    'delay': 'Delay'
+                                };
+                                return `<span class="badge bg-warning me-1">${labels[t] || t}</span>`;
+                            }).join('');
+                            
+                            return `
+                                <tr>
+                                    <td>${formatTracking(s.tracking_number)}</td>
+                                    <td>${types}</td>
+                                    <td><span class="status-badge ${getStatusClass(s.status)}">${s.status_display || s.status}</span></td>
+                                    <td>${s.origin_location || 'N/A'}</td>
+                                    <td>${s.destination_location || 'N/A'}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="viewShipment('${s.tracking_number}')">
+                                            <i class="bi bi-pencil"></i> Manage
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading interventions:', error);
+            }
+        }
+
+        // ============================================
+        // HISTORY FUNCTIONS
+        // ============================================
+        async function loadHistory() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/dashboard/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const activities = data.data.recent_activity || [];
+                    
+                    const tbody = document.getElementById('historyBody');
+                    
+                    if (activities.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No history available</td></tr>';
+                    } else {
+                        tbody.innerHTML = activities.map(a => {
+                            const [prev, next] = a.event.split('→').map(s => s.trim());
+                            return `
+                                <tr>
+                                    <td>${formatTracking(a.tracking)}</td>
+                                    <td>Status Change</td>
+                                    <td><span class="badge bg-secondary">${prev || 'NEW'}</span></td>
+                                    <td><span class="badge bg-primary">${next || a.event}</span></td>
+                                    <td>${new Date(a.timestamp).toLocaleString()}</td>
+                                    <td>${a.location || 'N/A'}</td>
+                                    <td>${a.changed_by || 'system'}</td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        // ============================================
+        // SHIPMENT DETAIL MODAL
+        // ============================================
+        async function viewShipment(trackingNumber) {
+            const token = localStorage.getItem('adminToken');
+            if (!token) return;
+            
+            currentShipmentTracking = trackingNumber;
+            document.getElementById('modalTracking').innerHTML = formatTracking(trackingNumber);
+            
+            try {
+                const response = await fetch(`${API_BASE}/shipments/${trackingNumber}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const s = data.data;
+                    
+                    document.getElementById('shipmentDetailContent').innerHTML = `
+                        <div class="row">
+                            <div class="col-6">
+                                <p><strong>Tracking:</strong> ${formatTracking(s.tracking_number)}</p>
+                                <p><strong>Invoice:</strong> ${s.invoice_number || 'N/A'}</p>
+                                <p><strong>Status:</strong> <span class="status-badge ${getStatusClass(s.current_status)}">${s.current_status || 'N/A'}</span></p>
+                                <p><strong>Sender:</strong> ${s.sender_name || 'N/A'}</p>
+                                <p><strong>Recipient:</strong> ${s.recipient_name || 'N/A'}</p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Origin:</strong> ${s.origin_location || 'N/A'}</p>
+                                <p><strong>Destination:</strong> ${s.destination_location || 'N/A'}</p>
+                                <p><strong>Weight:</strong> ${s.weight_kg ? s.weight_kg + ' kg' : 'N/A'}</p>
+                                <p><strong>Value:</strong> ${s.declared_currency || 'USD'} ${s.declared_value || '0.00'}</p>
+                                <p><strong>Created:</strong> ${s.created_at ? new Date(s.created_at).toLocaleDateString() : 'N/A'}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Set intervention checkboxes
+                    document.getElementById('customsBond').checked = s.customs_bond_active || false;
+                    document.getElementById('securityHold').checked = s.security_hold_active || false;
+                    document.getElementById('damageReported').checked = s.damage_reported || false;
+                    document.getElementById('returnActive').checked = s.return_active || false;
+                    document.getElementById('delayActive').checked = s.delay_active || false;
+                    
+                    // Hide all details initially
+                    ['customs', 'security', 'damage', 'return', 'delay'].forEach(type => {
+                        const details = document.getElementById(type + 'Details');
+                        if (details) details.style.display = 'none';
+                    });
+                    
+                    // Load available statuses
+                    loadAvailableStatuses(trackingNumber);
+                    
+                    document.getElementById('shipmentModal').classList.add('active');
+                }
+            } catch (error) {
+                console.error('Error loading shipment:', error);
+                showAlert('Failed to load shipment details', 'danger');
+            }
+        }
+
+        async function loadAvailableStatuses(trackingNumber) {
+            const token = localStorage.getItem('adminToken');
+            
+            try {
+                const response = await fetch(`${API_BASE}/shipments/${trackingNumber}/available-statuses`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const select = document.getElementById('statusSelect');
+                    
+                    select.innerHTML = `
+                        <option value="">Current: ${data.data.current_status_display}</option>
+                        ${(data.data.available_statuses || []).map(s => 
+                            `<option value="${s.status}">${s.display}</option>`
+                        ).join('')}
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading statuses:', error);
+            }
+        }
+
+        async function updateShipmentStatus() {
+            const token = localStorage.getItem('adminToken');
+            const newStatus = document.getElementById('statusSelect').value;
+            const location = document.getElementById('statusLocation').value;
+            const notes = document.getElementById('statusNotes').value;
+            
+            if (!newStatus) {
+                showAlert('Please select a status', 'warning');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/shipments/${currentShipmentTracking}/status`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        status: newStatus,
+                        location: location || undefined,
+                        notes: notes || undefined
+                    })
+                });
+                
+                if (response.ok) {
+                    showAlert('Status updated successfully!', 'success');
+                    closeModal();
+                    loadShipments();
+                    loadDashboardData();
+                } else {
+                    showAlert('Failed to update status', 'danger');
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+                showAlert('Error updating status', 'danger');
+            }
+        }
+
+        function toggleInterventionDetails(type) {
+            const checkbox = document.getElementById(type + (type === 'customs' ? 'Bond' : 
+                                                          type === 'security' ? 'Hold' : 
+                                                          type === 'damage' ? 'Reported' : 
+                                                          type === 'return' ? 'Active' : 'Active'));
+            const details = document.getElementById(type + 'Details');
+            if (details) {
+                details.style.display = checkbox.checked ? 'block' : 'none';
+            }
+        }
+
+        // Add event listeners for intervention checkboxes
+        document.getElementById('customsBond')?.addEventListener('change', () => toggleInterventionDetails('customs'));
+        document.getElementById('securityHold')?.addEventListener('change', () => toggleInterventionDetails('security'));
+        document.getElementById('damageReported')?.addEventListener('change', () => toggleInterventionDetails('damage'));
+        document.getElementById('returnActive')?.addEventListener('change', () => toggleInterventionDetails('return'));
+        document.getElementById('delayActive')?.addEventListener('change', () => toggleInterventionDetails('delay'));
+
+        async function updateInterventions() {
+            showAlert('Intervention management coming soon', 'info');
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById('shipmentModal').classList.remove('active');
+            document.getElementById('statusLocation').value = '';
+            document.getElementById('statusNotes').value = '';
+        }
+
+        // ============================================
+        // SETTINGS FUNCTIONS
+        // ============================================
+        document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const token = localStorage.getItem('adminToken');
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword !== confirmPassword) {
+                showAlert('New passwords do not match', 'danger');
+                return;
+            }
+            
+            if (newPassword.length < 8) {
+                showAlert('Password must be at least 8 characters', 'danger');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword
+                    })
+                });
+                
+                if (response.ok) {
+                    showAlert('Password changed successfully!', 'success');
+                    e.target.reset();
+                } else {
+                    const data = await response.json();
+                    showAlert(data.detail || 'Failed to change password', 'danger');
+                }
+            } catch (error) {
+                showAlert('Error changing password', 'danger');
+            }
+        });
+
+        // ============================================
+        // MODAL CLICK OUTSIDE
+        // ============================================
+        window.onclick = function(event) {
+            const modal = document.getElementById('shipmentModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html>

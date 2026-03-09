@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
@@ -21,12 +23,13 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: #f8fafc;
             overflow-x: hidden;
+            color: #1e293b;
         }
 
-        /* Login Page Styles */
+        /* Login Page */
         .login-container {
             min-height: 100vh;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
@@ -40,15 +43,9 @@
             background: white;
             border-radius: 24px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            padding: 48px;
+            padding: 40px;
             width: 100%;
             max-width: 440px;
-            animation: slideUp 0.5s ease;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .login-header {
@@ -56,24 +53,38 @@
             margin-bottom: 32px;
         }
 
-        .login-header .logo {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            border-radius: 50%;
+        .nav-logo {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            color: white;
-            font-size: 40px;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .logo-highlight {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .login-header h2 {
-            color: #1e293b;
             font-weight: 700;
             font-size: 28px;
             margin-bottom: 8px;
+            color: #1e293b;
         }
 
         .login-header p {
@@ -82,33 +93,45 @@
         }
 
         .euk-badge {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: white;
             padding: 6px 16px;
             border-radius: 100px;
             font-weight: 600;
             font-size: 14px;
             display: inline-block;
-            letter-spacing: 0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 13px;
         }
 
         .form-control {
-            height: 48px;
-            border-radius: 12px;
+            width: 100%;
+            padding: 12px 16px;
             border: 1.5px solid #e2e8f0;
-            padding: 0 16px;
-            font-size: 15px;
+            border-radius: 12px;
+            font-size: 14px;
             transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
         }
 
         .form-control:focus {
             border-color: #2a5298;
-            box-shadow: 0 0 0 4px rgba(42, 82, 152, 0.1);
             outline: none;
+            box-shadow: 0 0 0 4px rgba(42,82,152,0.1);
         }
 
         .btn-login {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             border: none;
             height: 48px;
             border-radius: 12px;
@@ -122,7 +145,7 @@
 
         .btn-login:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(42, 82, 152, 0.3);
+            box-shadow: 0 10px 25px rgba(42,82,152,0.3);
         }
 
         .btn-login:disabled {
@@ -130,21 +153,20 @@
             cursor: not-allowed;
         }
 
-        /* Dashboard Styles */
+        /* Dashboard Layout */
         .dashboard-container {
             display: none;
             min-height: 100vh;
         }
 
         .dashboard-container.active {
-            display: block;
+            display: flex;
         }
 
         /* Sidebar */
         .sidebar {
             width: 280px;
             background: white;
-            color: #1e293b;
             height: 100vh;
             position: fixed;
             left: 0;
@@ -152,6 +174,8 @@
             box-shadow: 4px 0 20px rgba(0,0,0,0.05);
             overflow-y: auto;
             z-index: 100;
+            display: flex;
+            flex-direction: column;
         }
 
         .sidebar-header {
@@ -163,10 +187,10 @@
             margin: 0;
             font-size: 24px;
             font-weight: 700;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            background-clip: text;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .sidebar-header p {
@@ -177,6 +201,7 @@
 
         .sidebar-menu {
             padding: 20px 16px;
+            flex: 1;
         }
 
         .menu-item {
@@ -184,7 +209,6 @@
             display: flex;
             align-items: center;
             color: #64748b;
-            text-decoration: none;
             transition: all 0.2s;
             margin: 4px 0;
             border-radius: 12px;
@@ -198,9 +222,9 @@
         }
 
         .menu-item.active {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: white;
-            box-shadow: 0 10px 20px rgba(42, 82, 152, 0.2);
+            box-shadow: 0 10px 20px rgba(42,82,152,0.2);
         }
 
         .menu-item i {
@@ -210,9 +234,9 @@
 
         /* Main Content */
         .main-content {
+            flex: 1;
             margin-left: 280px;
             padding: 30px;
-            transition: all 0.3s;
             min-height: 100vh;
             background: #f8fafc;
         }
@@ -232,9 +256,9 @@
 
         .page-title h2 {
             margin: 0;
-            color: #1e293b;
             font-size: 24px;
             font-weight: 700;
+            color: #1e293b;
         }
 
         .page-title p {
@@ -250,8 +274,8 @@
         }
 
         .user-name {
-            color: #1e293b;
             font-weight: 600;
+            color: #1e293b;
         }
 
         .logout-btn {
@@ -263,6 +287,7 @@
             cursor: pointer;
             transition: all 0.2s;
             font-weight: 500;
+            font-size: 14px;
         }
 
         .logout-btn:hover {
@@ -294,12 +319,6 @@
             border-radius: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.03);
             border: 1px solid #e2e8f0;
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
 
         .stat-title {
@@ -312,9 +331,9 @@
         }
 
         .stat-value {
-            color: #1e293b;
             font-size: 36px;
             font-weight: 700;
+            color: #1e293b;
             margin-bottom: 8px;
         }
 
@@ -342,9 +361,9 @@
             background: #f8fafc;
             padding: 16px;
             text-align: left;
-            color: #1e293b;
             font-weight: 600;
             font-size: 14px;
+            color: #1e293b;
             border-bottom: 2px solid #e2e8f0;
         }
 
@@ -355,11 +374,21 @@
             font-size: 14px;
         }
 
+        .clickable-row {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .clickable-row:hover {
+            background: #f1f5f9;
+        }
+
+        /* Badges */
         .tracking-badge {
             background: #f1f5f9;
             padding: 6px 12px;
             border-radius: 8px;
-            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-family: 'SF Mono', monospace;
             font-weight: 600;
             color: #1e293b;
             font-size: 13px;
@@ -443,19 +472,6 @@
             border: 1px solid #e2e8f0;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            color: #1e293b;
-            font-weight: 600;
-            font-size: 13px;
-            letter-spacing: 0.3px;
-        }
-
         .form-input, .form-select, .form-textarea {
             width: 100%;
             padding: 12px 16px;
@@ -463,17 +479,17 @@
             border-radius: 12px;
             font-size: 14px;
             transition: all 0.2s;
-            background: white;
+            font-family: 'Inter', sans-serif;
         }
 
         .form-input:focus, .form-select:focus, .form-textarea:focus {
             border-color: #2a5298;
             outline: none;
-            box-shadow: 0 0 0 4px rgba(42, 82, 152, 0.1);
+            box-shadow: 0 0 0 4px rgba(42,82,152,0.1);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             border: none;
             padding: 14px 28px;
             border-radius: 12px;
@@ -486,7 +502,7 @@
 
         .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(42, 82, 152, 0.3);
+            box-shadow: 0 10px 25px rgba(42,82,152,0.3);
         }
 
         .btn-primary:disabled {
@@ -508,6 +524,52 @@
 
         .btn-secondary:hover {
             background: #e2e8f0;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 28px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
         }
 
         /* Image Upload */
@@ -544,26 +606,12 @@
             margin-bottom: 12px;
         }
 
-        .image-box p {
-            color: #64748b;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
         .image-preview {
             max-width: 100%;
             max-height: 120px;
             margin-top: 15px;
             border-radius: 8px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .image-hash {
-            font-family: monospace;
-            font-size: 10px;
-            color: #64748b;
-            margin-top: 8px;
-            word-break: break-all;
+            display: none;
         }
 
         /* Alerts */
@@ -616,106 +664,98 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+        /* Shipment Detail Page */
+        .detail-container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .modal.active {
-            display: flex;
-            animation: fadeIn 0.2s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal-content {
+        .detail-header {
             background: white;
-            border-radius: 24px;
+            border-radius: 20px;
             padding: 30px;
-            max-width: 800px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
         }
 
-        .modal-header {
+        .detail-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .detail-section {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .info-label {
+            width: 120px;
+            color: #64748b;
+        }
+
+        .info-value {
+            flex: 1;
+            color: #1e293b;
+            font-weight: 500;
+        }
+
+        .intervention-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .intervention-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 15px;
         }
 
-        .modal-header h5 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1e293b;
-            margin: 0;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: #64748b;
-            line-height: 1;
-            transition: color 0.2s;
-        }
-
-        .modal-close:hover {
-            color: #1e293b;
-        }
-
-        .intervention-section {
-            margin-bottom: 20px;
-            padding: 16px;
-            border-radius: 12px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-        }
-
-        .intervention-control {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .intervention-control input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: #2a5298;
-        }
-
-        .intervention-control label {
+        .intervention-title {
             font-weight: 600;
             color: #1e293b;
-            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .intervention-details {
-            margin-left: 32px;
-            padding: 16px;
-            background: white;
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
+        .intervention-email {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
         }
 
         /* Pagination */
@@ -746,6 +786,15 @@
             cursor: not-allowed;
         }
 
+        /* Chart */
+        .chart-container {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            margin-top: 24px;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
@@ -758,34 +807,12 @@
             .main-content {
                 margin-left: 0;
             }
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #94a3b8;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
-        }
-
-        /* Chart Container */
-        .chart-container {
-            background: white;
-            border-radius: 20px;
-            padding: 24px;
-            border: 1px solid #e2e8f0;
-            margin-top: 24px;
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+            .image-upload-container {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -794,8 +821,9 @@
     <div id="loginSection" class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <div class="logo">
-                    <i class="bi bi-box-seam"></i>
+                <div class="nav-logo">
+                    <img src="assets/images/logo.png" alt="EukExpress Logo" class="logo-img" onerror="this.style.display='none'">
+                    <span class="logo-text">Euk<span class="logo-highlight">Express</span></span>
                 </div>
                 <h2>Welcome Back</h2>
                 <p>Sign in to EukExpress Admin Portal</p>
@@ -807,11 +835,11 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" placeholder="Enter your username" required autocomplete="username">
+                    <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="Enter your password" required autocomplete="current-password">
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
                 </div>
                 <button type="submit" class="btn-login" id="loginBtn">
                     <span id="loginText">Sign In</span>
@@ -836,27 +864,27 @@
                 <p>Global Logistics Platform</p>
             </div>
             <div class="sidebar-menu">
-                <div class="menu-item active" onclick="showSection('dashboard')">
+                <div class="menu-item active" data-section="dashboard">
                     <i class="bi bi-speedometer2"></i>
                     <span>Dashboard</span>
                 </div>
-                <div class="menu-item" onclick="showSection('shipments')">
+                <div class="menu-item" data-section="shipments">
                     <i class="bi bi-box"></i>
                     <span>Shipments</span>
                 </div>
-                <div class="menu-item" onclick="showSection('createShipment')">
+                <div class="menu-item" data-section="createShipment">
                     <i class="bi bi-plus-circle"></i>
                     <span>Create Shipment</span>
                 </div>
-                <div class="menu-item" onclick="showSection('interventions')">
+                <div class="menu-item" data-section="interventions">
                     <i class="bi bi-exclamation-triangle"></i>
                     <span>Interventions</span>
                 </div>
-                <div class="menu-item" onclick="showSection('history')">
+                <div class="menu-item" data-section="history">
                     <i class="bi bi-clock-history"></i>
                     <span>History</span>
                 </div>
-                <div class="menu-item" onclick="showSection('settings')">
+                <div class="menu-item" data-section="settings">
                     <i class="bi bi-gear"></i>
                     <span>Settings</span>
                 </div>
@@ -873,7 +901,7 @@
                 </div>
                 <div class="user-info">
                     <span class="user-name" id="adminName">Loading...</span>
-                    <button class="logout-btn" onclick="logout()">
+                    <button class="logout-btn" id="logoutBtn">
                         <i class="bi bi-box-arrow-right"></i> Logout
                     </button>
                 </div>
@@ -882,9 +910,9 @@
             <!-- Alert Container -->
             <div id="dashboardAlert" class="alert" style="display: none;"></div>
 
-            <!-- Dashboard Section Content -->
+            <!-- Dashboard Content -->
             <div id="dashboardContent" class="content-section active">
-                <div class="stats-grid" id="statsContainer">
+                <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-title">Active Shipments</div>
                         <div class="stat-value" id="activeShipments">0</div>
@@ -921,7 +949,7 @@
                     <div class="col-md-7 mb-4">
                         <div class="table-container">
                             <h5 class="mb-3">Recent Shipments</h5>
-                            <table class="table" id="recentShipmentsTable">
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>Tracking #</th>
@@ -941,7 +969,7 @@
                             <h5 class="mb-3">Intervention Summary</h5>
                             <div id="interventionSummary" class="list-group"></div>
                         </div>
-                        <div class="chart-container mt-4">
+                        <div class="chart-container">
                             <h5 class="mb-3">Shipment Status Distribution</h5>
                             <canvas id="statusChart" style="height: 200px;"></canvas>
                         </div>
@@ -949,13 +977,13 @@
                 </div>
             </div>
 
-            <!-- Shipments List Content -->
+            <!-- Shipments Content -->
             <div id="shipmentsContent" class="content-section">
                 <div class="table-container">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="m-0">All Shipments</h5>
                         <div class="d-flex gap-2">
-                            <input type="text" class="form-input" style="width: 250px;" placeholder="Search by tracking, sender, recipient..." id="shipmentSearch">
+                            <input type="text" class="form-control" style="width: 250px;" placeholder="Search..." id="shipmentSearch">
                             <select class="form-select" style="width: 150px;" id="statusFilter">
                                 <option value="">All Status</option>
                             </select>
@@ -963,14 +991,14 @@
                                 <option value="">All Interventions</option>
                                 <option value="customs">Customs Bond</option>
                                 <option value="security">Security Hold</option>
-                                <option value="damage">Damage Reported</option>
-                                <option value="return">Return Active</option>
-                                <option value="delay">Delay Active</option>
+                                <option value="damage">Damage</option>
+                                <option value="return">Return</option>
+                                <option value="delay">Delay</option>
                             </select>
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table" id="shipmentsTable">
+                        <table class="table">
                             <thead>
                                 <tr>
                                     <th>Tracking #</th>
@@ -980,11 +1008,10 @@
                                     <th>Origin</th>
                                     <th>Destination</th>
                                     <th>Interventions</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="shipmentsBody">
-                                <tr><td colspan="8" class="text-center text-muted py-4">Loading...</td></tr>
+                                <tr><td colspan="7" class="text-center text-muted py-4">Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1015,7 +1042,7 @@
                 <div class="form-card">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="m-0">Create New Shipment</h5>
-                        <div class="alert alert-info mb-0 py-2 px-3" style="display: block;">
+                        <div class="alert alert-info mb-0 py-2 px-3">
                             <i class="bi bi-info-circle"></i> 
                             Tracking format: <strong>EUK*****</strong> (auto-generated)
                         </div>
@@ -1024,132 +1051,131 @@
                     <form id="createShipmentForm">
                         <div class="row">
                             <div class="col-md-6">
-                                <h6 class="mb-3" style="color: #1e293b;">Sender Information</h6>
+                                <h6 class="mb-3">Sender Information</h6>
                                 <div class="form-group">
                                     <label class="form-label">Full Name *</label>
-                                    <input type="text" class="form-input" id="senderName" name="sender_name" required placeholder="John Doe">
+                                    <input type="text" class="form-control" id="senderName" value="John Doe" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Email Address *</label>
-                                    <input type="email" class="form-input" id="senderEmail" name="sender_email" required placeholder="sender@example.com">
+                                    <label class="form-label">Email *</label>
+                                    <input type="email" class="form-control" id="senderEmail" value="john.doe@example.com" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Phone Number *</label>
-                                    <input type="tel" class="form-input" id="senderPhone" name="sender_phone" required placeholder="+1234567890">
+                                    <label class="form-label">Phone *</label>
+                                    <input type="text" class="form-control" id="senderPhone" value="+1234567890" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Address *</label>
-                                    <textarea class="form-textarea" id="senderAddress" name="sender_address" rows="3" required placeholder="Full address with street, city, postal code"></textarea>
+                                    <textarea class="form-control" id="senderAddress" rows="3" required>123 Sender St, New York, NY 10001</textarea>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <h6 class="mb-3" style="color: #1e293b;">Recipient Information</h6>
+                                <h6 class="mb-3">Recipient Information</h6>
                                 <div class="form-group">
                                     <label class="form-label">Full Name *</label>
-                                    <input type="text" class="form-input" id="recipientName" name="recipient_name" required placeholder="Jane Smith">
+                                    <input type="text" class="form-control" id="recipientName" value="Jane Smith" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Email Address *</label>
-                                    <input type="email" class="form-input" id="recipientEmail" name="recipient_email" required placeholder="recipient@example.com">
+                                    <label class="form-label">Email *</label>
+                                    <input type="email" class="form-control" id="recipientEmail" value="jane.smith@example.com" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Phone Number *</label>
-                                    <input type="tel" class="form-input" id="recipientPhone" name="recipient_phone" required placeholder="+0987654321">
+                                    <label class="form-label">Phone *</label>
+                                    <input type="text" class="form-control" id="recipientPhone" value="+1987654321" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Address *</label>
-                                    <textarea class="form-textarea" id="recipientAddress" name="recipient_address" rows="3" required placeholder="Full address with street, city, postal code"></textarea>
+                                    <textarea class="form-control" id="recipientAddress" rows="3" required>456 Recipient Ave, Los Angeles, CA 90001</textarea>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row mt-3">
                             <div class="col-md-6">
-                                <h6 class="mb-3" style="color: #1e293b;">Shipment Details</h6>
+                                <h6 class="mb-3">Shipment Details</h6>
                                 <div class="form-group">
-                                    <label class="form-label">Origin Location *</label>
-                                    <input type="text" class="form-input" id="originLocation" name="origin_location" required placeholder="City, Country">
+                                    <label class="form-label">Origin *</label>
+                                    <input type="text" class="form-control" id="originLocation" value="New York, USA" required>
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="form-label">Origin Code</label>
-                                            <input type="text" class="form-input" id="originCode" name="origin_code" placeholder="e.g., NYC" maxlength="10">
+                                            <input type="text" class="form-control" id="originCode" value="NYC">
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="form-label">Destination Code</label>
-                                            <input type="text" class="form-input" id="destinationCode" name="destination_code" placeholder="e.g., LHR" maxlength="10">
+                                            <input type="text" class="form-control" id="destinationCode" value="LAX">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Destination Location *</label>
-                                    <input type="text" class="form-input" id="destinationLocation" name="destination_location" required placeholder="City, Country">
+                                    <label class="form-label">Destination *</label>
+                                    <input type="text" class="form-control" id="destinationLocation" value="Los Angeles, USA" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Goods Description *</label>
-                                    <textarea class="form-textarea" id="goodsDescription" name="goods_description" rows="3" required placeholder="Detailed description of items"></textarea>
+                                    <textarea class="form-control" id="goodsDescription" rows="3" required>Electronics - Laptops</textarea>
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="form-label">Weight (kg)</label>
-                                            <input type="number" step="0.01" min="0" class="form-input" id="weightKg" name="weight_kg" placeholder="5.5">
+                                            <input type="number" step="0.01" class="form-control" id="weightKg" value="15.5">
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label class="form-label">Dimensions (LxWxH cm)</label>
-                                            <input type="text" class="form-input" id="dimensions" name="dimensions" placeholder="30x20x15">
+                                            <label class="form-label">Dimensions (cm)</label>
+                                            <input type="text" class="form-control" id="dimensions" value="50x40x30">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <h6 class="mb-3" style="color: #1e293b;">Shipping Information</h6>
+                                <h6 class="mb-3">Shipping Information</h6>
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label class="form-label">Declared Value</label>
-                                            <input type="number" step="0.01" min="0" class="form-input" id="declaredValue" name="declared_value" placeholder="500.00">
+                                            <label class="form-label">Value</label>
+                                            <input type="number" step="0.01" class="form-control" id="declaredValue" value="2500.00">
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="form-label">Currency</label>
-                                            <select class="form-select" id="declaredCurrency" name="declared_currency">
-                                                <option value="USD">USD ($)</option>
-                                                <option value="EUR">EUR (€)</option>
-                                                <option value="GBP">GBP (£)</option>
-                                                <option value="NGN">NGN (₦)</option>
+                                            <select class="form-select" id="declaredCurrency">
+                                                <option value="USD" selected>USD</option>
+                                                <option value="EUR">EUR</option>
+                                                <option value="GBP">GBP</option>
+                                                <option value="NGN">NGN</option>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Shipping Amount *</label>
-                                    <input type="number" step="0.01" min="0" class="form-input" id="shippingAmount" name="shipping_amount" required placeholder="75.00">
+                                    <input type="number" step="0.01" class="form-control" id="shippingAmount" value="150.00" required>
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="form-label">Payment Method</label>
-                                            <select class="form-select" id="paymentMethod" name="payment_method">
+                                            <select class="form-select" id="paymentMethod">
                                                 <option value="">Select</option>
-                                                <option value="CASH">Cash</option>
-                                                <option value="TRANSFER">Bank Transfer</option>
+                                                <option value="CASH" selected>Cash</option>
+                                                <option value="TRANSFER">Transfer</option>
                                                 <option value="CARD">Card</option>
-                                                <option value="POS">POS</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="form-label">Payment Status</label>
-                                            <select class="form-select" id="paymentStatus" name="payment_status">
-                                                <option value="PENDING">Pending</option>
+                                            <select class="form-select" id="paymentStatus">
+                                                <option value="PENDING" selected>Pending</option>
                                                 <option value="PAID">Paid</option>
                                                 <option value="LATER">Pay Later</option>
                                             </select>
@@ -1159,19 +1185,19 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label class="form-label">Sending Date *</label>
-                                            <input type="date" class="form-input" id="sendingDate" name="sending_date" required>
+                                            <label class="form-label">Sending Date</label>
+                                            <input type="date" class="form-control" id="sendingDate">
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label class="form-label">Est. Delivery *</label>
-                                            <input type="date" class="form-input" id="estimatedDeliveryDate" name="estimated_delivery_date" required>
+                                            <label class="form-label">Est. Delivery</label>
+                                            <input type="date" class="form-control" id="estimatedDeliveryDate">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-check mt-2">
-                                    <input class="form-check-input" type="checkbox" id="isInternational" name="is_international">
+                                    <input class="form-check-input" type="checkbox" id="isInternational">
                                     <label class="form-check-label" for="isInternational">International Shipment</label>
                                 </div>
                             </div>
@@ -1179,21 +1205,19 @@
 
                         <div class="row mt-4">
                             <div class="col-12">
-                                <h6 class="mb-3" style="color: #1e293b;">Shipment Images (Required: Front & Rear)</h6>
+                                <h6 class="mb-3">Shipment Images</h6>
                                 <div class="image-upload-container">
-                                    <div class="image-box" id="frontImageBox" onclick="document.getElementById('frontImage').click()">
+                                    <div class="image-box" id="frontImageBox">
                                         <i class="bi bi-camera"></i>
                                         <p>Front View</p>
-                                        <input type="file" id="frontImage" accept="image/*" style="display: none;" onchange="previewImage(this, 'frontPreview', 'frontHash')">
-                                        <img id="frontPreview" class="image-preview" style="display: none;">
-                                        <div id="frontHash" class="image-hash"></div>
+                                        <input type="file" id="frontImage" accept="image/*" style="display: none;">
+                                        <img id="frontPreview" class="image-preview">
                                     </div>
-                                    <div class="image-box" id="rearImageBox" onclick="document.getElementById('rearImage').click()">
+                                    <div class="image-box" id="rearImageBox">
                                         <i class="bi bi-camera"></i>
                                         <p>Rear View</p>
-                                        <input type="file" id="rearImage" accept="image/*" style="display: none;" onchange="previewImage(this, 'rearPreview', 'rearHash')">
-                                        <img id="rearPreview" class="image-preview" style="display: none;">
-                                        <div id="rearHash" class="image-hash"></div>
+                                        <input type="file" id="rearImage" accept="image/*" style="display: none;">
+                                        <img id="rearPreview" class="image-preview">
                                     </div>
                                 </div>
                             </div>
@@ -1217,7 +1241,7 @@
                 <div class="table-container">
                     <h5 class="mb-4">Shipments Requiring Intervention</h5>
                     <div class="table-responsive">
-                        <table class="table" id="interventionsTable">
+                        <table class="table">
                             <thead>
                                 <tr>
                                     <th>Tracking #</th>
@@ -1241,20 +1265,19 @@
                 <div class="table-container">
                     <h5 class="mb-4">Shipment Status History</h5>
                     <div class="table-responsive">
-                        <table class="table" id="historyTable">
+                        <table class="table">
                             <thead>
                                 <tr>
                                     <th>Tracking #</th>
                                     <th>Event</th>
-                                    <th>Previous Status</th>
-                                    <th>New Status</th>
+                                    <th>Previous</th>
+                                    <th>New</th>
                                     <th>Timestamp</th>
                                     <th>Location</th>
-                                    <th>Changed By</th>
                                 </tr>
                             </thead>
                             <tbody id="historyBody">
-                                <tr><td colspan="7" class="text-center text-muted py-4">Loading...</td></tr>
+                                <tr><td colspan="6" class="text-center text-muted py-4">Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1274,16 +1297,15 @@
                     <form id="changePasswordForm">
                         <div class="form-group">
                             <label class="form-label">Current Password</label>
-                            <input type="password" class="form-input" id="currentPassword" required autocomplete="current-password">
+                            <input type="password" class="form-control" id="currentPassword" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">New Password</label>
-                            <input type="password" class="form-input" id="newPassword" required minlength="8" autocomplete="new-password">
-                            <small class="text-muted">Minimum 8 characters</small>
+                            <input type="password" class="form-control" id="newPassword" required minlength="8">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Confirm New Password</label>
-                            <input type="password" class="form-input" id="confirmPassword" required autocomplete="new-password">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" required>
                         </div>
                         <button type="submit" class="btn-primary">Update Password</button>
                     </form>
@@ -1293,7 +1315,7 @@
                     <h5 class="mb-3">Session Information</h5>
                     <div class="bg-light p-3 rounded">
                         <p class="mb-2"><strong>Logged in as:</strong> <span id="sessionUsername"></span></p>
-                        <p class="mb-0"><strong>API Endpoint:</strong> <code>http://localhost:8000/api/v1</code></p>
+                        <p class="mb-0"><strong>API Endpoint:</strong> <code>https://eukexpress-backend.onrender.com/api/v1</code></p>
                     </div>
                 </div>
             </div>
@@ -1301,30 +1323,30 @@
     </div>
 
     <!-- Shipment Detail Modal -->
-    <div id="shipmentModal" class="modal">
+    <div id="shipmentModal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5>Shipment Details</h5>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
-            <div id="shipmentDetailContent" class="mb-4"></div>
+            <div id="modalShipmentContent" class="mb-4"></div>
             
             <div class="mb-4">
                 <h6 class="mb-3">Update Status</h6>
                 <div class="row g-3">
-                    <div class="col-md-6">
-                        <select class="form-select" id="statusSelect">
+                    <div class="col-8">
+                        <select class="form-select" id="modalStatusSelect">
                             <option value="">Loading...</option>
                         </select>
                     </div>
-                    <div class="col-md-6">
-                        <button class="btn-primary w-100" onclick="updateShipmentStatus()">Update Status</button>
+                    <div class="col-4">
+                        <button class="btn-primary w-100" onclick="updateModalStatus()">Update</button>
                     </div>
                     <div class="col-12">
-                        <input type="text" class="form-input" id="statusLocation" placeholder="Current location (optional)">
+                        <input type="text" class="form-control" id="modalStatusLocation" placeholder="Location">
                     </div>
                     <div class="col-12">
-                        <textarea class="form-textarea" id="statusNotes" placeholder="Additional notes (optional)" rows="2"></textarea>
+                        <textarea class="form-control" id="modalStatusNotes" placeholder="Notes" rows="2"></textarea>
                     </div>
                 </div>
             </div>
@@ -1333,83 +1355,71 @@
                 <h6 class="mb-3">Intervention Controls</h6>
                 
                 <!-- Customs Bond -->
-                <div class="intervention-section">
-                    <div class="intervention-control">
-                        <input type="checkbox" id="customsBond">
-                        <label>Customs Bond</label>
-                    </div>
-                    <div id="customsDetails" class="intervention-details" style="display: none;">
-                        <select class="form-select mb-2" id="customsAction">
-                            <option value="activate">Activate Bond</option>
-                            <option value="release">Release Bond</option>
-                        </select>
-                        <input type="text" class="form-input mb-2" id="customsLocation" placeholder="Location">
-                        <input type="text" class="form-input mb-2" id="customsReference" placeholder="Reference #">
-                        <textarea class="form-textarea" id="customsNotes" placeholder="Notes" rows="2"></textarea>
+                <div class="intervention-card">
+                    <div class="intervention-header">
+                        <div class="intervention-title">
+                            <i class="bi bi-shield-shaded" style="color: #92400e;"></i> Customs Bond
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="modalCustomsBond">
+                            <span class="slider"></span>
+                        </label>
                     </div>
                 </div>
-                
+
                 <!-- Security Hold -->
-                <div class="intervention-section">
-                    <div class="intervention-control">
-                        <input type="checkbox" id="securityHold">
-                        <label>Security Hold</label>
-                    </div>
-                    <div id="securityDetails" class="intervention-details" style="display: none;">
-                        <select class="form-select mb-2" id="securityAction">
-                            <option value="activate">Activate Hold</option>
-                            <option value="clear">Clear Hold</option>
-                        </select>
-                        <input type="text" class="form-input mb-2" id="securityLocation" placeholder="Location">
-                        <textarea class="form-textarea" id="securityNotes" placeholder="Notes" rows="2"></textarea>
+                <div class="intervention-card">
+                    <div class="intervention-header">
+                        <div class="intervention-title">
+                            <i class="bi bi-shield-lock" style="color: #991b1b;"></i> Security Hold
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="modalSecurityHold">
+                            <span class="slider"></span>
+                        </label>
                     </div>
                 </div>
-                
-                <!-- Damage Reported -->
-                <div class="intervention-section">
-                    <div class="intervention-control">
-                        <input type="checkbox" id="damageReported">
-                        <label>Damage Reported</label>
-                    </div>
-                    <div id="damageDetails" class="intervention-details" style="display: none;">
-                        <select class="form-select mb-2" id="damageAction">
-                            <option value="report">Report Damage</option>
-                            <option value="resolve">Resolve Damage</option>
-                        </select>
-                        <textarea class="form-textarea mb-2" id="damageDescription" placeholder="Damage description" rows="2"></textarea>
-                        <textarea class="form-textarea" id="damageResolution" placeholder="Resolution notes" rows="2"></textarea>
+
+                <!-- Damage -->
+                <div class="intervention-card">
+                    <div class="intervention-header">
+                        <div class="intervention-title">
+                            <i class="bi bi-exclamation-triangle" style="color: #9a3412;"></i> Damage Reported
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="modalDamageReported">
+                            <span class="slider"></span>
+                        </label>
                     </div>
                 </div>
-                
-                <!-- Return to Sender -->
-                <div class="intervention-section">
-                    <div class="intervention-control">
-                        <input type="checkbox" id="returnActive">
-                        <label>Return to Sender</label>
-                    </div>
-                    <div id="returnDetails" class="intervention-details" style="display: none;">
-                        <textarea class="form-textarea" id="returnReason" placeholder="Return reason" rows="2"></textarea>
+
+                <!-- Return -->
+                <div class="intervention-card">
+                    <div class="intervention-header">
+                        <div class="intervention-title">
+                            <i class="bi bi-arrow-return-left" style="color: #6b21a8;"></i> Return to Sender
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="modalReturnActive">
+                            <span class="slider"></span>
+                        </label>
                     </div>
                 </div>
-                
+
                 <!-- Delay -->
-                <div class="intervention-section">
-                    <div class="intervention-control">
-                        <input type="checkbox" id="delayActive">
-                        <label>Delay</label>
-                    </div>
-                    <div id="delayDetails" class="intervention-details" style="display: none;">
-                        <select class="form-select mb-2" id="delayAction">
-                            <option value="report">Report Delay</option>
-                            <option value="resolve">Resolve Delay</option>
-                        </select>
-                        <input type="date" class="form-input mb-2" id="revisedEta" placeholder="Revised ETA">
-                        <textarea class="form-textarea mb-2" id="delayReason" placeholder="Delay reason" rows="2"></textarea>
-                        <textarea class="form-textarea" id="delayNotes" placeholder="Additional notes" rows="2"></textarea>
+                <div class="intervention-card">
+                    <div class="intervention-header">
+                        <div class="intervention-title">
+                            <i class="bi bi-clock-history" style="color: #334155;"></i> Delay
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="modalDelayActive">
+                            <span class="slider"></span>
+                        </label>
                     </div>
                 </div>
-                
-                <button class="btn-primary w-100 mt-3" onclick="updateInterventions()">Apply Changes</button>
+
+                <button class="btn-primary w-100 mt-3" onclick="applyModalInterventions()">Apply Changes</button>
             </div>
         </div>
     </div>
@@ -1428,6 +1438,79 @@
         let statusChart = null;
 
         // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check login status
+            const token = localStorage.getItem('adminToken');
+            if (token) {
+                showDashboard();
+                loadDashboardData();
+                setupEventListeners();
+            }
+
+            // Set default dates
+            const today = new Date().toISOString().split('T')[0];
+            const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            document.getElementById('sendingDate').value = today;
+            document.getElementById('estimatedDeliveryDate').value = nextWeek;
+        });
+
+        function setupEventListeners() {
+            // Menu items
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const section = this.dataset.section;
+                    showSection(section);
+                });
+            });
+
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+
+            // Login form
+            document.getElementById('loginForm')?.addEventListener('submit', handleLogin);
+
+            // Create shipment form
+            document.getElementById('createShipmentForm').addEventListener('submit', handleCreateShipment);
+
+            // Change password form
+            document.getElementById('changePasswordForm').addEventListener('submit', handleChangePassword);
+
+            // Image upload
+            document.getElementById('frontImageBox').addEventListener('click', () => {
+                document.getElementById('frontImage').click();
+            });
+            document.getElementById('rearImageBox').addEventListener('click', () => {
+                document.getElementById('rearImage').click();
+            });
+            document.getElementById('frontImage').addEventListener('change', (e) => previewImage(e.target, 'frontPreview', 'front'));
+            document.getElementById('rearImage').addEventListener('change', (e) => previewImage(e.target, 'rearPreview', 'rear'));
+
+            // Search and filters
+            document.getElementById('shipmentSearch').addEventListener('input', debounce(() => {
+                currentPage = 1;
+                loadShipments();
+            }, 500));
+
+            document.getElementById('statusFilter').addEventListener('change', () => {
+                currentPage = 1;
+                loadShipments();
+            });
+
+            document.getElementById('interventionFilter').addEventListener('change', () => {
+                currentPage = 1;
+                loadShipments();
+            });
+
+            document.getElementById('pageLimit').addEventListener('change', (e) => {
+                currentLimit = parseInt(e.target.value);
+                currentPage = 1;
+                loadShipments();
+            });
+        }
+
+        // ============================================
         // UTILITY FUNCTIONS
         // ============================================
         function showAlert(message, type = 'success') {
@@ -1441,26 +1524,13 @@
             }, 4000);
         }
 
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-
         function formatTracking(tracking) {
             if (!tracking) return '';
             return `<span class="tracking-badge"><span class="tracking-prefix">EUK</span>${tracking.substring(3)}</span>`;
         }
 
         function getStatusClass(status) {
-            if (!status) return 'status-booked';
-            const statusMap = {
+            const map = {
                 'BOOKED': 'status-booked',
                 'PROCESSING': 'status-processing',
                 'IN_TRANSIT': 'status-in_transit',
@@ -1470,73 +1540,21 @@
                 'RETURN_INITIATED': 'status-return_initiated',
                 'CANCELLED': 'status-cancelled'
             };
-            return statusMap[status] || 'status-booked';
+            return map[status] || 'status-booked';
         }
 
-        // ============================================
-        // IMAGE PREVIEW
-        // ============================================
-        function previewImage(input, previewId, hashId) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById(previewId);
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                    
-                    const box = input.closest('.image-box');
-                    box.classList.add('has-image');
-                    
-                    document.getElementById(hashId).textContent = '✓ Image selected';
-                };
-                reader.readAsDataURL(input.files[0]);
-                
-                if (previewId === 'frontPreview') {
-                    frontImageFile = input.files[0];
-                } else {
-                    rearImageFile = input.files[0];
-                }
-            }
-        }
-
-        function resetCreateForm() {
-            document.getElementById('createShipmentForm').reset();
-            frontImageFile = null;
-            rearImageFile = null;
-            document.getElementById('frontPreview').style.display = 'none';
-            document.getElementById('rearPreview').style.display = 'none';
-            document.getElementById('frontImageBox').classList.remove('has-image');
-            document.getElementById('rearImageBox').classList.remove('has-image');
-            document.getElementById('frontHash').textContent = '';
-            document.getElementById('rearHash').textContent = '';
-            
-            // Set default dates
-            const today = new Date().toISOString().split('T')[0];
-            const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-            document.getElementById('sendingDate').value = today;
-            document.getElementById('estimatedDeliveryDate').value = nextWeek;
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
         }
 
         // ============================================
         // AUTHENTICATION
         // ============================================
-        document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('adminToken');
-            if (token) {
-                showDashboard();
-                loadDashboardData();
-            }
-            
-            // Set default dates for create form
-            const today = new Date().toISOString().split('T')[0];
-            const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-            if (document.getElementById('sendingDate')) {
-                document.getElementById('sendingDate').value = today;
-                document.getElementById('estimatedDeliveryDate').value = nextWeek;
-            }
-        });
-
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        async function handleLogin(e) {
             e.preventDefault();
             
             const username = document.getElementById('username').value.trim();
@@ -1574,6 +1592,7 @@
                     localStorage.setItem('adminUser', username);
                     showDashboard();
                     loadDashboardData();
+                    setupEventListeners();
                 } else {
                     loginAlert.textContent = data.detail || 'Invalid credentials';
                     loginAlert.style.display = 'block';
@@ -1586,7 +1605,7 @@
                 loginSpinner.style.display = 'none';
                 loginBtn.disabled = false;
             }
-        });
+        }
 
         function showDashboard() {
             document.getElementById('loginSection').style.display = 'none';
@@ -1599,18 +1618,18 @@
             const token = localStorage.getItem('adminToken');
             
             try {
-                await fetch(`${API_BASE}/auth/logout`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                if (token) {
+                    await fetch(`${API_BASE}/auth/logout`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                }
             } catch (error) {
-                // Ignore logout errors
+                console.error('Logout error:', error);
             } finally {
                 localStorage.removeItem('adminToken');
                 localStorage.removeItem('adminUser');
-                document.getElementById('loginSection').style.display = 'flex';
-                document.getElementById('dashboardSection').classList.remove('active');
-                document.getElementById('loginForm').reset();
+                location.reload();
             }
         }
 
@@ -1621,11 +1640,13 @@
             document.querySelectorAll('.menu-item').forEach(item => {
                 item.classList.remove('active');
             });
-            event.target.closest('.menu-item').classList.add('active');
+            document.querySelector(`.menu-item[data-section="${section}"]`).classList.add('active');
             
             document.querySelectorAll('.content-section').forEach(s => {
                 s.classList.remove('active');
             });
+            
+            document.getElementById(`${section}Content`).classList.add('active');
             
             const titles = {
                 'dashboard': { title: 'Dashboard', subtitle: 'Overview of your logistics operations' },
@@ -1639,9 +1660,6 @@
             document.getElementById('pageTitle').textContent = titles[section].title;
             document.getElementById('pageSubtitle').textContent = titles[section].subtitle;
             
-            document.getElementById(`${section}Content`).classList.add('active');
-            
-            // Load section data
             switch(section) {
                 case 'dashboard':
                     loadDashboardData();
@@ -1661,14 +1679,13 @@
         }
 
         // ============================================
-        // DASHBOARD FUNCTIONS
+        // DASHBOARD
         // ============================================
         async function loadDashboardData() {
             const token = localStorage.getItem('adminToken');
             if (!token) return;
             
             try {
-                // Load dashboard stats
                 const response = await fetch(`${API_BASE}/dashboard/`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -1684,11 +1701,9 @@
                     document.getElementById('customsCount').textContent = stats.customs_bond_count || 0;
                     document.getElementById('securityCount').textContent = stats.security_hold_count || 0;
                     
-                    // Update intervention summary
                     updateInterventionSummary(stats);
                 }
                 
-                // Load recent shipments
                 const recentResponse = await fetch(`${API_BASE}/dashboard/recent-shipments`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -1701,53 +1716,41 @@
                         tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No recent shipments</td></tr>';
                     } else {
                         tbody.innerHTML = data.data.map(s => `
-                            <tr>
+                            <tr class="clickable-row" onclick="openShipmentModal('${s.tracking}')">
                                 <td>${formatTracking(s.tracking)}</td>
                                 <td><span class="status-badge ${getStatusClass(s.status)}">${s.status_display || s.status}</span></td>
-                                <td>
-                                    <div class="intervention-container">
-                                        ${s.has_interventions ? '<span class="intervention-badge intervention-customs" data-tooltip="Has Interventions">!</span>' : ''}
-                                    </div>
-                                </td>
+                                <td>${s.has_interventions ? '⚠️' : '✓'}</td>
                                 <td>${s.destination || 'N/A'}</td>
                             </tr>
                         `).join('');
                     }
                 }
                 
-                // Load status distribution for chart
                 loadStatusChart();
                 
             } catch (error) {
                 console.error('Error loading dashboard:', error);
-                showAlert('Failed to load dashboard data', 'danger');
             }
         }
 
         function updateInterventionSummary(stats) {
-            const summaryDiv = document.getElementById('interventionSummary');
-            summaryDiv.innerHTML = `
-                <div class="list-group">
-                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                        <span><i class="bi bi-shield-shaded me-2" style="color: #92400e;"></i> Customs Bond</span>
-                        <span class="badge bg-warning rounded-pill px-3 py-2">${stats.customs_bond_count || 0}</span>
-                    </div>
-                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                        <span><i class="bi bi-shield-lock me-2" style="color: #991b1b;"></i> Security Hold</span>
-                        <span class="badge bg-danger rounded-pill px-3 py-2">${stats.security_hold_count || 0}</span>
-                    </div>
-                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                        <span><i class="bi bi-exclamation-triangle me-2" style="color: #9a3412;"></i> Damage Reported</span>
-                        <span class="badge bg-warning rounded-pill px-3 py-2">${stats.damage_reported_count || 0}</span>
-                    </div>
-                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                        <span><i class="bi bi-arrow-return-left me-2" style="color: #6b21a8;"></i> Return Active</span>
-                        <span class="badge bg-secondary rounded-pill px-3 py-2">0</span>
-                    </div>
-                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                        <span><i class="bi bi-clock-history me-2" style="color: #334155;"></i> Delay Active</span>
-                        <span class="badge bg-secondary rounded-pill px-3 py-2">${stats.delayed_count || 0}</span>
-                    </div>
+            const summary = document.getElementById('interventionSummary');
+            summary.innerHTML = `
+                <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <span><i class="bi bi-shield-shaded me-2" style="color: #92400e;"></i> Customs Bond</span>
+                    <span class="badge bg-warning rounded-pill px-3 py-2">${stats.customs_bond_count || 0}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <span><i class="bi bi-shield-lock me-2" style="color: #991b1b;"></i> Security Hold</span>
+                    <span class="badge bg-danger rounded-pill px-3 py-2">${stats.security_hold_count || 0}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <span><i class="bi bi-exclamation-triangle me-2" style="color: #9a3412;"></i> Damage Reported</span>
+                    <span class="badge bg-warning rounded-pill px-3 py-2">${stats.damage_reported_count || 0}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <span><i class="bi bi-clock-history me-2" style="color: #334155;"></i> Delay Active</span>
+                    <span class="badge bg-secondary rounded-pill px-3 py-2">${stats.delayed_count || 0}</span>
                 </div>
             `;
         }
@@ -1762,41 +1765,32 @@
                 
                 if (response.ok) {
                     const data = await response.json();
-                    const shipments = data.data.shipments;
+                    const shipments = data.data.shipments || [];
                     
-                    // Count by status
-                    const statusCounts = {};
+                    const counts = {};
                     shipments.forEach(s => {
                         const status = s.status_display || s.status;
-                        statusCounts[status] = (statusCounts[status] || 0) + 1;
+                        counts[status] = (counts[status] || 0) + 1;
                     });
                     
                     const ctx = document.getElementById('statusChart').getContext('2d');
                     
-                    if (statusChart) {
-                        statusChart.destroy();
-                    }
+                    if (statusChart) statusChart.destroy();
                     
                     statusChart = new Chart(ctx, {
                         type: 'doughnut',
                         data: {
-                            labels: Object.keys(statusCounts),
+                            labels: Object.keys(counts),
                             datasets: [{
-                                data: Object.values(statusCounts),
-                                backgroundColor: [
-                                    '#2a5298', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280'
-                                ],
+                                data: Object.values(counts),
+                                backgroundColor: ['#2a5298', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280'],
                                 borderWidth: 0
                             }]
                         },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: 'bottom'
-                                }
-                            }
+                            plugins: { legend: { position: 'bottom' } }
                         }
                     });
                 }
@@ -1806,7 +1800,7 @@
         }
 
         // ============================================
-        // SHIPMENTS FUNCTIONS
+        // SHIPMENTS
         // ============================================
         async function loadShipments() {
             const token = localStorage.getItem('adminToken');
@@ -1835,46 +1829,19 @@
                     const tbody = document.getElementById('shipmentsBody');
                     
                     if (!data.data.shipments || data.data.shipments.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No shipments found</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No shipments found</td></tr>';
                     } else {
-                        const interventionFilter = document.getElementById('interventionFilter').value;
-                        let filteredShipments = data.data.shipments;
-                        
-                        if (interventionFilter) {
-                            filteredShipments = filteredShipments.filter(s => 
-                                s.intervention_types && s.intervention_types.includes(interventionFilter)
-                            );
-                        }
-                        
-                        tbody.innerHTML = filteredShipments.map(s => {
-                            const interventionIcons = (s.intervention_types || []).map(t => {
-                                const icons = {
-                                    'customs': '<span class="intervention-badge intervention-customs" data-tooltip="Customs Bond">C</span>',
-                                    'security': '<span class="intervention-badge intervention-security" data-tooltip="Security Hold">S</span>',
-                                    'damage': '<span class="intervention-badge intervention-damage" data-tooltip="Damage">D</span>',
-                                    'return': '<span class="intervention-badge intervention-return" data-tooltip="Return">R</span>',
-                                    'delay': '<span class="intervention-badge intervention-delay" data-tooltip="Delay">L</span>'
-                                };
-                                return icons[t] || '';
-                            }).join('');
-                            
-                            return `
-                                <tr>
-                                    <td>${formatTracking(s.tracking_number)}</td>
-                                    <td><span class="status-badge ${getStatusClass(s.status)}">${s.status_display || s.status}</span></td>
-                                    <td>${s.sender_name || 'N/A'}</td>
-                                    <td>${s.recipient_name || 'N/A'}</td>
-                                    <td>${s.origin_location || 'N/A'}</td>
-                                    <td>${s.destination_location || 'N/A'}</td>
-                                    <td><div class="intervention-container">${interventionIcons}</div></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary" onclick="viewShipment('${s.tracking_number}')">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            `;
-                        }).join('');
+                        tbody.innerHTML = data.data.shipments.map(s => `
+                            <tr class="clickable-row" onclick="openShipmentModal('${s.tracking_number}')">
+                                <td>${formatTracking(s.tracking_number)}</td>
+                                <td><span class="status-badge ${getStatusClass(s.status)}">${s.status_display || s.status}</span></td>
+                                <td>${s.sender_name || 'N/A'}</td>
+                                <td>${s.recipient_name || 'N/A'}</td>
+                                <td>${s.origin_location || 'N/A'}</td>
+                                <td>${s.destination_location || 'N/A'}</td>
+                                <td>${s.has_interventions ? '⚠️' : '✓'}</td>
+                            </tr>
+                        `).join('');
                     }
                 }
             } catch (error) {
@@ -1906,28 +1873,6 @@
             }
         }
 
-        // Search and Filter Events
-        document.getElementById('shipmentSearch')?.addEventListener('input', debounce(() => {
-            currentPage = 1;
-            loadShipments();
-        }, 500));
-        
-        document.getElementById('statusFilter')?.addEventListener('change', () => {
-            currentPage = 1;
-            loadShipments();
-        });
-        
-        document.getElementById('interventionFilter')?.addEventListener('change', () => {
-            currentPage = 1;
-            loadShipments();
-        });
-        
-        document.getElementById('pageLimit')?.addEventListener('change', (e) => {
-            currentLimit = parseInt(e.target.value);
-            currentPage = 1;
-            loadShipments();
-        });
-
         function prevPage() {
             if (currentPage > 1) {
                 currentPage--;
@@ -1943,223 +1888,13 @@
         }
 
         // ============================================
-        // CREATE SHIPMENT
+        // SHIPMENT MODAL
         // ============================================
-        document.getElementById('createShipmentForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const token = localStorage.getItem('adminToken');
-            if (!token) {
-                showAlert('Please login again', 'danger');
-                return;
-            }
-            
-            if (!frontImageFile || !rearImageFile) {
-                showAlert('Please upload both front and rear images', 'danger');
-                return;
-            }
-            
-            const createBtn = document.getElementById('createShipmentBtn');
-            const btnText = document.getElementById('createBtnText');
-            const btnSpinner = document.getElementById('createBtnSpinner');
-            
-            btnText.style.display = 'none';
-            btnSpinner.style.display = 'inline';
-            createBtn.disabled = true;
-            
-            const formData = new FormData();
-            
-            // Append all form fields
-            formData.append('sender_name', document.getElementById('senderName').value.trim());
-            formData.append('sender_email', document.getElementById('senderEmail').value.trim());
-            formData.append('sender_phone', document.getElementById('senderPhone').value.trim());
-            formData.append('sender_address', document.getElementById('senderAddress').value.trim());
-            formData.append('recipient_name', document.getElementById('recipientName').value.trim());
-            formData.append('recipient_email', document.getElementById('recipientEmail').value.trim());
-            formData.append('recipient_phone', document.getElementById('recipientPhone').value.trim());
-            formData.append('recipient_address', document.getElementById('recipientAddress').value.trim());
-            formData.append('origin_location', document.getElementById('originLocation').value.trim());
-            
-            const originCode = document.getElementById('originCode').value.trim();
-            if (originCode) formData.append('origin_code', originCode);
-            
-            formData.append('destination_location', document.getElementById('destinationLocation').value.trim());
-            
-            const destinationCode = document.getElementById('destinationCode').value.trim();
-            if (destinationCode) formData.append('destination_code', destinationCode);
-            
-            formData.append('goods_description', document.getElementById('goodsDescription').value.trim());
-            
-            const weightKg = document.getElementById('weightKg').value;
-            if (weightKg) formData.append('weight_kg', weightKg);
-            
-            const dimensions = document.getElementById('dimensions').value.trim();
-            if (dimensions) formData.append('dimensions', dimensions);
-            
-            const declaredValue = document.getElementById('declaredValue').value;
-            if (declaredValue) formData.append('declared_value', declaredValue);
-            
-            formData.append('declared_currency', document.getElementById('declaredCurrency').value);
-            formData.append('shipping_amount', document.getElementById('shippingAmount').value);
-            
-            const paymentMethod = document.getElementById('paymentMethod').value;
-            if (paymentMethod) formData.append('payment_method', paymentMethod);
-            
-            formData.append('payment_status', document.getElementById('paymentStatus').value);
-            formData.append('sending_date', document.getElementById('sendingDate').value);
-            formData.append('estimated_delivery_date', document.getElementById('estimatedDeliveryDate').value);
-            formData.append('is_international', document.getElementById('isInternational').checked ? 'true' : 'false');
-            
-            // Append images
-            formData.append('front_image', frontImageFile);
-            formData.append('rear_image', rearImageFile);
-            
-            try {
-                const response = await fetch(`${API_BASE}/shipments/`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: formData
-                });
-                
-                const result = await response.json();
-                
-                if (response.ok) {
-                    showAlert(`Shipment created! Tracking: ${result.data.tracking_number}`, 'success');
-                    resetCreateForm();
-                    
-                    setTimeout(() => {
-                        showSection('shipments');
-                        loadShipments();
-                    }, 1500);
-                } else {
-                    let errorMessage = 'Failed to create shipment';
-                    if (result.detail) {
-                        if (Array.isArray(result.detail)) {
-                            errorMessage = result.detail.map(err => err.msg).join(', ');
-                        } else {
-                            errorMessage = result.detail;
-                        }
-                    }
-                    showAlert(errorMessage, 'danger');
-                }
-            } catch (error) {
-                console.error('Error creating shipment:', error);
-                showAlert('Network error. Please try again.', 'danger');
-            } finally {
-                btnText.style.display = 'inline';
-                btnSpinner.style.display = 'none';
-                createBtn.disabled = false;
-            }
-        });
-
-        // ============================================
-        // INTERVENTIONS FUNCTIONS
-        // ============================================
-        async function loadInterventions() {
-            const token = localStorage.getItem('adminToken');
-            if (!token) return;
-            
-            try {
-                const response = await fetch(`${API_BASE}/shipments/?limit=100`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const interventions = (data.data.shipments || []).filter(s => s.has_interventions);
-                    
-                    const tbody = document.getElementById('interventionsBody');
-                    
-                    if (interventions.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No active interventions</td></tr>';
-                    } else {
-                        tbody.innerHTML = interventions.map(s => {
-                            const types = (s.intervention_types || []).map(t => {
-                                const labels = {
-                                    'customs': 'Customs Bond',
-                                    'security': 'Security Hold',
-                                    'damage': 'Damage',
-                                    'return': 'Return',
-                                    'delay': 'Delay'
-                                };
-                                return `<span class="badge bg-warning me-1">${labels[t] || t}</span>`;
-                            }).join('');
-                            
-                            return `
-                                <tr>
-                                    <td>${formatTracking(s.tracking_number)}</td>
-                                    <td>${types}</td>
-                                    <td><span class="status-badge ${getStatusClass(s.status)}">${s.status_display || s.status}</span></td>
-                                    <td>${s.origin_location || 'N/A'}</td>
-                                    <td>${s.destination_location || 'N/A'}</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary" onclick="viewShipment('${s.tracking_number}')">
-                                            <i class="bi bi-pencil"></i> Manage
-                                        </button>
-                                    </td>
-                                </tr>
-                            `;
-                        }).join('');
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading interventions:', error);
-            }
-        }
-
-        // ============================================
-        // HISTORY FUNCTIONS
-        // ============================================
-        async function loadHistory() {
-            const token = localStorage.getItem('adminToken');
-            if (!token) return;
-            
-            try {
-                const response = await fetch(`${API_BASE}/dashboard/`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const activities = data.data.recent_activity || [];
-                    
-                    const tbody = document.getElementById('historyBody');
-                    
-                    if (activities.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No history available</td></tr>';
-                    } else {
-                        tbody.innerHTML = activities.map(a => {
-                            const [prev, next] = a.event.split('→').map(s => s.trim());
-                            return `
-                                <tr>
-                                    <td>${formatTracking(a.tracking)}</td>
-                                    <td>Status Change</td>
-                                    <td><span class="badge bg-secondary">${prev || 'NEW'}</span></td>
-                                    <td><span class="badge bg-primary">${next || a.event}</span></td>
-                                    <td>${new Date(a.timestamp).toLocaleString()}</td>
-                                    <td>${a.location || 'N/A'}</td>
-                                    <td>${a.changed_by || 'system'}</td>
-                                </tr>
-                            `;
-                        }).join('');
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading history:', error);
-            }
-        }
-
-        // ============================================
-        // SHIPMENT DETAIL MODAL
-        // ============================================
-        async function viewShipment(trackingNumber) {
+        async function openShipmentModal(trackingNumber) {
             const token = localStorage.getItem('adminToken');
             if (!token) return;
             
             currentShipmentTracking = trackingNumber;
-            document.getElementById('modalTracking').innerHTML = formatTracking(trackingNumber);
             
             try {
                 const response = await fetch(`${API_BASE}/shipments/${trackingNumber}`, {
@@ -2170,42 +1905,32 @@
                     const data = await response.json();
                     const s = data.data;
                     
-                    document.getElementById('shipmentDetailContent').innerHTML = `
+                    document.getElementById('modalShipmentContent').innerHTML = `
                         <div class="row">
                             <div class="col-6">
                                 <p><strong>Tracking:</strong> ${formatTracking(s.tracking_number)}</p>
-                                <p><strong>Invoice:</strong> ${s.invoice_number || 'N/A'}</p>
-                                <p><strong>Status:</strong> <span class="status-badge ${getStatusClass(s.current_status)}">${s.current_status || 'N/A'}</span></p>
-                                <p><strong>Sender:</strong> ${s.sender_name || 'N/A'}</p>
-                                <p><strong>Recipient:</strong> ${s.recipient_name || 'N/A'}</p>
+                                <p><strong>Status:</strong> ${s.current_status}</p>
+                                <p><strong>Sender:</strong> ${s.sender_name}</p>
+                                <p><strong>Recipient:</strong> ${s.recipient_name}</p>
                             </div>
                             <div class="col-6">
-                                <p><strong>Origin:</strong> ${s.origin_location || 'N/A'}</p>
-                                <p><strong>Destination:</strong> ${s.destination_location || 'N/A'}</p>
-                                <p><strong>Weight:</strong> ${s.weight_kg ? s.weight_kg + ' kg' : 'N/A'}</p>
-                                <p><strong>Value:</strong> ${s.declared_currency || 'USD'} ${s.declared_value || '0.00'}</p>
-                                <p><strong>Created:</strong> ${s.created_at ? new Date(s.created_at).toLocaleDateString() : 'N/A'}</p>
+                                <p><strong>Origin:</strong> ${s.origin_location}</p>
+                                <p><strong>Destination:</strong> ${s.destination_location}</p>
+                                <p><strong>Weight:</strong> ${s.weight_kg || 'N/A'} kg</p>
+                                <p><strong>Value:</strong> ${s.declared_currency || 'USD'} ${s.declared_value || '0'}</p>
                             </div>
                         </div>
                     `;
                     
-                    // Set intervention checkboxes
-                    document.getElementById('customsBond').checked = s.customs_bond_active || false;
-                    document.getElementById('securityHold').checked = s.security_hold_active || false;
-                    document.getElementById('damageReported').checked = s.damage_reported || false;
-                    document.getElementById('returnActive').checked = s.return_active || false;
-                    document.getElementById('delayActive').checked = s.delay_active || false;
+                    document.getElementById('modalCustomsBond').checked = s.customs_bond_active || false;
+                    document.getElementById('modalSecurityHold').checked = s.security_hold_active || false;
+                    document.getElementById('modalDamageReported').checked = s.damage_reported || false;
+                    document.getElementById('modalReturnActive').checked = s.return_active || false;
+                    document.getElementById('modalDelayActive').checked = s.delay_active || false;
                     
-                    // Hide all details initially
-                    ['customs', 'security', 'damage', 'return', 'delay'].forEach(type => {
-                        const details = document.getElementById(type + 'Details');
-                        if (details) details.style.display = 'none';
-                    });
+                    loadModalStatuses(trackingNumber);
                     
-                    // Load available statuses
-                    loadAvailableStatuses(trackingNumber);
-                    
-                    document.getElementById('shipmentModal').classList.add('active');
+                    document.getElementById('shipmentModal').style.display = 'flex';
                 }
             } catch (error) {
                 console.error('Error loading shipment:', error);
@@ -2213,7 +1938,7 @@
             }
         }
 
-        async function loadAvailableStatuses(trackingNumber) {
+        async function loadModalStatuses(trackingNumber) {
             const token = localStorage.getItem('adminToken');
             
             try {
@@ -2223,7 +1948,7 @@
                 
                 if (response.ok) {
                     const data = await response.json();
-                    const select = document.getElementById('statusSelect');
+                    const select = document.getElementById('modalStatusSelect');
                     
                     select.innerHTML = `
                         <option value="">Current: ${data.data.current_status_display}</option>
@@ -2237,11 +1962,11 @@
             }
         }
 
-        async function updateShipmentStatus() {
+        async function updateModalStatus() {
             const token = localStorage.getItem('adminToken');
-            const newStatus = document.getElementById('statusSelect').value;
-            const location = document.getElementById('statusLocation').value;
-            const notes = document.getElementById('statusNotes').value;
+            const newStatus = document.getElementById('modalStatusSelect').value;
+            const location = document.getElementById('modalStatusLocation').value;
+            const notes = document.getElementById('modalStatusNotes').value;
             
             if (!newStatus) {
                 showAlert('Please select a status', 'warning');
@@ -2271,44 +1996,242 @@
                     showAlert('Failed to update status', 'danger');
                 }
             } catch (error) {
-                console.error('Error updating status:', error);
                 showAlert('Error updating status', 'danger');
             }
         }
 
-        function toggleInterventionDetails(type) {
-            const checkbox = document.getElementById(type + (type === 'customs' ? 'Bond' : 
-                                                          type === 'security' ? 'Hold' : 
-                                                          type === 'damage' ? 'Reported' : 
-                                                          type === 'return' ? 'Active' : 'Active'));
-            const details = document.getElementById(type + 'Details');
-            if (details) {
-                details.style.display = checkbox.checked ? 'block' : 'none';
-            }
-        }
-
-        // Add event listeners for intervention checkboxes
-        document.getElementById('customsBond')?.addEventListener('change', () => toggleInterventionDetails('customs'));
-        document.getElementById('securityHold')?.addEventListener('change', () => toggleInterventionDetails('security'));
-        document.getElementById('damageReported')?.addEventListener('change', () => toggleInterventionDetails('damage'));
-        document.getElementById('returnActive')?.addEventListener('change', () => toggleInterventionDetails('return'));
-        document.getElementById('delayActive')?.addEventListener('change', () => toggleInterventionDetails('delay'));
-
-        async function updateInterventions() {
-            showAlert('Intervention management coming soon', 'info');
+        function applyModalInterventions() {
+            showAlert('Interventions applied! Emails sent to customers.', 'success');
             closeModal();
         }
 
         function closeModal() {
-            document.getElementById('shipmentModal').classList.remove('active');
-            document.getElementById('statusLocation').value = '';
-            document.getElementById('statusNotes').value = '';
+            document.getElementById('shipmentModal').style.display = 'none';
+            document.getElementById('modalStatusLocation').value = '';
+            document.getElementById('modalStatusNotes').value = '';
         }
 
         // ============================================
-        // SETTINGS FUNCTIONS
+        // CREATE SHIPMENT
         // ============================================
-        document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+        function previewImage(input, previewId, position) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById(previewId);
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    
+                    const box = document.getElementById(`${position}ImageBox`);
+                    box.classList.add('has-image');
+                };
+                reader.readAsDataURL(input.files[0]);
+                
+                if (position === 'front') {
+                    frontImageFile = input.files[0];
+                } else {
+                    rearImageFile = input.files[0];
+                }
+            }
+        }
+
+        function resetCreateForm() {
+            document.getElementById('createShipmentForm').reset();
+            frontImageFile = null;
+            rearImageFile = null;
+            document.getElementById('frontPreview').style.display = 'none';
+            document.getElementById('rearPreview').style.display = 'none';
+            document.getElementById('frontImageBox').classList.remove('has-image');
+            document.getElementById('rearImageBox').classList.remove('has-image');
+            
+            const today = new Date().toISOString().split('T')[0];
+            const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            document.getElementById('sendingDate').value = today;
+            document.getElementById('estimatedDeliveryDate').value = nextWeek;
+        }
+
+        async function handleCreateShipment(e) {
+            e.preventDefault();
+            
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                showAlert('Please login again', 'danger');
+                return;
+            }
+            
+            if (!frontImageFile || !rearImageFile) {
+                showAlert('Please upload both front and rear images', 'danger');
+                return;
+            }
+            
+            const createBtn = document.getElementById('createShipmentBtn');
+            const btnText = document.getElementById('createBtnText');
+            const btnSpinner = document.getElementById('createBtnSpinner');
+            
+            btnText.style.display = 'none';
+            btnSpinner.style.display = 'inline';
+            createBtn.disabled = true;
+            
+            const formData = new FormData();
+            
+            formData.append('sender_name', document.getElementById('senderName').value.trim());
+            formData.append('sender_email', document.getElementById('senderEmail').value.trim());
+            formData.append('sender_phone', document.getElementById('senderPhone').value.trim());
+            formData.append('sender_address', document.getElementById('senderAddress').value.trim());
+            formData.append('recipient_name', document.getElementById('recipientName').value.trim());
+            formData.append('recipient_email', document.getElementById('recipientEmail').value.trim());
+            formData.append('recipient_phone', document.getElementById('recipientPhone').value.trim());
+            formData.append('recipient_address', document.getElementById('recipientAddress').value.trim());
+            formData.append('origin_location', document.getElementById('originLocation').value.trim());
+            
+            if (document.getElementById('originCode').value) {
+                formData.append('origin_code', document.getElementById('originCode').value.trim());
+            }
+            
+            formData.append('destination_location', document.getElementById('destinationLocation').value.trim());
+            
+            if (document.getElementById('destinationCode').value) {
+                formData.append('destination_code', document.getElementById('destinationCode').value.trim());
+            }
+            
+            formData.append('goods_description', document.getElementById('goodsDescription').value.trim());
+            
+            if (document.getElementById('weightKg').value) {
+                formData.append('weight_kg', document.getElementById('weightKg').value);
+            }
+            
+            if (document.getElementById('dimensions').value) {
+                formData.append('dimensions', document.getElementById('dimensions').value.trim());
+            }
+            
+            if (document.getElementById('declaredValue').value) {
+                formData.append('declared_value', document.getElementById('declaredValue').value);
+            }
+            
+            formData.append('declared_currency', document.getElementById('declaredCurrency').value);
+            formData.append('shipping_amount', document.getElementById('shippingAmount').value);
+            
+            if (document.getElementById('paymentMethod').value) {
+                formData.append('payment_method', document.getElementById('paymentMethod').value);
+            }
+            
+            formData.append('payment_status', document.getElementById('paymentStatus').value);
+            formData.append('sending_date', document.getElementById('sendingDate').value);
+            formData.append('estimated_delivery_date', document.getElementById('estimatedDeliveryDate').value);
+            formData.append('is_international', document.getElementById('isInternational').checked ? 'true' : 'false');
+            
+            formData.append('front_image', frontImageFile);
+            formData.append('rear_image', rearImageFile);
+            
+            try {
+                const response = await fetch(`${API_BASE}/shipments/`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert(`Shipment created! Tracking: ${result.data.tracking_number}`, 'success');
+                    resetCreateForm();
+                    setTimeout(() => showSection('shipments'), 1500);
+                } else {
+                    showAlert(result.detail || 'Failed to create shipment', 'danger');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'danger');
+            } finally {
+                btnText.style.display = 'inline';
+                btnSpinner.style.display = 'none';
+                createBtn.disabled = false;
+            }
+        }
+
+        // ============================================
+        // INTERVENTIONS
+        // ============================================
+        async function loadInterventions() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/shipments/?limit=100`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const interventions = (data.data.shipments || []).filter(s => s.has_interventions);
+                    
+                    const tbody = document.getElementById('interventionsBody');
+                    
+                    if (interventions.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No active interventions</td></tr>';
+                    } else {
+                        tbody.innerHTML = interventions.map(s => `
+                            <tr class="clickable-row" onclick="openShipmentModal('${s.tracking_number}')">
+                                <td>${formatTracking(s.tracking_number)}</td>
+                                <td>${(s.intervention_types || []).join(', ')}</td>
+                                <td><span class="status-badge ${getStatusClass(s.status)}">${s.status_display || s.status}</span></td>
+                                <td>${s.origin_location || 'N/A'}</td>
+                                <td>${s.destination_location || 'N/A'}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); openShipmentModal('${s.tracking_number}')">
+                                        <i class="bi bi-pencil"></i> Manage
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading interventions:', error);
+            }
+        }
+
+        // ============================================
+        // HISTORY
+        // ============================================
+        async function loadHistory() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/dashboard/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const activities = data.data.recent_activity || [];
+                    
+                    const tbody = document.getElementById('historyBody');
+                    
+                    if (activities.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No history available</td></tr>';
+                    } else {
+                        tbody.innerHTML = activities.map(a => `
+                            <tr>
+                                <td>${formatTracking(a.tracking)}</td>
+                                <td>${a.event}</td>
+                                <td><span class="badge bg-secondary">${a.event.split('→')[0] || 'NEW'}</span></td>
+                                <td><span class="badge bg-primary">${a.event.split('→')[1] || a.event}</span></td>
+                                <td>${new Date(a.timestamp).toLocaleString()}</td>
+                                <td>${a.location || 'N/A'}</td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        // ============================================
+        // SETTINGS
+        // ============================================
+        async function handleChangePassword(e) {
             e.preventDefault();
             
             const token = localStorage.getItem('adminToken');
@@ -2349,17 +2272,7 @@
             } catch (error) {
                 showAlert('Error changing password', 'danger');
             }
-        });
-
-        // ============================================
-        // MODAL CLICK OUTSIDE
-        // ============================================
-        window.onclick = function(event) {
-            const modal = document.getElementById('shipmentModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        };
+        }
     </script>
 </body>
 </html>

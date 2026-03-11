@@ -15,6 +15,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- html2pdf for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- SweetAlert2 for better notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         /* Global Styles */
@@ -1118,6 +1120,32 @@
             font-weight: 600;
         }
 
+        /* Email Status Indicator */
+        .email-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .email-sent {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .email-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .email-failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
@@ -1165,6 +1193,26 @@
         </div>
     </div>
 
+    <!-- Email Test Modal -->
+    <div id="emailTestModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h5>Test Email Configuration</h5>
+                <button class="modal-close" onclick="closeEmailTestModal()">&times;</button>
+            </div>
+            <div class="p-3">
+                <div class="form-group">
+                    <label class="form-label">Test Email Address</label>
+                    <input type="email" class="form-control" id="testEmailAddress" placeholder="Enter your email">
+                </div>
+                <button class="btn-primary w-100 mt-3" onclick="sendTestEmail()">
+                    <i class="bi bi-send"></i> Send Test Email
+                </button>
+                <div id="testEmailResult" class="mt-3" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Login Section -->
     <div id="loginSection" class="login-container">
         <div class="login-card">
@@ -1174,7 +1222,7 @@
                     <span class="logo-text">Euk<span class="logo-highlight">Express</span></span>
                 </div>
                 <h2>Welcome Back</h2>
-<p>Sign in to EukExpress Admin Portal</p>
+                <p>Sign in to EukExpress Admin Portal</p>
                 <div class="euk-badge mt-3">v2.0.0 • Secure Session</div>
             </div>
             
@@ -1810,6 +1858,21 @@
                     
                     <hr class="my-4">
                     
+                    <h5 class="mb-3">Email Service Status</h5>
+                    <div class="bg-light p-3 rounded">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <p class="mb-1"><strong>Status:</strong> <span id="emailServiceStatus" class="text-success">Checking...</span></p>
+                                <p class="mb-1"><strong>From:</strong> <span id="emailFromAddress">onboarding@delivery.eukexpress.com</span></p>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="openEmailTestModal()">
+                                <i class="bi bi-envelope"></i> Test Email
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
                     <h5 class="mb-3">System Information</h5>
                     <div class="bg-light p-3 rounded">
                         <p class="mb-2"><strong>Logged in as:</strong> <span id="sessionUsername"></span></p>
@@ -2090,6 +2153,55 @@
             } catch (error) {
                 console.error('Token verification error:', error);
                 return false;
+            }
+        }
+
+        // ============================================
+        // EMAIL SERVICE FUNCTIONS
+        // ============================================
+        function openEmailTestModal() {
+            document.getElementById('emailTestModal').style.display = 'flex';
+        }
+
+        function closeEmailTestModal() {
+            document.getElementById('emailTestModal').style.display = 'none';
+            document.getElementById('testEmailResult').style.display = 'none';
+            document.getElementById('testEmailAddress').value = '';
+        }
+
+        async function sendTestEmail() {
+            const email = document.getElementById('testEmailAddress').value.trim();
+            if (!email) {
+                showAlert('Please enter an email address', 'warning');
+                return;
+            }
+
+            const resultDiv = document.getElementById('testEmailResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div class="alert alert-info">Sending test email...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/email/test`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ to: email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    resultDiv.innerHTML = '<div class="alert alert-success">✅ Test email sent successfully! Check your inbox.</div>';
+                    document.getElementById('emailServiceStatus').innerHTML = '✅ Active';
+                } else {
+                    resultDiv.innerHTML = `<div class="alert alert-danger">❌ Failed: ${data.error || 'Unknown error'}</div>`;
+                    document.getElementById('emailServiceStatus').innerHTML = '❌ Error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="alert alert-danger">❌ Network error. Please try again.</div>';
+                document.getElementById('emailServiceStatus').innerHTML = '❌ Error';
             }
         }
 
@@ -2868,6 +2980,7 @@
             const delayActive = document.getElementById('modalDelayActive').checked;
             
             let successCount = 0;
+            let emailSuccess = true;
             
             try {
                 // Customs Bond
@@ -2886,7 +2999,11 @@
                             notes: document.getElementById('modalCustomsNotes').value || undefined
                         })
                     });
-                    if (response.ok) successCount++;
+                    if (response.ok) {
+                        successCount++;
+                        const result = await response.json();
+                        if (!result.email_sent) emailSuccess = false;
+                    }
                 }
                 
                 // Security Hold
@@ -2904,7 +3021,11 @@
                             notes: document.getElementById('modalSecurityNotes').value || undefined
                         })
                     });
-                    if (response.ok) successCount++;
+                    if (response.ok) {
+                        successCount++;
+                        const result = await response.json();
+                        if (!result.email_sent) emailSuccess = false;
+                    }
                 }
                 
                 // Damage
@@ -2922,7 +3043,11 @@
                             resolution_notes: document.getElementById('modalDamageResolution').value || undefined
                         })
                     });
-                    if (response.ok) successCount++;
+                    if (response.ok) {
+                        successCount++;
+                        const result = await response.json();
+                        if (!result.email_sent) emailSuccess = false;
+                    }
                 }
                 
                 // Return
@@ -2939,7 +3064,11 @@
                             reason: document.getElementById('modalReturnReason').value || undefined
                         })
                     });
-                    if (response.ok) successCount++;
+                    if (response.ok) {
+                        successCount++;
+                        const result = await response.json();
+                        if (!result.email_sent) emailSuccess = false;
+                    }
                 }
                 
                 // Delay
@@ -2958,11 +3087,16 @@
                             notes: document.getElementById('modalDelayNotes').value || undefined
                         })
                     });
-                    if (response.ok) successCount++;
+                    if (response.ok) {
+                        successCount++;
+                        const result = await response.json();
+                        if (!result.email_sent) emailSuccess = false;
+                    }
                 }
                 
                 if (successCount > 0) {
-                    showAlert(`${successCount} intervention(s) applied successfully! Emails sent to sender and recipient.`, 'success');
+                    const emailMsg = emailSuccess ? 'Emails sent successfully.' : 'Warning: Some emails may have failed.';
+                    showAlert(`${successCount} intervention(s) applied successfully! ${emailMsg}`, emailSuccess ? 'success' : 'warning');
                 } else {
                     showAlert('No changes were made.', 'info');
                 }

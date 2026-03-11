@@ -1922,7 +1922,7 @@
                         <p class="mb-2"><strong>Session Expires:</strong> <span id="sessionExpiresIn"></span></p>
                         <p class="mb-2"><strong>API Endpoint:</strong> <code>https://eukexpress-backend.onrender.com/api/v1</code></p>
                         <p class="mb-2"><strong>Email Service:</strong> <span class="text-success">✅ Active</span> (onboarding@delivery.eukexpress.com)</p>
-                        <p class="mb-0"><strong>PDF Invoice:</strong> Automatically generated and sent to sender</p>
+                        <p class="mb-0"><strong>PDF Invoice:</strong> Automatically generated and sent to sender and recipient</p>
                     </div>
                 </div>
             </div>
@@ -2399,9 +2399,16 @@
         // UTILITY FUNCTIONS
         // ============================================
         function showAlert(message, type = 'success') {
+            // FIXED: Changed 'danger' to 'error' for SweetAlert2 compatibility
+            let swalType = type;
+            if (type === 'danger') swalType = 'error';
+            if (type === 'success') swalType = 'success';
+            if (type === 'warning') swalType = 'warning';
+            if (type === 'info') swalType = 'info';
+            
             Swal.fire({
-                icon: type,
-                title: type === 'success' ? 'Success' : type === 'danger' ? 'Error' : type === 'warning' ? 'Warning' : 'Info',
+                icon: swalType,
+                title: swalType === 'success' ? 'Success' : swalType === 'error' ? 'Error' : swalType === 'warning' ? 'Warning' : 'Info',
                 text: message,
                 timer: 3000,
                 showConfirmButton: false
@@ -2513,7 +2520,7 @@
             const password = document.getElementById('password').value;
             
             if (!username || !password) {
-                showAlert('Please enter username and password', 'danger');
+                showAlert('Please enter username and password', 'warning');
                 return;
             }
             
@@ -2539,10 +2546,10 @@
                     loadDashboardData();
                     startSessionTimer(data.expires_in);
                 } else {
-                    showAlert(data.detail || 'Invalid credentials', 'danger');
+                    showAlert(data.detail || 'Invalid credentials', 'error');
                 }
             } catch (error) {
-                showAlert('Network error. Please check your connection.', 'danger');
+                showAlert('Network error. Please check your connection.', 'error');
             } finally {
                 setLoading('loginBtn', false);
             }
@@ -2830,10 +2837,12 @@
                     }
                 } else if (response.status === 401) {
                     logout();
+                } else {
+                    showAlert('Failed to load shipments', 'error');
                 }
             } catch (error) {
                 console.error('Error loading shipments:', error);
-                showAlert('Failed to load shipments', 'danger');
+                showAlert('Failed to load shipments', 'error');
             }
         }
 
@@ -2953,10 +2962,12 @@
                     document.getElementById('shipmentModal').style.display = 'flex';
                 } else if (response.status === 401) {
                     logout();
+                } else {
+                    showAlert('Failed to load shipment details', 'error');
                 }
             } catch (error) {
                 console.error('Error loading shipment:', error);
-                showAlert('Failed to load shipment details', 'danger');
+                showAlert('Failed to load shipment details', 'error');
             }
         }
 
@@ -3020,10 +3031,10 @@
                 } else if (response.status === 401) {
                     logout();
                 } else {
-                    showAlert('Failed to update status', 'danger');
+                    showAlert('Failed to update status', 'error');
                 }
             } catch (error) {
-                showAlert('Error updating status', 'danger');
+                showAlert('Error updating status', 'error');
             } finally {
                 setLoading('updateStatusBtn', false);
             }
@@ -3172,7 +3183,7 @@
                 
             } catch (error) {
                 console.error('Error applying interventions:', error);
-                showAlert('Error applying interventions. Please try again.', 'danger');
+                showAlert('Error applying interventions. Please try again.', 'error');
             } finally {
                 setLoading('applyInterventionsBtn', false);
             }
@@ -3262,12 +3273,12 @@
             
             const token = localStorage.getItem('adminToken');
             if (!token) {
-                showAlert('Please login again', 'danger');
+                showAlert('Please login again', 'error');
                 return;
             }
             
             if (!frontImageFile || !rearImageFile) {
-                showAlert('Please upload both front and rear images', 'danger');
+                showAlert('Please upload both front and rear images', 'warning');
                 return;
             }
             
@@ -3334,17 +3345,17 @@
                 const result = await response.json();
                 
                 if (response.ok) {
-                    showAlert(`✅ Shipment created! Tracking: ${result.data.tracking_number}. PDF Invoice sent to sender, notification to recipient.`, 'success');
+                    showAlert(`✅ Shipment created! Tracking: ${result.data.tracking_number}. PDF Invoice sent to sender and recipient.`, 'success');
                     resetCreateForm();
                     
                     setTimeout(() => showSection('shipments'), 2000);
                 } else if (response.status === 401) {
                     logout();
                 } else {
-                    showAlert(result.detail || 'Failed to create shipment', 'danger');
+                    showAlert(result.detail || 'Failed to create shipment', 'error');
                 }
             } catch (error) {
-                showAlert('Network error. Please try again.', 'danger');
+                showAlert('Network error. Please try again.', 'error');
             } finally {
                 setLoading('createShipmentBtn', false);
             }
@@ -3572,10 +3583,10 @@
                     logout();
                 } else {
                     const data = await response.json();
-                    showAlert(data.detail || 'Failed to send message', 'danger');
+                    showAlert(data.detail || 'Failed to send message', 'error');
                 }
             } catch (error) {
-                showAlert('Error sending message', 'danger');
+                showAlert('Error sending message', 'error');
             } finally {
                 setLoading('sendMessageBtn', false);
             }
@@ -3620,10 +3631,10 @@
                     logout();
                 } else {
                     const data = await response.json();
-                    showAlert(data.detail || 'Failed to start campaign', 'danger');
+                    showAlert(data.detail || 'Failed to start campaign', 'error');
                 }
             } catch (error) {
-                showAlert('Error starting campaign', 'danger');
+                showAlert('Error starting campaign', 'error');
             } finally {
                 setLoading('bulkCampaignBtn', false);
             }
@@ -3671,12 +3682,12 @@
             const confirmPassword = document.getElementById('confirmPassword').value;
             
             if (newPassword !== confirmPassword) {
-                showAlert('New passwords do not match', 'danger');
+                showAlert('New passwords do not match', 'warning');
                 return;
             }
             
             if (newPassword.length < 8) {
-                showAlert('Password must be at least 8 characters', 'danger');
+                showAlert('Password must be at least 8 characters', 'warning');
                 return;
             }
             
@@ -3702,10 +3713,10 @@
                     logout();
                 } else {
                     const data = await response.json();
-                    showAlert(data.detail || 'Failed to change password', 'danger');
+                    showAlert(data.detail || 'Failed to change password', 'error');
                 }
             } catch (error) {
-                showAlert('Error changing password', 'danger');
+                showAlert('Error changing password', 'error');
             } finally {
                 setLoading('changePasswordBtn', false);
             }

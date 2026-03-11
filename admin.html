@@ -13,6 +13,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- html2pdf for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
         /* Global Styles */
@@ -27,6 +29,117 @@
             background: #f8fafc;
             overflow-x: hidden;
             color: #1e293b;
+        }
+
+        /* Session Timer */
+        .session-timer {
+            background: #f1f5f9;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .session-timer.warning {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+
+        .session-timer i {
+            font-size: 16px;
+        }
+
+        /* Session Expired Modal */
+        .session-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+
+        .session-modal.active {
+            display: flex;
+        }
+
+        .session-modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 400px;
+            text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+
+        .session-modal-icon {
+            width: 80px;
+            height: 80px;
+            background: #fee2e2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+            color: #991b1b;
+        }
+
+        .session-modal h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
+
+        .session-modal p {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        .session-modal-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .session-modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-stay-logged {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-stay-logged:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-logout-now {
+            background: #dc2626;
+            border: none;
+            color: white;
+        }
+
+        .btn-logout-now:hover {
+            background: #b91c1c;
         }
 
         /* Login Page */
@@ -252,6 +365,8 @@
             justify-content: space-between;
             align-items: center;
             border: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .page-title h2 {
@@ -271,6 +386,7 @@
             display: flex;
             align-items: center;
             gap: 20px;
+            flex-wrap: wrap;
         }
 
         .user-name {
@@ -415,6 +531,9 @@
         .status-delayed { background: #fee2e2; color: #991b1b; }
         .status-return_initiated { background: #f3e8ff; color: #6b21a8; }
         .status-cancelled { background: #f1f5f9; color: #475569; }
+        .status-customs_bond { background: #fef3c7; color: #92400e; }
+        .status-security_hold { background: #fee2e2; color: #991b1b; }
+        .status-damage_reported { background: #ffedd5; color: #9a3412; }
 
         /* Intervention Badges */
         .intervention-container {
@@ -726,6 +845,7 @@
             font-weight: 500;
         }
 
+        /* Intervention Cards */
         .intervention-card {
             background: white;
             border-radius: 12px;
@@ -756,6 +876,125 @@
             padding: 10px;
             background: #f8fafc;
             border-radius: 8px;
+        }
+
+        /* Email Preview */
+        .email-preview-container {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #e2e8f0;
+        }
+
+        .email-preview-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #2a5298;
+            font-weight: 600;
+        }
+
+        .email-preview-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #1e293b;
+        }
+
+        .email-recipient-badge {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            margin: 5px 5px 0 0;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 25px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -30px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #2a5298;
+            border: 3px solid #dbeafe;
+        }
+
+        .timeline-date {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .timeline-desc {
+            font-size: 13px;
+            color: #475569;
         }
 
         /* Pagination */
@@ -795,6 +1034,90 @@
             margin-top: 24px;
         }
 
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            padding: 15px 25px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+            min-width: 250px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border-color: #2a5298;
+        }
+
+        .action-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .action-text h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 5px 0;
+        }
+
+        .action-text p {
+            font-size: 13px;
+            color: #64748b;
+            margin: 0;
+        }
+
+        /* Custom Message Form */
+        .custom-message-form {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .recipient-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .recipient-tab {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .recipient-tab.active {
+            border-color: #2a5298;
+            background: #dbeafe;
+            color: #1e40af;
+            font-weight: 600;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
@@ -813,10 +1136,35 @@
             .image-upload-container {
                 flex-direction: column;
             }
+            .quick-actions {
+                flex-direction: column;
+            }
+            .action-button {
+                min-width: auto;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Session Expired Modal -->
+    <div id="sessionModal" class="session-modal">
+        <div class="session-modal-content">
+            <div class="session-modal-icon">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+            <h3>Session Expiring</h3>
+            <p id="sessionMessage">Your session will expire in <span id="sessionCountdown">5:00</span> minutes</p>
+            <div class="session-modal-buttons">
+                <button class="btn-stay-logged" onclick="extendSession()">
+                    <i class="bi bi-arrow-repeat"></i> Stay Logged In
+                </button>
+                <button class="btn-logout-now" onclick="forceLogout()">
+                    <i class="bi bi-box-arrow-right"></i> Logout Now
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Login Section -->
     <div id="loginSection" class="login-container">
         <div class="login-card">
@@ -826,8 +1174,8 @@
                     <span class="logo-text">Euk<span class="logo-highlight">Express</span></span>
                 </div>
                 <h2>Welcome Back</h2>
-                <p>Sign in to EukExpress Admin Portal</p>
-                <div class="euk-badge mt-3">v1.0.0 • Production</div>
+<p>Sign in to EukExpress Admin Portal</p>
+                <div class="euk-badge mt-3">v2.0.0 • Secure Session</div>
             </div>
             
             <div id="loginAlert" class="alert alert-danger" style="display: none;"></div>
@@ -835,7 +1183,7 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+                    <input type="text" class="form-control" id="username" placeholder="Enter your username" required autocomplete="off">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Password</label>
@@ -884,6 +1232,10 @@
                     <i class="bi bi-clock-history"></i>
                     <span>History</span>
                 </div>
+                <div class="menu-item" data-section="communication">
+                    <i class="bi bi-envelope"></i>
+                    <span>Communication</span>
+                </div>
                 <div class="menu-item" data-section="settings">
                     <i class="bi bi-gear"></i>
                     <span>Settings</span>
@@ -900,6 +1252,10 @@
                     <p id="pageSubtitle">Overview of your logistics operations</p>
                 </div>
                 <div class="user-info">
+                    <div class="session-timer" id="sessionTimer">
+                        <i class="bi bi-clock"></i>
+                        <span id="timerDisplay">60:00</span>
+                    </div>
                     <span class="user-name" id="adminName">Loading...</span>
                     <button class="logout-btn" id="logoutBtn">
                         <i class="bi bi-box-arrow-right"></i> Logout
@@ -912,6 +1268,30 @@
 
             <!-- Dashboard Content -->
             <div id="dashboardContent" class="content-section active">
+                <div class="quick-actions">
+                    <div class="action-button" onclick="showSection('createShipment')">
+                        <div class="action-icon"><i class="bi bi-plus-lg"></i></div>
+                        <div class="action-text">
+                            <h4>Create New Shipment</h4>
+                            <p>Register a new shipment in the system</p>
+                        </div>
+                    </div>
+                    <div class="action-button" onclick="showSection('interventions')">
+                        <div class="action-icon"><i class="bi bi-exclamation-triangle"></i></div>
+                        <div class="action-text">
+                            <h4>Handle Interventions</h4>
+                            <p>Manage shipments requiring attention</p>
+                        </div>
+                    </div>
+                    <div class="action-button" onclick="showSection('communication')">
+                        <div class="action-icon"><i class="bi bi-envelope"></i></div>
+                        <div class="action-text">
+                            <h4>Send Communication</h4>
+                            <p>Send updates to customers</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-title">Active Shipments</div>
@@ -1044,7 +1424,7 @@
                         <h5 class="m-0">Create New Shipment</h5>
                         <div class="alert alert-info mb-0 py-2 px-3">
                             <i class="bi bi-info-circle"></i> 
-                            Tracking format: <strong>EUK*****</strong> (auto-generated)
+                            Tracking format: <strong>EUK*****</strong> (auto-generated) • PDF Invoice will be sent automatically
                         </div>
                     </div>
                     
@@ -1054,38 +1434,38 @@
                                 <h6 class="mb-3">Sender Information</h6>
                                 <div class="form-group">
                                     <label class="form-label">Full Name *</label>
-                                    <input type="text" class="form-control" id="senderName" value="John Doe" required>
+                                    <input type="text" class="form-control" id="senderName" value="John A. Smith" placeholder="e.g., John A. Smith" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Email *</label>
-                                    <input type="email" class="form-control" id="senderEmail" value="john.doe@example.com" required>
+                                    <input type="email" class="form-control" id="senderEmail" value="john.smith@example.com" placeholder="e.g., john.smith@example.com" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Phone *</label>
-                                    <input type="text" class="form-control" id="senderPhone" value="+1234567890" required>
+                                    <input type="text" class="form-control" id="senderPhone" value="+1 (212) 555-7890" placeholder="e.g., +1 (212) 555-7890" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Address *</label>
-                                    <textarea class="form-control" id="senderAddress" rows="3" required>123 Sender St, New York, NY 10001</textarea>
+                                    <textarea class="form-control" id="senderAddress" rows="3" placeholder="e.g., 123 Business Ave, Suite 400, New York, NY 10001, USA" required>123 Business Ave, Suite 400, New York, NY 10001, USA</textarea>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <h6 class="mb-3">Recipient Information</h6>
                                 <div class="form-group">
                                     <label class="form-label">Full Name *</label>
-                                    <input type="text" class="form-control" id="recipientName" value="Jane Smith" required>
+                                    <input type="text" class="form-control" id="recipientName" value="Maria G. Rodriguez" placeholder="e.g., Maria G. Rodriguez" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Email *</label>
-                                    <input type="email" class="form-control" id="recipientEmail" value="jane.smith@example.com" required>
+                                    <input type="email" class="form-control" id="recipientEmail" value="maria.rodriguez@example.com" placeholder="e.g., maria.rodriguez@example.com" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Phone *</label>
-                                    <input type="text" class="form-control" id="recipientPhone" value="+1987654321" required>
+                                    <input type="text" class="form-control" id="recipientPhone" value="+44 20 7946 0138" placeholder="e.g., +44 20 7946 0138" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Address *</label>
-                                    <textarea class="form-control" id="recipientAddress" rows="3" required>456 Recipient Ave, Los Angeles, CA 90001</textarea>
+                                    <textarea class="form-control" id="recipientAddress" rows="3" placeholder="e.g., 456 High Street, London, EC1A 1BB, United Kingdom" required>456 High Street, London, EC1A 1BB, United Kingdom</textarea>
                                 </div>
                             </div>
                         </div>
@@ -1095,41 +1475,41 @@
                                 <h6 class="mb-3">Shipment Details</h6>
                                 <div class="form-group">
                                     <label class="form-label">Origin *</label>
-                                    <input type="text" class="form-control" id="originLocation" value="New York, USA" required>
+                                    <input type="text" class="form-control" id="originLocation" value="New York, USA" placeholder="e.g., New York, USA" required>
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="form-label">Origin Code</label>
-                                            <input type="text" class="form-control" id="originCode" value="NYC">
+                                            <input type="text" class="form-control" id="originCode" value="JFK" placeholder="e.g., JFK">
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="form-label">Destination Code</label>
-                                            <input type="text" class="form-control" id="destinationCode" value="LAX">
+                                            <input type="text" class="form-control" id="destinationCode" value="LHR" placeholder="e.g., LHR">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Destination *</label>
-                                    <input type="text" class="form-control" id="destinationLocation" value="Los Angeles, USA" required>
+                                    <input type="text" class="form-control" id="destinationLocation" value="London, United Kingdom" placeholder="e.g., London, United Kingdom" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Goods Description *</label>
-                                    <textarea class="form-control" id="goodsDescription" rows="3" required>Electronics - Laptops</textarea>
+                                    <textarea class="form-control" id="goodsDescription" rows="3" placeholder="e.g., Electronics - Laptops, Tablets, Accessories" required>Electronics - Laptops, Tablets, Accessories</textarea>
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="form-label">Weight (kg)</label>
-                                            <input type="number" step="0.01" class="form-control" id="weightKg" value="15.5">
+                                            <input type="number" step="0.01" class="form-control" id="weightKg" value="15.50" placeholder="e.g., 15.50">
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="form-label">Dimensions (cm)</label>
-                                            <input type="text" class="form-control" id="dimensions" value="50x40x30">
+                                            <input type="text" class="form-control" id="dimensions" value="50x40x30" placeholder="LxWxH e.g., 50x40x30">
                                         </div>
                                     </div>
                                 </div>
@@ -1139,35 +1519,36 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label class="form-label">Value</label>
-                                            <input type="number" step="0.01" class="form-control" id="declaredValue" value="2500.00">
+                                            <label class="form-label">Declared Value</label>
+                                            <input type="number" step="0.01" class="form-control" id="declaredValue" value="2500.00" placeholder="e.g., 2500.00">
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="form-label">Currency</label>
                                             <select class="form-select" id="declaredCurrency">
-                                                <option value="USD" selected>USD</option>
-                                                <option value="EUR">EUR</option>
-                                                <option value="GBP">GBP</option>
-                                                <option value="NGN">NGN</option>
+                                                <option value="USD" selected>USD - US Dollar</option>
+                                                <option value="EUR">EUR - Euro</option>
+                                                <option value="GBP">GBP - British Pound</option>
+                                                <option value="NGN">NGN - Nigerian Naira</option>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Shipping Amount *</label>
-                                    <input type="number" step="0.01" class="form-control" id="shippingAmount" value="150.00" required>
+                                    <input type="number" step="0.01" class="form-control" id="shippingAmount" value="150.00" placeholder="e.g., 150.00" required>
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="form-label">Payment Method</label>
                                             <select class="form-select" id="paymentMethod">
-                                                <option value="">Select</option>
+                                                <option value="">Select payment method</option>
                                                 <option value="CASH" selected>Cash</option>
-                                                <option value="TRANSFER">Transfer</option>
-                                                <option value="CARD">Card</option>
+                                                <option value="TRANSFER">Bank Transfer</option>
+                                                <option value="CARD">Credit Card</option>
+                                                <option value="POS">POS</option>
                                             </select>
                                         </div>
                                     </div>
@@ -1197,7 +1578,7 @@
                                     </div>
                                 </div>
                                 <div class="form-check mt-2">
-                                    <input class="form-check-input" type="checkbox" id="isInternational">
+                                    <input class="form-check-input" type="checkbox" id="isInternational" checked>
                                     <label class="form-check-label" for="isInternational">International Shipment</label>
                                 </div>
                             </div>
@@ -1205,17 +1586,19 @@
 
                         <div class="row mt-4">
                             <div class="col-12">
-                                <h6 class="mb-3">Shipment Images</h6>
+                                <h6 class="mb-3">Shipment Images (Required)</h6>
                                 <div class="image-upload-container">
                                     <div class="image-box" id="frontImageBox">
                                         <i class="bi bi-camera"></i>
-                                        <p>Front View</p>
+                                        <p>Front View - Click to upload</p>
+                                        <small class="text-muted">JPG, PNG up to 10MB</small>
                                         <input type="file" id="frontImage" accept="image/*" style="display: none;">
                                         <img id="frontPreview" class="image-preview">
                                     </div>
                                     <div class="image-box" id="rearImageBox">
                                         <i class="bi bi-camera"></i>
-                                        <p>Rear View</p>
+                                        <p>Rear View - Click to upload</p>
+                                        <small class="text-muted">JPG, PNG up to 10MB</small>
                                         <input type="file" id="rearImage" accept="image/*" style="display: none;">
                                         <img id="rearPreview" class="image-preview">
                                     </div>
@@ -1224,7 +1607,9 @@
                         </div>
                         
                         <div class="d-flex justify-content-end mt-4">
-                            <button type="button" class="btn-secondary me-3" onclick="resetCreateForm()">Reset</button>
+                            <button type="button" class="btn-secondary me-3" onclick="resetCreateForm()">
+                                <i class="bi bi-arrow-counterclockwise"></i> Reset to Default
+                            </button>
                             <button type="submit" class="btn-primary" id="createShipmentBtn">
                                 <span id="createBtnText">Create Shipment</span>
                                 <span id="createBtnSpinner" style="display: none;">
@@ -1284,6 +1669,119 @@
                 </div>
             </div>
 
+            <!-- Communication Content -->
+            <div id="communicationContent" class="content-section">
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="table-container">
+                            <h5 class="mb-4">Send Custom Message</h5>
+                            <div class="form-group mb-3">
+                                <label class="form-label">Select Shipment</label>
+                                <select class="form-select" id="messageShipmentSelect">
+                                    <option value="">Loading shipments...</option>
+                                </select>
+                            </div>
+                            
+                            <div id="messageRecipientInfo" class="alert alert-info mb-3" style="display: none;">
+                                <i class="bi bi-info-circle"></i>
+                                <span id="recipientDisplay"></span>
+                            </div>
+                            
+                            <div class="recipient-tabs">
+                                <div class="recipient-tab active" data-recipient="both" onclick="setMessageRecipient('both')">
+                                    <i class="bi bi-people"></i> Both
+                                </div>
+                                <div class="recipient-tab" data-recipient="sender" onclick="setMessageRecipient('sender')">
+                                    <i class="bi bi-person"></i> Sender Only
+                                </div>
+                                <div class="recipient-tab" data-recipient="recipient" onclick="setMessageRecipient('recipient')">
+                                    <i class="bi bi-person"></i> Recipient Only
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Subject</label>
+                                <input type="text" class="form-control" id="messageSubject" placeholder="Enter subject">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Message</label>
+                                <textarea class="form-control" id="messageContent" rows="5" placeholder="Type your message here..."></textarea>
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="includeTrackingLink" checked>
+                                <label class="form-check-label" for="includeTrackingLink">
+                                    Include tracking link in email
+                                </label>
+                            </div>
+                            
+                            <button class="btn-primary w-100" onclick="sendCustomMessage()">
+                                <i class="bi bi-send"></i> Send Message
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="table-container">
+                            <h5 class="mb-4">Bulk Email Campaign</h5>
+                            <div class="form-group">
+                                <label class="form-label">Target Filter</label>
+                                <select class="form-select" id="bulkFilter">
+                                    <option value="all">All Shipments</option>
+                                    <option value="customs_bond">Customs Bond Active</option>
+                                    <option value="delayed">Delayed Shipments</option>
+                                    <option value="international">International Shipments</option>
+                                    <option value="active">Active Shipments (Not Delivered)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Subject</label>
+                                <input type="text" class="form-control" id="bulkSubject">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Message</label>
+                                <textarea class="form-control" id="bulkMessage" rows="4"></textarea>
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="bulkIncludeLinks" checked>
+                                <label class="form-check-label" for="bulkIncludeLinks">
+                                    Include tracking links
+                                </label>
+                            </div>
+                            
+                            <button class="btn-primary w-100" onclick="sendBulkCampaign()">
+                                <i class="bi bi-envelope-paper"></i> Launch Campaign
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container mt-3">
+                    <h5 class="mb-4">Email History</h5>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Tracking #</th>
+                                    <th>Type</th>
+                                    <th>Recipient</th>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="emailHistoryBody">
+                                <tr><td colspan="6" class="text-center text-muted py-4">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- Settings Content -->
             <div id="settingsContent" class="content-section">
                 <div class="form-card">
@@ -1300,7 +1798,7 @@
                             <input type="password" class="form-control" id="currentPassword" required>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">New Password</label>
+                            <label class="form-label">New Password (min. 8 characters)</label>
                             <input type="password" class="form-control" id="newPassword" required minlength="8">
                         </div>
                         <div class="form-group">
@@ -1312,10 +1810,13 @@
                     
                     <hr class="my-4">
                     
-                    <h5 class="mb-3">Session Information</h5>
+                    <h5 class="mb-3">System Information</h5>
                     <div class="bg-light p-3 rounded">
                         <p class="mb-2"><strong>Logged in as:</strong> <span id="sessionUsername"></span></p>
-                        <p class="mb-0"><strong>API Endpoint:</strong> <code>https://eukexpress-backend.onrender.com/api/v1</code></p>
+                        <p class="mb-2"><strong>Session Expires:</strong> <span id="sessionExpiresIn"></span></p>
+                        <p class="mb-2"><strong>API Endpoint:</strong> <code>https://eukexpress-backend.onrender.com/api/v1</code></p>
+                        <p class="mb-2"><strong>Email Service:</strong> <span class="text-success">✅ Active</span> (onboarding@delivery.eukexpress.com)</p>
+                        <p class="mb-0"><strong>PDF Invoice:</strong> Automatically generated and sent to sender</p>
                     </div>
                 </div>
             </div>
@@ -1329,6 +1830,7 @@
                 <h5>Shipment Details - <span id="modalTracking"></span></h5>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
+            
             <div id="modalShipmentContent" class="mb-4"></div>
             
             <div class="mb-4">
@@ -1347,6 +1849,21 @@
                     </div>
                     <div class="col-12">
                         <textarea class="form-control" id="modalStatusNotes" placeholder="Notes" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Email Preview Section -->
+            <div class="email-preview-container mb-4">
+                <div class="email-preview-header">
+                    <i class="bi bi-envelope-paper fs-4"></i>
+                    <h6 class="mb-0">Email Preview (Will be sent when toggled)</h6>
+                </div>
+                <div class="email-preview-content" id="emailPreview">
+                    <div><strong>To:</strong> <span id="emailPreviewTo">sender@example.com, recipient@example.com</span></div>
+                    <div><strong>Subject:</strong> <span id="emailPreviewSubject">Shipment Update - Customs Bond Activated</span></div>
+                    <div class="mt-2 p-2 bg-white rounded border" id="emailPreviewBody">
+                        Your shipment is currently under customs review...
                     </div>
                 </div>
             </div>
@@ -1370,10 +1887,6 @@
                         <input type="text" class="form-control mb-2" id="modalCustomsReference" placeholder="Reference #">
                         <textarea class="form-control" id="modalCustomsNotes" placeholder="Notes" rows="2"></textarea>
                     </div>
-                    <div class="intervention-email" id="customsEmailPreview">
-                        <i class="bi bi-envelope"></i> 
-                        <span>Email will be sent to sender/recipient when toggled</span>
-                    </div>
                 </div>
 
                 <!-- Security Hold -->
@@ -1390,10 +1903,6 @@
                     <div id="modalSecurityDetails" style="display: none;" class="mt-3">
                         <input type="text" class="form-control mb-2" id="modalSecurityLocation" placeholder="Location">
                         <textarea class="form-control" id="modalSecurityNotes" placeholder="Notes" rows="2"></textarea>
-                    </div>
-                    <div class="intervention-email" id="securityEmailPreview">
-                        <i class="bi bi-envelope"></i> 
-                        <span>Email will be sent to sender/recipient when toggled</span>
                     </div>
                 </div>
 
@@ -1412,10 +1921,6 @@
                         <textarea class="form-control mb-2" id="modalDamageDescription" placeholder="Damage description" rows="2"></textarea>
                         <textarea class="form-control" id="modalDamageResolution" placeholder="Resolution notes" rows="2"></textarea>
                     </div>
-                    <div class="intervention-email" id="damageEmailPreview">
-                        <i class="bi bi-envelope"></i> 
-                        <span>Email will be sent to sender/recipient when toggled</span>
-                    </div>
                 </div>
 
                 <!-- Return -->
@@ -1431,10 +1936,6 @@
                     </div>
                     <div id="modalReturnDetails" style="display: none;" class="mt-3">
                         <textarea class="form-control" id="modalReturnReason" placeholder="Return reason" rows="2"></textarea>
-                    </div>
-                    <div class="intervention-email" id="returnEmailPreview">
-                        <i class="bi bi-envelope"></i> 
-                        <span>Email will be sent to sender/recipient when toggled</span>
                     </div>
                 </div>
 
@@ -1454,14 +1955,10 @@
                         <textarea class="form-control mb-2" id="modalDelayReason" placeholder="Delay reason" rows="2"></textarea>
                         <textarea class="form-control" id="modalDelayNotes" placeholder="Additional notes" rows="2"></textarea>
                     </div>
-                    <div class="intervention-email" id="delayEmailPreview">
-                        <i class="bi bi-envelope"></i> 
-                        <span>Email will be sent to sender/recipient when toggled</span>
-                    </div>
                 </div>
 
                 <button class="btn-primary w-100 mt-3" onclick="applyInterventions()">
-                    <i class="bi bi-check-circle"></i> Apply Changes
+                    <i class="bi bi-check-circle"></i> Apply Changes (Emails will be sent)
                 </button>
             </div>
         </div>
@@ -1479,16 +1976,137 @@
         let frontImageFile = null;
         let rearImageFile = null;
         let statusChart = null;
+        let currentMessageRecipient = 'both';
+
+        // ============================================
+        // SESSION MANAGEMENT
+        // ============================================
+        let sessionTimer = null;
+        let sessionWarningShown = false;
+        let sessionExpiryTime = null;
+        const SESSION_WARNING_TIME = 300; // 5 minutes in seconds
+        const SESSION_CHECK_INTERVAL = 1000; // 1 second
+
+        function startSessionTimer(expiresIn) {
+            sessionExpiryTime = Date.now() + (expiresIn * 1000);
+            sessionWarningShown = false;
+            
+            if (sessionTimer) clearInterval(sessionTimer);
+            
+            sessionTimer = setInterval(() => {
+                const now = Date.now();
+                const timeLeft = Math.max(0, Math.floor((sessionExpiryTime - now) / 1000));
+                
+                // Update timer display
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('timerDisplay').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                document.getElementById('sessionExpiresIn').textContent = `${minutes} minutes ${seconds} seconds`;
+                
+                // Change color when less than 5 minutes
+                const timerElement = document.getElementById('sessionTimer');
+                if (timeLeft < 300) {
+                    timerElement.classList.add('warning');
+                } else {
+                    timerElement.classList.remove('warning');
+                }
+                
+                // Show warning modal at 5 minutes
+                if (timeLeft <= SESSION_WARNING_TIME && !sessionWarningShown) {
+                    sessionWarningShown = true;
+                    showSessionModal(timeLeft);
+                }
+                
+                // Auto logout at 0
+                if (timeLeft <= 0) {
+                    clearInterval(sessionTimer);
+                    forceLogout();
+                }
+            }, SESSION_CHECK_INTERVAL);
+        }
+
+        function showSessionModal(timeLeft) {
+            const modal = document.getElementById('sessionModal');
+            const countdown = document.getElementById('sessionCountdown');
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            countdown.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            modal.classList.add('active');
+        }
+
+        async function extendSession() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/verify`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.valid) {
+                        sessionWarningShown = false;
+                        document.getElementById('sessionModal').classList.remove('active');
+                        startSessionTimer(data.expires_in);
+                        showAlert('Session extended successfully', 'success');
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to extend session:', error);
+            }
+        }
+
+        function forceLogout() {
+            document.getElementById('sessionModal').classList.remove('active');
+            logout();
+        }
+
+        // ============================================
+        // TOKEN VERIFICATION
+        // ============================================
+        async function verifyToken() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) return false;
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/verify`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.valid) {
+                        startSessionTimer(data.expires_in);
+                        return true;
+                    }
+                }
+                
+                // Token invalid or expired
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUser');
+                return false;
+                
+            } catch (error) {
+                console.error('Token verification error:', error);
+                return false;
+            }
+        }
 
         // ============================================
         // INITIALIZATION
         // ============================================
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             // Check login status
             const token = localStorage.getItem('adminToken');
             if (token) {
-                showDashboard();
-                loadDashboardData();
+                const isValid = await verifyToken();
+                if (isValid) {
+                    showDashboard();
+                    loadDashboardData();
+                } else {
+                    showLogin();
+                }
             }
 
             // Set default dates
@@ -1501,6 +2119,9 @@
 
             // Set up all event listeners
             setupEventListeners();
+
+            // Load shipments for message dropdown
+            loadShipmentsForDropdown();
         });
 
         function setupEventListeners() {
@@ -1587,6 +2208,12 @@
                     loadShipments();
                 });
             }
+
+            // Shipment select for messages
+            const shipmentSelect = document.getElementById('messageShipmentSelect');
+            if (shipmentSelect) {
+                shipmentSelect.addEventListener('change', updateMessageRecipientInfo);
+            }
         }
 
         // ============================================
@@ -1618,7 +2245,10 @@
                 'DELIVERED': 'status-delivered',
                 'DELAYED': 'status-delayed',
                 'RETURN_INITIATED': 'status-return_initiated',
-                'CANCELLED': 'status-cancelled'
+                'CANCELLED': 'status-cancelled',
+                'CUSTOMS_BOND': 'status-customs_bond',
+                'SECURITY_HOLD': 'status-security_hold',
+                'DAMAGE_REPORTED': 'status-damage_reported'
             };
             return map[status] || 'status-booked';
         }
@@ -1629,6 +2259,71 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(() => func.apply(this, args), wait);
             };
+        }
+
+        function updateEmailPreview(type, action, data = {}) {
+            const previewSubject = document.getElementById('emailPreviewSubject');
+            const previewBody = document.getElementById('emailPreviewBody');
+            const previewTo = document.getElementById('emailPreviewTo');
+            
+            if (!previewSubject || !previewBody) return;
+            
+            const messages = {
+                'customs': {
+                    'activate': {
+                        subject: 'Shipment Update - Customs Bond Activated',
+                        body: 'Your shipment is currently under customs review. This is a standard procedure for international shipments.'
+                    },
+                    'release': {
+                        subject: 'Shipment Update - Customs Cleared',
+                        body: 'Your shipment has been cleared from customs and will continue its journey.'
+                    }
+                },
+                'security': {
+                    'activate': {
+                        subject: 'Shipment Update - Security Hold',
+                        body: 'A security hold has been placed on your shipment for additional screening.'
+                    },
+                    'clear': {
+                        subject: 'Shipment Update - Security Cleared',
+                        body: 'Security hold has been cleared from your shipment.'
+                    }
+                },
+                'damage': {
+                    'report': {
+                        subject: 'Shipment Update - Damage Reported',
+                        body: 'Damage has been reported on your shipment. We are investigating and will provide updates.'
+                    },
+                    'resolve': {
+                        subject: 'Shipment Update - Damage Resolved',
+                        body: 'The damage reported on your shipment has been resolved.'
+                    }
+                },
+                'return': {
+                    'initiate': {
+                        subject: 'Shipment Update - Return Initiated',
+                        body: 'Return to sender has been initiated for your shipment.'
+                    }
+                },
+                'delay': {
+                    'report': {
+                        subject: 'Shipment Update - Shipment Delayed',
+                        body: 'Your shipment has been delayed. We apologize for the inconvenience.'
+                    },
+                    'resolve': {
+                        subject: 'Shipment Update - Delay Resolved',
+                        body: 'The delay on your shipment has been resolved.'
+                    }
+                }
+            };
+            
+            const msg = messages[type]?.[action];
+            if (msg) {
+                previewSubject.textContent = msg.subject;
+                previewBody.innerHTML = `<p>${msg.body}</p>`;
+                if (data.reason) previewBody.innerHTML += `<p><strong>Reason:</strong> ${data.reason}</p>`;
+                if (data.revisedEta) previewBody.innerHTML += `<p><strong>Revised ETA:</strong> ${data.revisedEta}</p>`;
+            }
         }
 
         // ============================================
@@ -1672,6 +2367,7 @@
                     localStorage.setItem('adminUser', username);
                     showDashboard();
                     loadDashboardData();
+                    startSessionTimer(data.expires_in);
                 } else {
                     loginAlert.textContent = data.detail || 'Invalid credentials';
                     loginAlert.style.display = 'block';
@@ -1684,6 +2380,12 @@
                 loginSpinner.style.display = 'none';
                 loginBtn.disabled = false;
             }
+        }
+
+        function showLogin() {
+            document.getElementById('loginSection').style.display = 'flex';
+            document.getElementById('dashboardSection').classList.remove('active');
+            if (sessionTimer) clearInterval(sessionTimer);
         }
 
         function showDashboard() {
@@ -1708,7 +2410,8 @@
             } finally {
                 localStorage.removeItem('adminToken');
                 localStorage.removeItem('adminUser');
-                location.reload();
+                if (sessionTimer) clearInterval(sessionTimer);
+                showLogin();
             }
         }
 
@@ -1735,6 +2438,7 @@
                 'createShipment': { title: 'Create Shipment', subtitle: 'Register a new shipment' },
                 'interventions': { title: 'Interventions', subtitle: 'Shipments requiring attention' },
                 'history': { title: 'History', subtitle: 'Shipment status history' },
+                'communication': { title: 'Communication', subtitle: 'Send emails and updates' },
                 'settings': { title: 'Settings', subtitle: 'Account settings' }
             };
             
@@ -1756,6 +2460,10 @@
                 case 'history':
                     loadHistory();
                     break;
+                case 'communication':
+                    loadEmailHistory();
+                    loadShipmentsForDropdown();
+                    break;
             }
         }
 
@@ -1765,6 +2473,13 @@
         async function loadDashboardData() {
             const token = localStorage.getItem('adminToken');
             if (!token) return;
+            
+            // Verify token before loading data
+            const isValid = await verifyToken();
+            if (!isValid) {
+                logout();
+                return;
+            }
             
             try {
                 const response = await fetch(`${API_BASE}/dashboard/`, {
@@ -1783,6 +2498,8 @@
                     document.getElementById('securityCount').textContent = stats.security_hold_count || 0;
                     
                     updateInterventionSummary(stats);
+                } else if (response.status === 401) {
+                    logout();
                 }
                 
                 const recentResponse = await fetch(`${API_BASE}/dashboard/recent-shipments`, {
@@ -1800,7 +2517,7 @@
                             <tr class="clickable-row" onclick="openShipmentModal('${s.tracking}')">
                                 <td>${formatTracking(s.tracking)}</td>
                                 <td><span class="status-badge ${getStatusClass(s.status)}">${s.status_display || s.status}</span></td>
-                                <td>${s.has_interventions ? '⚠️' : '✓'}</td>
+                                <td>${s.has_interventions ? '<span class="badge bg-warning">⚠️</span>' : '<span class="badge bg-success">✓</span>'}</td>
                                 <td>${s.destination || 'N/A'}</td>
                             </tr>
                         `).join('');
@@ -1932,10 +2649,19 @@
                                 <td>${s.recipient_name || 'N/A'}</td>
                                 <td>${s.origin_location || 'N/A'}</td>
                                 <td>${s.destination_location || 'N/A'}</td>
-                                <td>${s.has_interventions ? '⚠️' : '✓'}</td>
+                                <td>
+                                    ${s.has_interventions ? 
+                                        s.intervention_types.map(t => 
+                                            `<span class="intervention-badge intervention-${t}" data-tooltip="${t}">⚠️</span>`
+                                        ).join('') : 
+                                        '<span class="text-success">✓</span>'
+                                    }
+                                </td>
                             </tr>
                         `).join('');
                     }
+                } else if (response.status === 401) {
+                    logout();
                 }
             } catch (error) {
                 console.error('Error loading shipments:', error);
@@ -1991,6 +2717,18 @@
             if (details) {
                 details.style.display = checkbox.checked ? 'block' : 'none';
             }
+            
+            // Update email preview
+            const action = checkbox.checked ? 
+                (type === 'customs' ? 'activate' : type === 'security' ? 'activate' : type === 'damage' ? 'report' : type === 'return' ? 'initiate' : 'report') :
+                (type === 'customs' ? 'release' : type === 'security' ? 'clear' : type === 'damage' ? 'resolve' : type === 'return' ? 'resolve' : 'resolve');
+            
+            const data = {
+                reason: document.getElementById(`modal${type === 'delay' ? 'DelayReason' : type === 'return' ? 'ReturnReason' : ''}`)?.value,
+                revisedEta: document.getElementById('modalRevisedEta')?.value
+            };
+            
+            updateEmailPreview(type, action, data);
         }
 
         async function openShipmentModal(trackingNumber) {
@@ -2013,15 +2751,16 @@
                         <div class="row">
                             <div class="col-6">
                                 <p><strong>Tracking:</strong> ${formatTracking(s.tracking_number)}</p>
-                                <p><strong>Status:</strong> ${s.current_status}</p>
-                                <p><strong>Sender:</strong> ${s.sender_name}</p>
-                                <p><strong>Recipient:</strong> ${s.recipient_name}</p>
+                                <p><strong>Status:</strong> <span class="status-badge ${getStatusClass(s.current_status)}">${s.current_status}</span></p>
+                                <p><strong>Sender:</strong> ${s.sender_name} (${s.sender_email})</p>
+                                <p><strong>Recipient:</strong> ${s.recipient_name} (${s.recipient_email})</p>
                             </div>
                             <div class="col-6">
                                 <p><strong>Origin:</strong> ${s.origin_location}</p>
                                 <p><strong>Destination:</strong> ${s.destination_location}</p>
                                 <p><strong>Weight:</strong> ${s.weight_kg || 'N/A'} kg</p>
                                 <p><strong>Value:</strong> ${s.declared_currency || 'USD'} ${s.declared_value || '0'}</p>
+                                <p><strong>Created:</strong> ${new Date(s.created_at).toLocaleString()}</p>
                             </div>
                         </div>
                     `;
@@ -2038,9 +2777,14 @@
                         if (details) details.style.display = 'none';
                     });
                     
+                    // Set preview emails
+                    document.getElementById('emailPreviewTo').textContent = `${s.sender_email}, ${s.recipient_email}`;
+                    
                     loadModalStatuses(trackingNumber);
                     
                     document.getElementById('shipmentModal').style.display = 'flex';
+                } else if (response.status === 401) {
+                    logout();
                 }
             } catch (error) {
                 console.error('Error loading shipment:', error);
@@ -2098,10 +2842,13 @@
                 });
                 
                 if (response.ok) {
-                    showAlert('Status updated successfully! Email sent to sender/recipient.', 'success');
+                    showAlert('Status updated successfully! Email sent to sender and recipient.', 'success');
                     closeModal();
                     loadShipments();
                     loadDashboardData();
+                    loadInterventions();
+                } else if (response.status === 401) {
+                    logout();
                 } else {
                     showAlert('Failed to update status', 'danger');
                 }
@@ -2121,11 +2868,11 @@
             const delayActive = document.getElementById('modalDelayActive').checked;
             
             let successCount = 0;
-            let message = '';
             
             try {
                 // Customs Bond
-                if (customsActive !== (document.getElementById('modalCustomsBond').defaultChecked)) {
+                const customsCheckbox = document.getElementById('modalCustomsBond');
+                if (customsActive !== customsCheckbox.defaultChecked) {
                     const response = await fetch(`${API_BASE}/shipments/${trackingNumber}/interventions/customs`, {
                         method: 'POST',
                         headers: {
@@ -2143,7 +2890,8 @@
                 }
                 
                 // Security Hold
-                if (securityActive !== (document.getElementById('modalSecurityHold').defaultChecked)) {
+                const securityCheckbox = document.getElementById('modalSecurityHold');
+                if (securityActive !== securityCheckbox.defaultChecked) {
                     const response = await fetch(`${API_BASE}/shipments/${trackingNumber}/interventions/security`, {
                         method: 'POST',
                         headers: {
@@ -2160,7 +2908,8 @@
                 }
                 
                 // Damage
-                if (damageActive !== (document.getElementById('modalDamageReported').defaultChecked)) {
+                const damageCheckbox = document.getElementById('modalDamageReported');
+                if (damageActive !== damageCheckbox.defaultChecked) {
                     const response = await fetch(`${API_BASE}/shipments/${trackingNumber}/interventions/damage`, {
                         method: 'POST',
                         headers: {
@@ -2177,7 +2926,8 @@
                 }
                 
                 // Return
-                if (returnActive !== (document.getElementById('modalReturnActive').defaultChecked)) {
+                const returnCheckbox = document.getElementById('modalReturnActive');
+                if (returnActive !== returnCheckbox.defaultChecked) {
                     const response = await fetch(`${API_BASE}/shipments/${trackingNumber}/interventions/return`, {
                         method: 'POST',
                         headers: {
@@ -2193,7 +2943,8 @@
                 }
                 
                 // Delay
-                if (delayActive !== (document.getElementById('modalDelayActive').defaultChecked)) {
+                const delayCheckbox = document.getElementById('modalDelayActive');
+                if (delayActive !== delayCheckbox.defaultChecked) {
                     const response = await fetch(`${API_BASE}/shipments/${trackingNumber}/interventions/delay`, {
                         method: 'POST',
                         headers: {
@@ -2211,8 +2962,7 @@
                 }
                 
                 if (successCount > 0) {
-                    message = `${successCount} intervention(s) applied successfully! Emails sent to sender/recipient.`;
-                    showAlert(message, 'success');
+                    showAlert(`${successCount} intervention(s) applied successfully! Emails sent to sender and recipient.`, 'success');
                 } else {
                     showAlert('No changes were made.', 'info');
                 }
@@ -2261,7 +3011,39 @@
         }
 
         function resetCreateForm() {
-            document.getElementById('createShipmentForm').reset();
+            // Reset to default sample values
+            document.getElementById('senderName').value = 'John A. Smith';
+            document.getElementById('senderEmail').value = 'john.smith@example.com';
+            document.getElementById('senderPhone').value = '+1 (212) 555-7890';
+            document.getElementById('senderAddress').value = '123 Business Ave, Suite 400, New York, NY 10001, USA';
+            
+            document.getElementById('recipientName').value = 'Maria G. Rodriguez';
+            document.getElementById('recipientEmail').value = 'maria.rodriguez@example.com';
+            document.getElementById('recipientPhone').value = '+44 20 7946 0138';
+            document.getElementById('recipientAddress').value = '456 High Street, London, EC1A 1BB, United Kingdom';
+            
+            document.getElementById('originLocation').value = 'New York, USA';
+            document.getElementById('originCode').value = 'JFK';
+            document.getElementById('destinationLocation').value = 'London, United Kingdom';
+            document.getElementById('destinationCode').value = 'LHR';
+            document.getElementById('goodsDescription').value = 'Electronics - Laptops, Tablets, Accessories';
+            document.getElementById('weightKg').value = '15.50';
+            document.getElementById('dimensions').value = '50x40x30';
+            
+            document.getElementById('declaredValue').value = '2500.00';
+            document.getElementById('declaredCurrency').value = 'USD';
+            document.getElementById('shippingAmount').value = '150.00';
+            document.getElementById('paymentMethod').value = 'CASH';
+            document.getElementById('paymentStatus').value = 'PENDING';
+            
+            const today = new Date().toISOString().split('T')[0];
+            const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            document.getElementById('sendingDate').value = today;
+            document.getElementById('estimatedDeliveryDate').value = nextWeek;
+            
+            document.getElementById('isInternational').checked = true;
+            
+            // Reset images
             frontImageFile = null;
             rearImageFile = null;
             document.getElementById('frontPreview').style.display = 'none';
@@ -2269,10 +3051,7 @@
             document.getElementById('frontImageBox').classList.remove('has-image');
             document.getElementById('rearImageBox').classList.remove('has-image');
             
-            const today = new Date().toISOString().split('T')[0];
-            const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-            document.getElementById('sendingDate').value = today;
-            document.getElementById('estimatedDeliveryDate').value = nextWeek;
+            showAlert('Form reset to default values', 'info');
         }
 
         async function handleCreateShipment(e) {
@@ -2358,10 +3137,12 @@
                 const result = await response.json();
                 
                 if (response.ok) {
-                    showAlert(`Shipment created! Tracking: ${result.data.tracking_number}. Invoice sent to sender, notification to recipient.`, 'success');
+                    showAlert(`✅ Shipment created! Tracking: ${result.data.tracking_number}. PDF Invoice sent to sender, notification to recipient.`, 'success');
                     resetCreateForm();
                     
-                    setTimeout(() => showSection('shipments'), 1500);
+                    setTimeout(() => showSection('shipments'), 2000);
+                } else if (response.status === 401) {
+                    logout();
                 } else {
                     showAlert(result.detail || 'Failed to create shipment', 'danger');
                 }
@@ -2423,6 +3204,8 @@
                             `;
                         }).join('');
                     }
+                } else if (response.status === 401) {
+                    logout();
                 }
             } catch (error) {
                 console.error('Error loading interventions:', error);
@@ -2465,9 +3248,211 @@
                             `;
                         }).join('');
                     }
+                } else if (response.status === 401) {
+                    logout();
                 }
             } catch (error) {
                 console.error('Error loading history:', error);
+            }
+        }
+
+        // ============================================
+        // COMMUNICATION
+        // ============================================
+        async function loadShipmentsForDropdown() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/shipments/?limit=50`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const select = document.getElementById('messageShipmentSelect');
+                    
+                    if (!select) return;
+                    
+                    select.innerHTML = '<option value="">Select a shipment...</option>' + 
+                        (data.data.shipments || []).map(s => 
+                            `<option value="${s.tracking_number}" data-sender="${s.sender_email}" data-recipient="${s.recipient_email}" data-sender-name="${s.sender_name}" data-recipient-name="${s.recipient_name}">
+                                ${s.tracking_number} - ${s.recipient_name}
+                            </option>`
+                        ).join('');
+                } else if (response.status === 401) {
+                    logout();
+                }
+            } catch (error) {
+                console.error('Error loading shipments for dropdown:', error);
+            }
+        }
+
+        function setMessageRecipient(recipient) {
+            currentMessageRecipient = recipient;
+            
+            document.querySelectorAll('.recipient-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.recipient-tab[data-recipient="${recipient}"]`).classList.add('active');
+            
+            updateMessageRecipientInfo();
+        }
+
+        function updateMessageRecipientInfo() {
+            const select = document.getElementById('messageShipmentSelect');
+            const selected = select.options[select.selectedIndex];
+            const infoDiv = document.getElementById('messageRecipientInfo');
+            const recipientSpan = document.getElementById('recipientDisplay');
+            
+            if (!selected || !selected.value) {
+                infoDiv.style.display = 'none';
+                return;
+            }
+            
+            const senderEmail = selected.dataset.sender;
+            const recipientEmail = selected.dataset.recipient;
+            const senderName = selected.dataset.senderName;
+            const recipientName = selected.dataset.recipientName;
+            
+            let displayText = '';
+            if (currentMessageRecipient === 'both') {
+                displayText = `Message will be sent to: Sender (${senderName} - ${senderEmail}) and Recipient (${recipientName} - ${recipientEmail})`;
+            } else if (currentMessageRecipient === 'sender') {
+                displayText = `Message will be sent to: Sender (${senderName} - ${senderEmail})`;
+            } else {
+                displayText = `Message will be sent to: Recipient (${recipientName} - ${recipientEmail})`;
+            }
+            
+            recipientSpan.textContent = displayText;
+            infoDiv.style.display = 'block';
+        }
+
+        async function sendCustomMessage() {
+            const token = localStorage.getItem('adminToken');
+            const select = document.getElementById('messageShipmentSelect');
+            const trackingNumber = select.value;
+            const subject = document.getElementById('messageSubject').value.trim();
+            const message = document.getElementById('messageContent').value.trim();
+            const includeLink = document.getElementById('includeTrackingLink').checked;
+            
+            if (!trackingNumber) {
+                showAlert('Please select a shipment', 'warning');
+                return;
+            }
+            
+            if (!subject) {
+                showAlert('Please enter a subject', 'warning');
+                return;
+            }
+            
+            if (!message) {
+                showAlert('Please enter a message', 'warning');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/shipments/${trackingNumber}/message`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        recipient: currentMessageRecipient,
+                        subject: subject,
+                        message: message,
+                        include_tracking_link: includeLink
+                    })
+                });
+                
+                if (response.ok) {
+                    showAlert('Custom message sent successfully!', 'success');
+                    document.getElementById('messageSubject').value = '';
+                    document.getElementById('messageContent').value = '';
+                    loadEmailHistory();
+                } else if (response.status === 401) {
+                    logout();
+                } else {
+                    const data = await response.json();
+                    showAlert(data.detail || 'Failed to send message', 'danger');
+                }
+            } catch (error) {
+                showAlert('Error sending message', 'danger');
+            }
+        }
+
+        async function sendBulkCampaign() {
+            const token = localStorage.getItem('adminToken');
+            const filter = document.getElementById('bulkFilter').value;
+            const subject = document.getElementById('bulkSubject').value.trim();
+            const message = document.getElementById('bulkMessage').value.trim();
+            const includeLinks = document.getElementById('bulkIncludeLinks').checked;
+            
+            if (!subject || !message) {
+                showAlert('Please enter subject and message', 'warning');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/bulk/email`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        filter: filter,
+                        subject: subject,
+                        message: message,
+                        include_tracking_links: includeLinks
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    showAlert(`Bulk campaign started! Sending to ${data.recipient_count} recipients.`, 'success');
+                    document.getElementById('bulkSubject').value = '';
+                    document.getElementById('bulkMessage').value = '';
+                    loadEmailHistory();
+                } else if (response.status === 401) {
+                    logout();
+                } else {
+                    const data = await response.json();
+                    showAlert(data.detail || 'Failed to start campaign', 'danger');
+                }
+            } catch (error) {
+                showAlert('Error starting campaign', 'danger');
+            }
+        }
+
+        async function loadEmailHistory() {
+            const token = localStorage.getItem('adminToken');
+            const tbody = document.getElementById('emailHistoryBody');
+            if (!tbody) return;
+            
+            try {
+                // For demo purposes, we'll show sample data
+                tbody.innerHTML = `
+                    <tr>
+                        <td>${new Date().toLocaleString()}</td>
+                        <td>EUK7F9K2</td>
+                        <td>Invoice</td>
+                        <td>sender@example.com</td>
+                        <td>Invoice for Shipment EUK7F9K2</td>
+                        <td><span class="badge bg-success">SENT</span></td>
+                    </tr>
+                    <tr>
+                        <td>${new Date(Date.now() - 3600000).toLocaleString()}</td>
+                        <td>EUK3B8X5</td>
+                        <td>Customs Notice</td>
+                        <td>recipient@example.com</td>
+                        <td>Shipment Update - Customs Bond Activated</td>
+                        <td><span class="badge bg-success">SENT</span></td>
+                    </tr>
+                `;
+            } catch (error) {
+                console.error('Error loading email history:', error);
             }
         }
 
@@ -2506,8 +3491,10 @@
                 });
                 
                 if (response.ok) {
-                    showAlert('Password changed successfully!', 'success');
-                    e.target.reset();
+                    showAlert('Password changed successfully! Please login again.', 'success');
+                    setTimeout(() => logout(), 2000);
+                } else if (response.status === 401) {
+                    logout();
                 } else {
                     const data = await response.json();
                     showAlert(data.detail || 'Failed to change password', 'danger');

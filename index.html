@@ -10,7 +10,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* GLOBAL STYLES - Your complete CSS */
+        /* GLOBAL STYLES - Your complete CSS (unchanged) */
         :root {
             --primary: #003366;
             --primary-dark: #002244;
@@ -480,6 +480,243 @@
             color: var(--gray);
             font-size: 15px;
             line-height: 1.6;
+        }
+
+        /* ========== ENHANCED TRACKING SECTION ========== */
+        .tracking-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tracking-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0,51,102,0.03) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .tracking-section::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,107,53,0.03) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .tracking-card {
+            background: var(--white);
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .tracking-card:hover {
+            box-shadow: 0 30px 60px -12px rgba(0, 51, 102, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .tracking-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .tracking-header h3 {
+            font-size: 32px;
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .tracking-header p {
+            color: var(--gray);
+            font-size: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .tracking-form {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            background: var(--white);
+            border-radius: 100px;
+            padding: 5px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            border: 2px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .input-group:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 51, 102, 0.15);
+        }
+
+        .input-group i {
+            width: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            font-size: 20px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 18px 0;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            background: transparent;
+            outline: none;
+            color: var(--dark);
+        }
+
+        .input-group input::placeholder {
+            color: var(--gray);
+            font-weight: 400;
+            opacity: 0.7;
+        }
+
+        .btn-track {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: var(--white);
+            border: none;
+            padding: 0 35px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .btn-track:hover {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 51, 102, 0.3);
+        }
+
+        .btn-track:hover i {
+            transform: translateX(5px);
+        }
+
+        .input-hint {
+            margin-top: 15px;
+            font-size: 13px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .input-hint i {
+            color: var(--accent);
+        }
+
+        .tracking-preview {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px dashed var(--border);
+            text-align: center;
+            color: var(--gray);
+        }
+
+        .tracking-features {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tracking-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .tracking-feature i {
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 51, 102, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .tracking-card {
+                padding: 30px 20px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                border-radius: 20px;
+                padding: 10px;
+            }
+            
+            .input-group i {
+                display: none;
+            }
+            
+            .input-group input {
+                padding: 15px;
+                border: 2px solid var(--border);
+                border-radius: 12px;
+                text-align: center;
+            }
+            
+            .btn-track {
+                width: 100%;
+                justify-content: center;
+                padding: 18px;
+            }
+            
+            .tracking-features {
+                gap: 20px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .tracking-header h3 {
+                font-size: 24px;
+            }
+            
+            .tracking-feature {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
         /* Services Section */
@@ -995,7 +1232,7 @@
             color: var(--accent);
         }
 
-        /* Mobile Responsiveness - COMPLETELY REWORKED */
+        /* Mobile Responsiveness */
         @media screen and (max-width: 991px) {
             .hero-title {
                 font-size: 48px;
@@ -1324,6 +1561,11 @@
         .operations-content {
             animation: fadeIn 1s ease-out;
         }
+
+        /* Additional border color variable for tracking section */
+        :root {
+            --border: #e2e8f0;
+        }
     </style>
 </head>
 <body>
@@ -1441,7 +1683,7 @@
         </div>
     </section>
 
-    <!-- Tracking Section -->
+    <!-- ========== ENHANCED TRACKING SECTION ========== -->
     <section id="tracking" class="tracking-section">
         <div class="container">
             <div class="section-header">
@@ -1450,17 +1692,41 @@
                 <p>Enter your tracking number to get real-time updates on your shipment's location and status</p>
             </div>
             <div class="tracking-card">
+                <div class="tracking-header">
+                    <h3>Where is your package?</h3>
+                    <p>Enter your EukExpress tracking number below</p>
+                </div>
+                
                 <form id="tracking-form" action="/track" method="get" class="tracking-form">
                     <div class="input-group">
                         <i class="fas fa-box"></i>
-                        <input type="text" name="tracking" id="tracking-input" placeholder="Enter tracking number (e.g., EUK12345)" pattern="EUK[A-Z2-9]{5}" required>
-                        <button type="submit" class="btn btn-primary btn-track">
-                            <i class="fas fa-arrow-right"></i> Track
+                        <input type="text" name="number" id="tracking-input" placeholder="E.g., EUK7F9K2" pattern="EUK[A-Z2-9]{5}" required>
+                        <button type="submit" class="btn btn-track">
+                            <i class="fas fa-arrow-right"></i> Track Package
                         </button>
                     </div>
-                    <p class="input-hint">Format: EUK followed by 5 characters (e.g., EUKABCDE)</p>
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i>
+                        Format: EUK followed by 5 characters (e.g., EUKABCDE)
+                    </div>
                 </form>
-                <div id="tracking-preview" class="tracking-preview"></div>
+                
+                <div class="tracking-preview">
+                    <div class="tracking-features">
+                        <div class="tracking-feature">
+                            <i class="fas fa-clock"></i>
+                            <span>Real-time updates</span>
+                        </div>
+                        <div class="tracking-feature">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Location tracking</span>
+                        </div>
+                        <div class="tracking-feature">
+                            <i class="fas fa-bell"></i>
+                            <span>Status notifications</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -1765,6 +2031,15 @@
                     link.classList.add('active');
                 }
             });
+        });
+
+        // Update tracking form to link to track.html
+        document.getElementById('tracking-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const trackingNumber = document.getElementById('tracking-input').value.trim().toUpperCase();
+            if (trackingNumber) {
+                window.location.href = `track.html?number=${encodeURIComponent(trackingNumber)}`;
+            }
         });
     </script>
 </body>

@@ -33,6 +33,36 @@
             color: #1e293b;
         }
 
+        /* Loading Button Styles */
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .btn-loading .btn-text {
+            visibility: hidden;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         /* Session Timer */
         .session-timer {
             background: #f1f5f9;
@@ -256,6 +286,7 @@
             cursor: pointer;
             transition: all 0.2s;
             width: 100%;
+            position: relative;
         }
 
         .btn-login:hover:not(:disabled) {
@@ -406,12 +437,17 @@
             transition: all 0.2s;
             font-weight: 500;
             font-size: 14px;
+            position: relative;
         }
 
         .logout-btn:hover {
             background: #f1f5f9;
             border-color: #2a5298;
             color: #2a5298;
+        }
+
+        .logout-btn.btn-loading {
+            color: transparent;
         }
 
         /* Content Sections */
@@ -619,6 +655,7 @@
             font-size: 15px;
             cursor: pointer;
             transition: all 0.2s;
+            position: relative;
         }
 
         .btn-primary:hover:not(:disabled) {
@@ -631,6 +668,10 @@
             cursor: not-allowed;
         }
 
+        .btn-primary.btn-loading .btn-text {
+            visibility: hidden;
+        }
+
         .btn-secondary {
             background: #f1f5f9;
             border: 1.5px solid #e2e8f0;
@@ -641,10 +682,15 @@
             font-size: 14px;
             cursor: pointer;
             transition: all 0.2s;
+            position: relative;
         }
 
         .btn-secondary:hover {
             background: #e2e8f0;
+        }
+
+        .btn-secondary.btn-loading .btn-text {
+            visibility: hidden;
         }
 
         /* Toggle Switch */
@@ -779,10 +825,6 @@
             animation: spin 0.8s linear infinite;
             margin-right: 10px;
             vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
 
         /* Shipment Detail Page */
@@ -1015,6 +1057,7 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
+            position: relative;
         }
 
         .page-btn:hover:not(:disabled) {
@@ -1025,6 +1068,10 @@
         .page-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+
+        .page-btn.btn-loading .btn-text {
+            visibility: hidden;
         }
 
         /* Chart */
@@ -1183,11 +1230,11 @@
             <h3>Session Expiring</h3>
             <p id="sessionMessage">Your session will expire in <span id="sessionCountdown">5:00</span> minutes</p>
             <div class="session-modal-buttons">
-                <button class="btn-stay-logged" onclick="extendSession()">
-                    <i class="bi bi-arrow-repeat"></i> Stay Logged In
+                <button class="btn-stay-logged" id="stayLoggedBtn" onclick="extendSession()">
+                    <span class="btn-text">Stay Logged In</span>
                 </button>
-                <button class="btn-logout-now" onclick="forceLogout()">
-                    <i class="bi bi-box-arrow-right"></i> Logout Now
+                <button class="btn-logout-now" id="logoutNowBtn" onclick="forceLogout()">
+                    <span class="btn-text">Logout Now</span>
                 </button>
             </div>
         </div>
@@ -1205,8 +1252,8 @@
                     <label class="form-label">Test Email Address</label>
                     <input type="email" class="form-control" id="testEmailAddress" placeholder="Enter your email">
                 </div>
-                <button class="btn-primary w-100 mt-3" onclick="sendTestEmail()">
-                    <i class="bi bi-send"></i> Send Test Email
+                <button class="btn-primary w-100 mt-3" id="sendTestEmailBtn" onclick="sendTestEmail()">
+                    <span class="btn-text">Send Test Email</span>
                 </button>
                 <div id="testEmailResult" class="mt-3" style="display: none;"></div>
             </div>
@@ -1238,10 +1285,7 @@
                     <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
                 </div>
                 <button type="submit" class="btn-login" id="loginBtn">
-                    <span id="loginText">Sign In</span>
-                    <span id="loginSpinner" style="display: none;">
-                        <span class="loading-spinner"></span> Authenticating...
-                    </span>
+                    <span class="btn-text">Sign In</span>
                 </button>
             </form>
             
@@ -1306,7 +1350,7 @@
                     </div>
                     <span class="user-name" id="adminName">Loading...</span>
                     <button class="logout-btn" id="logoutBtn">
-                        <i class="bi bi-box-arrow-right"></i> Logout
+                        <span class="btn-text"><i class="bi bi-box-arrow-right"></i> Logout</span>
                     </button>
                 </div>
             </div>
@@ -1454,11 +1498,11 @@
                         </div>
                         <div class="pagination-info">
                             <button class="page-btn" onclick="prevPage()" id="prevPageBtn" disabled>
-                                <i class="bi bi-chevron-left"></i> Previous
+                                <span class="btn-text"><i class="bi bi-chevron-left"></i> Previous</span>
                             </button>
                             <span id="pageInfo" class="fw-medium">Page 1</span>
                             <button class="page-btn" onclick="nextPage()" id="nextPageBtn">
-                                Next <i class="bi bi-chevron-right"></i>
+                                <span class="btn-text">Next <i class="bi bi-chevron-right"></i></span>
                             </button>
                         </div>
                     </div>
@@ -1655,14 +1699,11 @@
                         </div>
                         
                         <div class="d-flex justify-content-end mt-4">
-                            <button type="button" class="btn-secondary me-3" onclick="resetCreateForm()">
-                                <i class="bi bi-arrow-counterclockwise"></i> Reset to Default
+                            <button type="button" class="btn-secondary me-3" id="resetFormBtn" onclick="resetCreateForm()">
+                                <span class="btn-text"><i class="bi bi-arrow-counterclockwise"></i> Reset to Default</span>
                             </button>
                             <button type="submit" class="btn-primary" id="createShipmentBtn">
-                                <span id="createBtnText">Create Shipment</span>
-                                <span id="createBtnSpinner" style="display: none;">
-                                    <span class="loading-spinner"></span> Creating...
-                                </span>
+                                <span class="btn-text">Create Shipment</span>
                             </button>
                         </div>
                     </form>
@@ -1764,8 +1805,8 @@
                                 </label>
                             </div>
                             
-                            <button class="btn-primary w-100" onclick="sendCustomMessage()">
-                                <i class="bi bi-send"></i> Send Message
+                            <button class="btn-primary w-100" id="sendMessageBtn" onclick="sendCustomMessage()">
+                                <span class="btn-text"><i class="bi bi-send"></i> Send Message</span>
                             </button>
                         </div>
                     </div>
@@ -1801,8 +1842,8 @@
                                 </label>
                             </div>
                             
-                            <button class="btn-primary w-100" onclick="sendBulkCampaign()">
-                                <i class="bi bi-envelope-paper"></i> Launch Campaign
+                            <button class="btn-primary w-100" id="bulkCampaignBtn" onclick="sendBulkCampaign()">
+                                <span class="btn-text"><i class="bi bi-envelope-paper"></i> Launch Campaign</span>
                             </button>
                         </div>
                     </div>
@@ -1853,7 +1894,9 @@
                             <label class="form-label">Confirm Password</label>
                             <input type="password" class="form-control" id="confirmPassword" required>
                         </div>
-                        <button type="submit" class="btn-primary">Update Password</button>
+                        <button type="submit" class="btn-primary" id="changePasswordBtn">
+                            <span class="btn-text">Update Password</span>
+                        </button>
                     </form>
                     
                     <hr class="my-4">
@@ -1865,8 +1908,8 @@
                                 <p class="mb-1"><strong>Status:</strong> <span id="emailServiceStatus" class="text-success">Checking...</span></p>
                                 <p class="mb-1"><strong>From:</strong> <span id="emailFromAddress">onboarding@delivery.eukexpress.com</span></p>
                             </div>
-                            <button class="btn btn-sm btn-outline-primary" onclick="openEmailTestModal()">
-                                <i class="bi bi-envelope"></i> Test Email
+                            <button class="btn btn-sm btn-outline-primary" id="testEmailBtn" onclick="openEmailTestModal()">
+                                <span class="btn-text"><i class="bi bi-envelope"></i> Test Email</span>
                             </button>
                         </div>
                     </div>
@@ -1905,7 +1948,9 @@
                         </select>
                     </div>
                     <div class="col-4">
-                        <button class="btn-primary w-100" onclick="updateModalStatus()">Update</button>
+                        <button class="btn-primary w-100" id="updateStatusBtn" onclick="updateModalStatus()">
+                            <span class="btn-text">Update</span>
+                        </button>
                     </div>
                     <div class="col-12">
                         <input type="text" class="form-control" id="modalStatusLocation" placeholder="Location">
@@ -2020,8 +2065,8 @@
                     </div>
                 </div>
 
-                <button class="btn-primary w-100 mt-3" onclick="applyInterventions()">
-                    <i class="bi bi-check-circle"></i> Apply Changes (Emails will be sent)
+                <button class="btn-primary w-100 mt-3" id="applyInterventionsBtn" onclick="applyInterventions()">
+                    <span class="btn-text"><i class="bi bi-check-circle"></i> Apply Changes (Emails will be sent)</span>
                 </button>
             </div>
         </div>
@@ -2040,6 +2085,22 @@
         let rearImageFile = null;
         let statusChart = null;
         let currentMessageRecipient = 'both';
+
+        // ============================================
+        // LOADING STATES UTILITY
+        // ============================================
+        function setLoading(buttonId, isLoading) {
+            const button = document.getElementById(buttonId);
+            if (!button) return;
+            
+            if (isLoading) {
+                button.classList.add('btn-loading');
+                button.disabled = true;
+            } else {
+                button.classList.remove('btn-loading');
+                button.disabled = false;
+            }
+        }
 
         // ============================================
         // SESSION MANAGEMENT
@@ -2098,6 +2159,7 @@
         }
 
         async function extendSession() {
+            setLoading('stayLoggedBtn', true);
             const token = localStorage.getItem('adminToken');
             if (!token) return;
             
@@ -2117,6 +2179,8 @@
                 }
             } catch (error) {
                 console.error('Failed to extend session:', error);
+            } finally {
+                setLoading('stayLoggedBtn', false);
             }
         }
 
@@ -2176,6 +2240,7 @@
                 return;
             }
 
+            setLoading('sendTestEmailBtn', true);
             const resultDiv = document.getElementById('testEmailResult');
             resultDiv.style.display = 'block';
             resultDiv.innerHTML = '<div class="alert alert-info">Sending test email...</div>';
@@ -2202,6 +2267,8 @@
             } catch (error) {
                 resultDiv.innerHTML = '<div class="alert alert-danger">❌ Network error. Please try again.</div>';
                 document.getElementById('emailServiceStatus').innerHTML = '❌ Error';
+            } finally {
+                setLoading('sendTestEmailBtn', false);
             }
         }
 
@@ -2332,15 +2399,13 @@
         // UTILITY FUNCTIONS
         // ============================================
         function showAlert(message, type = 'success') {
-            const alert = document.getElementById('dashboardAlert');
-            if (!alert) return;
-            alert.className = `alert alert-${type}`;
-            alert.textContent = message;
-            alert.style.display = 'block';
-            
-            setTimeout(() => {
-                alert.style.display = 'none';
-            }, 4000);
+            Swal.fire({
+                icon: type,
+                title: type === 'success' ? 'Success' : type === 'danger' ? 'Error' : type === 'warning' ? 'Warning' : 'Info',
+                text: message,
+                timer: 3000,
+                showConfirmButton: false
+            });
         }
 
         function formatTracking(tracking) {
@@ -2446,20 +2511,13 @@
             
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
-            const loginBtn = document.getElementById('loginBtn');
-            const loginText = document.getElementById('loginText');
-            const loginSpinner = document.getElementById('loginSpinner');
-            const loginAlert = document.getElementById('loginAlert');
             
             if (!username || !password) {
                 showAlert('Please enter username and password', 'danger');
                 return;
             }
             
-            loginText.style.display = 'none';
-            loginSpinner.style.display = 'inline';
-            loginBtn.disabled = true;
-            loginAlert.style.display = 'none';
+            setLoading('loginBtn', true);
             
             try {
                 const formData = new URLSearchParams();
@@ -2481,16 +2539,12 @@
                     loadDashboardData();
                     startSessionTimer(data.expires_in);
                 } else {
-                    loginAlert.textContent = data.detail || 'Invalid credentials';
-                    loginAlert.style.display = 'block';
+                    showAlert(data.detail || 'Invalid credentials', 'danger');
                 }
             } catch (error) {
-                loginAlert.textContent = 'Network error. Please check your connection.';
-                loginAlert.style.display = 'block';
+                showAlert('Network error. Please check your connection.', 'danger');
             } finally {
-                loginText.style.display = 'inline';
-                loginSpinner.style.display = 'none';
-                loginBtn.disabled = false;
+                setLoading('loginBtn', false);
             }
         }
 
@@ -2508,6 +2562,7 @@
         }
 
         async function logout() {
+            setLoading('logoutBtn', true);
             const token = localStorage.getItem('adminToken');
             
             try {
@@ -2524,6 +2579,7 @@
                 localStorage.removeItem('adminUser');
                 if (sessionTimer) clearInterval(sessionTimer);
                 showLogin();
+                setLoading('logoutBtn', false);
             }
         }
 
@@ -2939,6 +2995,8 @@
                 return;
             }
             
+            setLoading('updateStatusBtn', true);
+            
             try {
                 const response = await fetch(`${API_BASE}/shipments/${currentShipmentTracking}/status`, {
                     method: 'POST',
@@ -2966,12 +3024,16 @@
                 }
             } catch (error) {
                 showAlert('Error updating status', 'danger');
+            } finally {
+                setLoading('updateStatusBtn', false);
             }
         }
 
         async function applyInterventions() {
             const token = localStorage.getItem('adminToken');
             const trackingNumber = currentShipmentTracking;
+            
+            setLoading('applyInterventionsBtn', true);
             
             const customsActive = document.getElementById('modalCustomsBond').checked;
             const securityActive = document.getElementById('modalSecurityHold').checked;
@@ -3111,6 +3173,8 @@
             } catch (error) {
                 console.error('Error applying interventions:', error);
                 showAlert('Error applying interventions. Please try again.', 'danger');
+            } finally {
+                setLoading('applyInterventionsBtn', false);
             }
         }
 
@@ -3145,6 +3209,8 @@
         }
 
         function resetCreateForm() {
+            setLoading('resetFormBtn', true);
+            
             // Reset to default sample values
             document.getElementById('senderName').value = 'John A. Smith';
             document.getElementById('senderEmail').value = 'john.smith@example.com';
@@ -3185,7 +3251,10 @@
             document.getElementById('frontImageBox').classList.remove('has-image');
             document.getElementById('rearImageBox').classList.remove('has-image');
             
-            showAlert('Form reset to default values', 'info');
+            setTimeout(() => {
+                setLoading('resetFormBtn', false);
+                showAlert('Form reset to default values', 'info');
+            }, 500);
         }
 
         async function handleCreateShipment(e) {
@@ -3202,13 +3271,7 @@
                 return;
             }
             
-            const createBtn = document.getElementById('createShipmentBtn');
-            const btnText = document.getElementById('createBtnText');
-            const btnSpinner = document.getElementById('createBtnSpinner');
-            
-            btnText.style.display = 'none';
-            btnSpinner.style.display = 'inline';
-            createBtn.disabled = true;
+            setLoading('createShipmentBtn', true);
             
             const formData = new FormData();
             
@@ -3283,9 +3346,7 @@
             } catch (error) {
                 showAlert('Network error. Please try again.', 'danger');
             } finally {
-                btnText.style.display = 'inline';
-                btnSpinner.style.display = 'none';
-                createBtn.disabled = false;
+                setLoading('createShipmentBtn', false);
             }
         }
 
@@ -3331,7 +3392,7 @@
                                     <td>${s.destination_location || 'N/A'}</td>
                                     <td>
                                         <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); openShipmentModal('${s.tracking_number}')">
-                                            <i class="bi bi-pencil"></i> Manage
+                                            <span class="btn-text"><i class="bi bi-pencil"></i> Manage</span>
                                         </button>
                                     </td>
                                 </tr>
@@ -3485,6 +3546,8 @@
                 return;
             }
             
+            setLoading('sendMessageBtn', true);
+            
             try {
                 const response = await fetch(`${API_BASE}/shipments/${trackingNumber}/message`, {
                     method: 'POST',
@@ -3513,6 +3576,8 @@
                 }
             } catch (error) {
                 showAlert('Error sending message', 'danger');
+            } finally {
+                setLoading('sendMessageBtn', false);
             }
         }
 
@@ -3527,6 +3592,8 @@
                 showAlert('Please enter subject and message', 'warning');
                 return;
             }
+            
+            setLoading('bulkCampaignBtn', true);
             
             try {
                 const response = await fetch(`${API_BASE}/bulk/email`, {
@@ -3557,6 +3624,8 @@
                 }
             } catch (error) {
                 showAlert('Error starting campaign', 'danger');
+            } finally {
+                setLoading('bulkCampaignBtn', false);
             }
         }
 
@@ -3611,6 +3680,8 @@
                 return;
             }
             
+            setLoading('changePasswordBtn', true);
+            
             try {
                 const response = await fetch(`${API_BASE}/auth/change-password`, {
                     method: 'POST',
@@ -3635,6 +3706,8 @@
                 }
             } catch (error) {
                 showAlert('Error changing password', 'danger');
+            } finally {
+                setLoading('changePasswordBtn', false);
             }
         }
     </script>
